@@ -6,4 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\Interface\" />
+    <Folder Include="Model\DTO\" />
+    <Folder Include="Model\Entities\" />
+    <Folder Include="Extension\" />
+    <Folder Include="Service\" />
+    <Folder Include="Utility\" />
+    <Folder Include="wwwroot\Assets\StaticImages\" />
+  </ItemGroup>
+
 </Project>

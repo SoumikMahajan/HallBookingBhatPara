@@ -13,7 +13,10 @@
     <Folder Include="Extension\" />
     <Folder Include="Service\" />
     <Folder Include="Utility\" />
-    <Folder Include="wwwroot\Assets\StaticImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
   </ItemGroup>
 
 </Project>

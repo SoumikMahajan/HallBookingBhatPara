@@ -1,17 +1,101 @@
-﻿<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <div class="container-fluid">
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HallBookingBhatPara</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+﻿<!-- Top Bar -->
+<div class="top-bar">
+    <div class="container">
+        <div class="contact-info">
+            <div>
+                <i class="fas fa-phone" aria-hidden="true"></i><span class="fallback-icon">📞</span>
+                <span>+91-33-2584-2345</span>
+            </div>
+            <div>
+                <i class="fas fa-envelope" aria-hidden="true"></i><span class="fallback-icon">📧</span>
+                <span>info@bhatparamunicipalitygov.co.in</span>
+            </div>
+            <div>
+                <i class="fas fa-clock" aria-hidden="true"></i><span class="fallback-icon">🕒</span>
+                <span>Office Hours: 10:00 AM - 6:00 PM</span>
+            </div>
+        </div>
+        <div class="social-links">
+            <a href="#" title="Facebook">
+                <i class="fab fa-facebook-f" aria-hidden="true"></i><span class="fallback-icon">📘</span>
+            </a>
+            <a href="#" title="Twitter">
+                <i class="fab fa-twitter" aria-hidden="true"></i><span class="fallback-icon">🐦</span>
+            </a>
+            <a href="#" title="YouTube">
+                <i class="fab fa-youtube" aria-hidden="true"></i><span class="fallback-icon">📺</span>
+            </a>
+            <a href="#" title="Instagram">
+                <i class="fab fa-instagram" aria-hidden="true"></i><span class="fallback-icon">📷</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Header -->
+<header class="main-header">
+    <div class="container">
+        <div class="header-content">           
+            <div class="logo-section">
+                <img src="~/assets/staticimages/flag.gif" alt="Indian Flag" class="flag-logo">
+                <img src="~/assets/staticimages/bhatparaheaderlogo.png" alt="Municipality Seal" class="municipality-seal">                
+            </div>
+            <div class="header-text">
+                <h1 class="municipality-name">Bhatpara Municipality</h1>
+                <p class="municipality-subtitle">Hall Booking System</p>
+                <p class="est-year">Established 1899</p>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <p class="welcome-text">Welcome back,</p>
+                    <p class="user-name">Admin User</p>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i><span class="fallback-icon">🚪</span>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="fas fa-bars" aria-hidden="true"></i><span class="fallback-icon">☰</span>
         </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-            <ul class="navbar-nav flex-grow-1">
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="nav-link active" href="#home">
+                        <i class="fas fa-home me-2" aria-hidden="true"></i><span class="fallback-icon">🏠 </span>Home
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    <a class="nav-link" href="#hall-booking">
+                        <i class="fas fa-building me-2" aria-hidden="true"></i><span class="fallback-icon">🏛️ </span>Hall Booking
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#my-bookings">
+                        <i class="fas fa-calendar-alt me-2" aria-hidden="true"></i><span class="fallback-icon">📅 </span>My Bookings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#services">
+                        <i class="fas fa-cogs me-2" aria-hidden="true"></i><span class="fallback-icon">⚙️ </span>Services
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">
+                        <i class="fas fa-info-circle me-2" aria-hidden="true"></i><span class="fallback-icon">ℹ️ </span>About
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">
+                        <i class="fas fa-phone me-2" aria-hidden="true"></i><span class="fallback-icon">📞 </span>Contact
+                    </a>
                 </li>
             </ul>
         </div>

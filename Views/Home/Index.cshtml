@@ -2,7 +2,107 @@
     ViewData["Title"] = "Home Page"; 
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <h2 class="hero-title">Welcome to Bhatpara Municipality</h2>
+            <p class="hero-subtitle">Serving the Community Since 1899</p>
+            <p class="lead">Book marriage halls, seminar halls, and community centers with ease through our online booking system.</p>
+        </div>
+    </section>
+
+    @* <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users" aria-hidden="true"></i><span class="fallback-icon">👥</span>
+                        </div>
+                        <div class="stat-number">4,42,383</div>
+                        <div class="stat-label">Population</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i><span class="fallback-icon">📍</span>
+                        </div>
+                        <div class="stat-number">35</div>
+                        <div class="stat-label">Sq. KM Area</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-building" aria-hidden="true"></i><span class="fallback-icon">🏢</span>
+                        </div>
+                        <div class="stat-number">35</div>
+                        <div class="stat-label">Wards</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap" aria-hidden="true"></i><span class="fallback-icon">🎓</span>
+                        </div>
+                        <div class="stat-number">179</div>
+                        <div class="stat-label">Schools</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> *@
+
+    <!-- Quick Actions Section -->
+    <section class="quick-actions">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h3 class="section-title">Quick Actions</h3>
+                    <p class="section-subtitle">Access our services with just a few clicks</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-6">
+                    <div class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-calendar-plus" aria-hidden="true"></i><span class="fallback-icon">📅</span>
+                        </div>
+                        <h4 class="action-title">Book a Hall</h4>
+                        <p class="action-description">Reserve marriage halls, seminar halls, and community centers for your events.</p>
+                        <button class="action-btn" onclick="navigateToBooking()">Book Now</button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-list-alt" aria-hidden="true"></i><span class="fallback-icon">📋</span>
+                        </div>
+                        <h4 class="action-title">View Bookings</h4>
+                        <p class="action-description">Check your current bookings, payment status, and booking history.</p>
+                        <button class="action-btn" onclick="navigateToBookings()">View Bookings</button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-download" aria-hidden="true"></i><span class="fallback-icon">📥</span>
+                        </div>
+                        <h4 class="action-title">Download Forms</h4>
+                        <p class="action-description">Access application forms, guidelines, and necessary documents.</p>
+                        <button class="action-btn" onclick="navigateToForms()">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+
+
+

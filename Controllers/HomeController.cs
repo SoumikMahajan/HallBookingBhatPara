@@ -33,5 +33,15 @@ namespace HallBookingBhatPara.Controllers
         {
             return View();
         }
+
+        public IActionResult BookingList()
+        {
+            return View();
+        }
+
+        public IActionResult AddHallMaster()
+        {
+            return View();
+        }
     }
 }

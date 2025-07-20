@@ -1,0 +1,384 @@
+﻿@{
+    ViewData["Title"] = "AddHallMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+    body {
+        background: #f2f4f8;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .admin-container {
+        max-width: 800px;
+        margin: 1rem auto;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .admin-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+        .admin-header h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-header p {
+            color: #7f8c8d;
+            margin: 0;
+        }
+
+    .form-label {
+        font-weight: 500;
+        color: #34495e;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0077b6;
+            box-shadow: 0 0 0 0.2rem rgba(0, 119, 182, 0.15);
+            transform: translateY(-1px);
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #0077b6, #023e8a);
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #023e8a, #0077b6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 119, 182, 0.4);
+        }
+
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        margin-right: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+    .form-row {
+        margin-bottom: 1.5rem;
+    }
+
+    .success-message {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: none;
+    }
+
+    .hotels-list {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    .hotel-item {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #0077b6;
+    }
+
+        .hotel-item h6 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .hotel-item p {
+            margin: 0.25rem 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+    .input-group-text {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-right: none;
+    }
+
+    .input-group .form-control {
+        border-left: none;
+    }
+
+    .input-group:focus-within .input-group-text {
+        border-color: #0077b6;
+    }
+</style>
+
+<div class="container">
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-hotel text-primary me-2"></i>Add New Hall</h1>
+            @* <p>Enter hotel details to add to the system</p> *@
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <i class="fas fa-check-circle me-2"></i>Hall added successfully!
+        </div>
+
+        <form id="hotelForm">
+            <div class="row">
+                <div class="col-md-6 form-row">
+                    <label for="hotelCategory" class="form-label">
+                        <i class="fas fa-tags me-1"></i>Hall Category
+                    </label>
+                    <select id="hotelCategory" class="form-select" required>
+                        <option value="">Select Category</option>
+                        <option value="Marriage Hall">Marriage Hall</option>
+                        <option value="Auditorium">Auditorium</option>
+                        @* <option value="Resort">Resort</option> *@
+                    </select>
+                </div>
+
+                <div class="col-md-6 form-row">
+                    <label for="hotelName" class="form-label">
+                        <i class="fas fa-building me-1"></i>Hall Name
+                    </label>
+                    <input type="text" id="hotelName" class="form-control" placeholder="Enter Hall name" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-row">
+                    <label for="availableFrom" class="form-label">
+                        <i class="fas fa-calendar-alt me-1"></i>Available From
+                    </label>
+                    <input type="date" id="availableFrom" class="form-control" required>
+                </div>
+
+                <div class="col-md-6 form-row">
+                    <label for="availableTo" class="form-label">
+                        <i class="fas fa-calendar-check me-1"></i>Available To
+                    </label>
+                    <input type="date" id="availableTo" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-row">
+                    <label for="proposedRate" class="form-label">
+                        <i class="fas fa-rupee-sign me-1"></i>Proposed Rate (per night)
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" id="proposedRate" class="form-control" placeholder="Enter rate" min="0" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6 form-row">
+                    <label for="securityMoney" class="form-label">
+                        <i class="fas fa-shield-alt me-1"></i>Security Money
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" id="securityMoney" class="form-control" placeholder="Enter security amount" min="0" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                @* <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                    <i class="fas fa-redo me-2"></i>Reset
+                </button> *@
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Submit
+                </button>
+            </div>
+        </form>
+
+        <div class="hotels-list">
+            <h4><i class="fas fa-list me-2"></i>Added Hall</h4>
+            <div id="hotelsList">
+                <p class="text-muted">No Hall added yet.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Array to store hotel data
+    let hotelData = [];
+
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('availableFrom').setAttribute('min', today);
+        document.getElementById('availableTo').setAttribute('min', today);
+
+        // Update "Available To" minimum date when "Available From" changes
+        document.getElementById('availableFrom').addEventListener('change', function() {
+            document.getElementById('availableTo').setAttribute('min', this.value);
+        });
+    });
+
+    // Form submission handler
+    document.getElementById('hotelForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = {
+            id: Date.now(), // Simple ID generation
+            category: document.getElementById('hotelCategory').value,
+            name: document.getElementById('hotelName').value,
+            availableFrom: document.getElementById('availableFrom').value,
+            availableTo: document.getElementById('availableTo').value,
+            proposedRate: parseFloat(document.getElementById('proposedRate').value),
+            securityMoney: parseFloat(document.getElementById('securityMoney').value),
+            dateAdded: new Date().toLocaleDateString('en-IN')
+        };
+
+        // Validate dates
+        if (new Date(formData.availableFrom) > new Date(formData.availableTo)) {
+            alert('Available From date cannot be later than Available To date!');
+            return;
+        }
+
+        // Save data
+        saveHotelData(formData);
+
+        // Show success message
+        showSuccessMessage();
+
+        // Reset form
+        resetForm();
+
+        // Update hotels list
+        displayHotels();
+    });
+
+    function saveHotelData(data) {
+        hotelData.push(data);
+        console.log('Hotel data saved:', data);
+
+        // In a real application, you would send this data to a server
+        // For now, we're just storing it in memory
+    }
+
+    function showSuccessMessage() {
+        const successMessage = document.getElementById('successMessage');
+        successMessage.style.display = 'block';
+
+        setTimeout(() => {
+            successMessage.style.display = 'none';
+        }, 3000);
+    }
+
+    function resetForm() {
+        document.getElementById('hotelForm').reset();
+    }
+
+    function displayHotels() {
+        const hotelsList = document.getElementById('hotelsList');
+
+        if (hotelData.length === 0) {
+            hotelsList.innerHTML = '<p class="text-muted">No hotels added yet.</p>';
+            return;
+        }
+
+        let hotelsHTML = '';
+        hotelData.forEach((hotel, index) => {
+            hotelsHTML += `
+                <div class="hotel-item">
+                    <h6>${hotel.name} <span class="badge bg-primary">${hotel.category}</span></h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Available:</strong> ${formatDate(hotel.availableFrom)} to ${formatDate(hotel.availableTo)}</p>
+                            <p><strong>Rate:</strong> ₹${hotel.proposedRate.toLocaleString('en-IN')} per night</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Security:</strong> ₹${hotel.securityMoney.toLocaleString('en-IN')}</p>
+                            <p><strong>Added:</strong> ${hotel.dateAdded}</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger" onclick="removeHotel(${index})">
+                        <i class="fas fa-trash me-1"></i>Remove
+                    </button>
+                </div>
+            `;
+        });
+
+        hotelsList.innerHTML = hotelsHTML;
+    }
+
+    function formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('en-IN');
+    }
+
+    function removeHotel(index) {
+        if (confirm('Are you sure you want to remove this hotel?')) {
+            hotelData.splice(index, 1);
+            displayHotels();
+        }
+    }
+
+    // Load some dummy data for demonstration
+    function loadDummyData() {
+        const dummyHotels = [
+            {
+                id: 1,
+                category: 'Marriage Hall',
+                name: 'Grand Palace Wedding Hall',
+                availableFrom: '2025-08-01',
+                availableTo: '2025-12-31',
+                proposedRate: 5000,
+                securityMoney: 10000,
+                dateAdded: '20/07/2025'
+            },
+            {
+                id: 2,
+                category: 'Auditorium',
+                name: 'Royal Heritage Resort',
+                availableFrom: '2025-07-25',
+                availableTo: '2025-10-30',
+                proposedRate: 8500,
+                securityMoney: 15000,
+                dateAdded: '20/07/2025'
+            }
+        ];
+
+        hotelData = dummyHotels;
+        displayHotels();
+    }
+
+    // Load dummy data on page load
+    loadDummyData();
+</script>

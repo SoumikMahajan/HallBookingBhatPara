@@ -1,5 +1,14 @@
 ﻿<script src="@Url.Content("~/js/jquery.min.js")" asp-append-version="true"></script>
 <script src="@Url.Content("~/js/bootstrap.bundle.min.js")" asp-append-version="true"></script>
-<script src="@Url.Content("~/js/site.js")" asp-append-version="true"></script>
 <script src="@Url.Content("~/Scripts/Global.js")" asp-append-version="true"></script>
+<script src="@Url.Content("~/Scripts/Auth.js")" asp-append-version="true"></script>
 <script src="@Url.Content("~/Scripts/User.js")" asp-append-version="true"></script>
+
+@if (TempData["GlobalErrorMessage"] != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            notify(false, @Html.Raw(Json.Serialize(TempData["GlobalErrorMessage"])), true);
+        });
+    </script>
+}

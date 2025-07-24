@@ -8,12 +8,10 @@
     <link rel="stylesheet" href="@Url.Content("~/css/bootstrap.min.css")" asp-append-version="true" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="@Url.Content("~/css/Auth.css")" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
 </head>
 <body>    
-    @RenderBody()    
-    <script src="@Url.Content("~/js/jquery.min.js")" asp-append-version="true"></script>
-    <script src="@Url.Content("~/js/bootstrap.bundle.min.js")" asp-append-version="true"></script>
-    <script src="@Url.Content("~/Scripts/Global.js")" asp-append-version="true"></script>
-    <script src="@Url.Content("~/Scripts/Auth.js")" asp-append-version="true"></script>
+    @RenderBody() 
+    @await Html.PartialAsync("_Script")    
 </body>
 </html>

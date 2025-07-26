@@ -8,12 +8,26 @@ namespace HallBookingBhatPara.Infrastructure.Repository
     {
         private ApplicationDbContext _db;
         private IDbContextTransaction? _transaction;
+        private readonly LogService _logService;
+        private readonly IConfiguration _configuration;
         public bool HasActiveTransaction => _transaction != null;
 
-        public UnitOfWork(ApplicationDbContext db)
+        #region :: Stored Procedure          
+        public ISPRepository SPRepository { get; private set; }
+        #endregion
+
+        public UnitOfWork(ApplicationDbContext db, IConfiguration configuration, LogService logService)
         {
             _db = db;
+            _configuration = configuration;
+            _logService = logService;
+
+            #region :: Stored Procedure           
+            SPRepository = new SPService(_configuration, _logService);
+            #endregion
         }
+
+
 
         public async Task SaveAsync()
         {

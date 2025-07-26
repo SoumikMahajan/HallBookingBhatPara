@@ -41,20 +41,22 @@ $.ajaxSetup({
 
         let errorMessage = "Something went wrong.";
 
-        if (xhr.status === 0) {
-            errorMessage = "Cannot connect to the server";
-        } else {
-            try {
-                const response = JSON.parse(xhr.responseText);
-                if (response?.message) {
-                    errorMessage = response.message;
-                } else if (xhr.statusText) {
-                    errorMessage = xhr.statusText;
-                }
-            } catch {
-                errorMessage = error || xhr.statusText || "Unexpected error occurred.";
+        try {
+            const response = JSON.parse(xhr.responseText);
+
+            if (response?.errorMessages?.length > 0) {
+                errorMessage = response.errorMessages[0];
+            } else if (response?.message) {
+                errorMessage = response.message;
+            } else if (xhr.statusText) {
+                errorMessage = xhr.statusText;
             }
+        } catch {
+            errorMessage = error || xhr.statusText || "Unexpected error occurred.";
         }
+
+        notify(false, errorMessage, false);
+        console.error(`[AJAX Error] ${xhr.status}: ${errorMessage}`);
 
         notify(false, errorMessage, false);
         console.error(`[AJAX Error] ${xhr.status}: ${errorMessage}`);
@@ -63,14 +65,13 @@ $.ajaxSetup({
 function handleAuthRedirect(xhr) {
     try {
         const response = JSON.parse(xhr.responseText);
-        if (response.redirectUrl) {
-            notify(false, response.message || "Soemthing went wrong. Redirecting...", false);
-            window.location.href = response.redirectUrl;
-        } else {
-            window.location.href = '/Home/Index';
-        }
+        const redirectUrl = response?.result?.redirectUrl || "/User/Login";
+        const message = response?.errorMessages?.[0] || response?.message || "Redirecting...";
+
+        notify(false, message, false);
+        window.location.href = redirectUrl;
     } catch {
-        window.location.href = '/Home/Index';
+        window.location.href = '/User/Login';
     }
 }
 
@@ -105,6 +106,20 @@ function notify(IsSuccess, Title, IsValid, position, timeout) {
         }
     }
 
+}
+
+// Function to show alerts
+function showAlert(type, message) {
+    const alertElement = type === 'error' ? $('#errorAlert') : $('#successAlert');
+    const messageElement = type === 'error' ? $('#errorMessage') : $('#successMessage');
+
+    messageElement.text(message);
+    alertElement.fadeIn();
+
+    // Auto hide after 5 seconds
+    setTimeout(function () {
+        alertElement.fadeOut();
+    }, 5000);
 }
 
 function debounce(func, delay) {

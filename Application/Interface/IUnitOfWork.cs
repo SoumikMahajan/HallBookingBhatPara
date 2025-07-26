@@ -2,6 +2,9 @@
 {
     public interface IUnitOfWork
     {
+        #region:: Stored Procedure              
+        ISPRepository SPRepository { get; }
+        #endregion
         Task SaveAsync();
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();

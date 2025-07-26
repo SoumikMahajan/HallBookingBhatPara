@@ -1,5 +1,6 @@
 ﻿<script src="@Url.Content("~/js/jquery.min.js")" asp-append-version="true"></script>
 <script src="@Url.Content("~/js/bootstrap.bundle.min.js")" asp-append-version="true"></script>
+<script src="@Url.Content("~/js/izitoast.min.js")" asp-append-version="true"></script>
 <script src="@Url.Content("~/Scripts/Global.js")" asp-append-version="true"></script>
 <script src="@Url.Content("~/Scripts/Auth.js")" asp-append-version="true"></script>
 <script src="@Url.Content("~/Scripts/User.js")" asp-append-version="true"></script>
@@ -12,3 +13,27 @@
         });
     </script>
 }
+
+<script>
+    @if (User.Identity.IsAuthenticated)
+    {
+      <text>
+      setInterval(function() {
+         $.ajax({
+            url: '@Url.Action("CheckTokenValidity", "Home")',
+            type: 'GET',
+            success: function(response) {
+                // Token is still valid
+            },
+            error: function(xhr) {
+               if (xhr.status === 401) {
+                 // Token expired, redirect to login
+                 notify(false, 'Your session has expired. Please login again.', true);                
+                 window.location.href = '@Url.Action("Login", "User")';
+               }
+            }
+         });
+      }, 300000);
+      </text>
+    }
+</script>

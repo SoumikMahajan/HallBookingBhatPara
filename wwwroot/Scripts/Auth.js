@@ -16,13 +16,12 @@
 
     // Form submission with animation
     $("#loginForm").on("submit", function (e)  {
-        e.preventDefault();
-
-        const email = $('#floatingEmail').val();
-        const password = $('#passwordInput').val();
+        e.preventDefault();       
 
         // Hide previous alerts
         $('.alert').hide();
+        const email = $('#floatingEmail').val();
+        const password = $('#passwordInput').val();
 
         // Basic validation
         if (!email || !password) {
@@ -40,43 +39,73 @@
         $('.loading').show();
         $('.btn-login').prop('disabled', true);
 
-        // Simulate API call
-        setTimeout(function () {
-            // Reset button state
-            $('.login-text').show();
-            $('.loading').hide();
-            $('.btn-login').prop('disabled', false);
+        let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
 
-            // Simulate successful login
-            if (email === 'admin@gmail.com' && password === 'admin') {
-                showAlert('success', 'Login successful! Redirecting to dashboard...');
-                setTimeout(function () {
-                    // Redirect to dashboard (you can change this URL)
-                    window.location.href = '/Home/Index';
-                }, 1500);
-            } else {
-                showAlert('error', 'Invalid email or password. Please try again.');
+        // Get form data
+        const formData = {
+            Email: email,
+            Password: password,
+            RememberMe: $('#rememberMe').is(':checked')
+        };
+
+        //// Simulate API call
+        //setTimeout(function () {
+        //    // Reset button state
+        //    $('.login-text').show();
+        //    $('.loading').hide();
+        //    $('.btn-login').prop('disabled', false);
+
+        //    // Simulate successful login
+        //    if (email === 'admin@gmail.com' && password === 'admin') {
+        //        showAlert('success', 'Login successful! Redirecting to dashboard...');
+        //        setTimeout(function () {
+        //            // Redirect to dashboard (you can change this URL)
+        //            window.location.href = '/Home/Index';
+        //        }, 1500);
+        //    } else {
+        //        showAlert('error', 'Invalid email or password. Please try again.');
+        //    }
+        //}, 2000);
+
+        
+
+
+        $.ajax({
+            url: '/User/Login',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            beforeSend: function (xhr) {
+                $(".loader").css("display", "flex");
+                xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
+            },
+            success: function (response) {
+                $(".loader").css("display", "none");
+                $('.login-text').show();
+                $('.loading').hide();
+                $('.btn-login').prop('disabled', false);
+                if (response.isSuccess) {                  
+                    notify(true, 'Login successful! Redirecting...', true);
+
+                    // Redirect after a short delay to show success message
+                    setTimeout(function () {
+                        if (response.result && response.result.redirectUrl) {
+                            window.location.href = response.result.redirectUrl;
+                        } else {
+                            window.location.href = '/Home/Index';
+                        }
+                    }, 1500);
+                } else {                   
+                    notify(false, 'Invalid email or password. Please try again.', false);
+                }
+                
             }
-        }, 2000);
+        });
     });
 
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
-    }
-
-    // Function to show alerts
-    function showAlert(type, message) {
-        const alertElement = type === 'error' ? $('#errorAlert') : $('#successAlert');
-        const messageElement = type === 'error' ? $('#errorMessage') : $('#successMessage');
-
-        messageElement.text(message);
-        alertElement.fadeIn();
-
-        // Auto hide after 5 seconds
-        setTimeout(function () {
-            alertElement.fadeOut();
-        }, 5000);
     }
 
     // Input animations

@@ -10,7 +10,7 @@
             DELETE
         }
 
-        public static string AccessToken = "JWTToken";
+        public static string AccessToken = "Token";
         public static string UserId = "";
         public static string RoleName = "role";
         public enum ContentType

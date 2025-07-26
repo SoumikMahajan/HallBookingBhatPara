@@ -7,5 +7,7 @@ namespace HallBookingBhatPara.Application.Interface
         void SetToken(string AccessTOken);
         TokenDTO? GetToken();
         void ClearToken();
+        bool IsTokenValid();
+        UserClaims? GetUserClaims();
     }
 }

@@ -28,6 +28,7 @@
                     </div>
 
                     <form id="loginForm">
+                        @Html.AntiForgeryToken()
                         <div class="form-floating">
                             <input type="email" class="form-control" id="floatingEmail" placeholder="name@example.com" required>
                             <label for="floatingEmail">

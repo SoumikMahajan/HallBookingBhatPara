@@ -1,4 +1,5 @@
 ﻿using HallBookingBhatPara.Infrastructure.Repository;
+using HallBookingBhatPara.Infrastructure.Service;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Net;
 using System.Security.Authentication;
@@ -27,11 +28,15 @@ namespace HallBookingBhatPara.Extension
             {
                 httpContext.Response.StatusCode = statusCode;
                 httpContext.Response.ContentType = "application/json";
-                await httpContext.Response.WriteAsJsonAsync(new
+
+                var errorResponse = ResponseService.ErrorResponse<object>(message);
+                errorResponse.StatusCode = (HttpStatusCode)statusCode;
+                errorResponse.Result = new
                 {
-                    redirectUrl = "/Home/Index",
-                    message = message
-                });
+                    redirectUrl = "/User/Login"
+                };
+
+                await httpContext.Response.WriteAsJsonAsync(errorResponse);
             }
             else
             {

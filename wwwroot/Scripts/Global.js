@@ -23,3 +23,111 @@ console.log('%c This console is used by developers for development purpose, plea
 $(function () {
     
 });
+
+
+$.ajaxSetup({
+    statusCode: {
+        401: function (xhr) {
+            handleAuthRedirect(xhr);
+        },
+        403: function (xhr) {
+            handleAuthRedirect(xhr);
+        }
+    },
+    error: function (xhr, status, error) {
+        $(".loader").css("display", "none");
+
+        if (xhr.status === 401 || xhr.status === 403) return;
+
+        let errorMessage = "Something went wrong.";
+
+        try {
+            const response = JSON.parse(xhr.responseText);
+
+            if (response?.errorMessages?.length > 0) {
+                errorMessage = response.errorMessages[0];
+            } else if (response?.message) {
+                errorMessage = response.message;
+            } else if (xhr.statusText) {
+                errorMessage = xhr.statusText;
+            }
+        } catch {
+            errorMessage = error || xhr.statusText || "Unexpected error occurred.";
+        }
+
+        notify(false, errorMessage, false);
+        console.error(`[AJAX Error] ${xhr.status}: ${errorMessage}`);
+
+        notify(false, errorMessage, false);
+        console.error(`[AJAX Error] ${xhr.status}: ${errorMessage}`);
+    }
+});
+function handleAuthRedirect(xhr) {
+    try {
+        const response = JSON.parse(xhr.responseText);
+        const redirectUrl = response?.result?.redirectUrl || "/User/Login";
+        const message = response?.errorMessages?.[0] || response?.message || "Redirecting...";
+
+        notify(false, message, false);
+        window.location.href = redirectUrl;
+    } catch {
+        window.location.href = '/User/Login';
+    }
+}
+
+function notify(IsSuccess, Title, IsValid, position, timeout) {
+
+    position = position == null || position == undefined ? "topRight" : position;
+
+    if (IsSuccess) {
+        iziToast.success({
+            title: 'SUCCESS',
+            position: position,
+            message: Title,
+        });
+    }
+    else {
+        const options = {
+            title: IsValid ? 'Error' : 'Caution',
+            position: position,
+            message: Title,
+
+        };
+
+        //optional timeout property set, else the default timeout of iziToast will work
+        if (timeout != null || timeout != undefined) {
+            options.timeout = timeout;
+        }
+
+        if (IsValid) {
+            iziToast.error(options);
+        } else {
+            iziToast.warning(options);
+        }
+    }
+
+}
+
+// Function to show alerts
+function showAlert(type, message) {
+    const alertElement = type === 'error' ? $('#errorAlert') : $('#successAlert');
+    const messageElement = type === 'error' ? $('#errorMessage') : $('#successMessage');
+
+    messageElement.text(message);
+    alertElement.fadeIn();
+
+    // Auto hide after 5 seconds
+    setTimeout(function () {
+        alertElement.fadeOut();
+    }, 5000);
+}
+
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}

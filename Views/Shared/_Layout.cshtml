@@ -10,10 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/Custom.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Developer.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
     <link rel="stylesheet" href="~/HallBookingBhatPara.styles.css" asp-append-version="true" />
 
 </head>
 <body>
+    @await Html.PartialAsync("_GlobalLoader")
     @await Html.PartialAsync("_NavBar")
     @RenderBody()
     @await Html.PartialAsync("_Footer")

@@ -1,0 +1,166 @@
+﻿@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Registration";
+}
+
+
+<!-- Single Page Registration Form -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow rounded-4 p-4 bg-white">
+                <div class="text-center mb-4">
+                    <div class="logo-icon mb-3">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h2 class="municipality-name">Bhatpara Municipality</h2>
+                    <p class="subtitle">Create your Hall Booking Account</p>
+                </div>
+
+                <form id="singleRegisterForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                                <label for="firstName">First Name</label>
+                                <div class="invalid-feedback">Enter a valid First Name (only letters, min 2 chars).</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                                <label for="lastName">Last Name</label>
+                                <div class="invalid-feedback">Enter a valid Last Name (only letters, min 2 chars).</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" placeholder="Email Address">
+                                <label for="email">Email Address</label>
+                                <div class="invalid-feedback">Enter a valid email address.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
+                                <label for="phone">Phone Number</label>
+                                <div class="invalid-feedback">Enter a 10-digit mobile number.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <label for="gender">Gender</label>
+                                <div class="invalid-feedback">Please select your gender.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="dob" placeholder="Date of Birth">
+                                <label for="dob">Date of Birth</label>
+                                <div class="invalid-feedback">Please enter your birthdate.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="address" placeholder="Full Address" style="height: 100px"></textarea>
+                                <label for="address">Full Address</label>
+                                <div class="invalid-feedback">Enter your full address.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="city" placeholder="City">
+                                <label for="city">City</label>
+                                <div class="invalid-feedback">Enter your city name.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="pincode" placeholder="PIN Code">
+                                <label for="pincode">PIN Code</label>
+                                <div class="invalid-feedback">Enter a 6-digit PIN code.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" placeholder="Password">
+                                <div class="invalid-feedback">Password must be 8+ chars with uppercase, lowercase, special char.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
+                                <div class="invalid-feedback">Passwords do not match.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="profilePic" class="form-label">Upload Profile Picture</label>
+                            <div class="row align-items-center g-2">
+                                <!-- Unified: Drag-and-drop or Select -->
+                                <div class="col-md-6">
+                                    <div class="custom-file-upload" id="dropZone">
+                                        <input type="file" id="profilePic" accept="image/png, image/jpeg" hidden>
+                                        <label for="profilePic" class="upload-area">
+                                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                            <span id="uploadText">Choose or Drag & Drop File</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Right: File Name + Image Preview -->
+                                <div class="col-md-6 text-center">
+                                    <div id="fileNameDisplay" class="text-muted mb-2" style="font-weight: 500;">No file selected</div>
+                                    <img id="previewImage" src="#" alt="Image Preview" style="max-height: 150px; display: none;" class="img-fluid rounded shadow" />
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms">
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>
+                                </label>
+                                <div class="invalid-feedback">You must agree before submitting.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-register" type="submit">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </div>
+                </form>
+
+                <div class="divider mt-4">
+                    <span>Already have an account?</span>
+                </div>
+
+                <div class="text-center mt-2">
+                    <a href="@Url.Action("Login", "User")" class="text-decoration-none">Sign In to Your Account</a>
+                </div>
+
+                <div class="footer-text mt-4">
+                    <p>&copy; @DateTime.Now.Year Bhatpara Municipality. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

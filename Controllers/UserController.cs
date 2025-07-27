@@ -1,6 +1,7 @@
 ﻿using HallBookingBhatPara.Application.Interface;
 using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.User;
+using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Infrastructure.Service;
 using HallBookingBhatPara.Model.Validator;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace HallBookingBhatPara.Controllers
                 return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
             }
 
-            //var svvs = PasswordHasher.ComputeSha256Hash(model.Password);
+            var svvs = PasswordHasher.ComputeSha256Hash(model.Password);
 
             var response = await _unitOfWork.SPRepository.LoginAsync(model);
             if (response == null)
@@ -70,17 +71,13 @@ namespace HallBookingBhatPara.Controllers
         public IActionResult Logout()
         {
             _tokenProvider.ClearToken();
-            return RedirectToAction("Login");
+            return RedirectToAction("Login", "User");
         }
 
-        // TODO: Replace with your actual user validation logic
-        private bool IsValidUser(string email, string password)
+        public IActionResult Registration()
         {
-            // This is a simplified example. In a real application, you would:
-            // 1. Hash the password
-            // 2. Check against your database
-            // 3. Use proper user management
-            return email == "admin@example.com" && password == "password123";
+            return View();
         }
+
     }
 }

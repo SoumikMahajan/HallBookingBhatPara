@@ -57,9 +57,6 @@ $.ajaxSetup({
 
         notify(false, errorMessage, false);
         console.error(`[AJAX Error] ${xhr.status}: ${errorMessage}`);
-
-        notify(false, errorMessage, false);
-        console.error(`[AJAX Error] ${xhr.status}: ${errorMessage}`);
     }
 });
 function handleAuthRedirect(xhr) {
@@ -131,3 +128,29 @@ function debounce(func, delay) {
         }, delay);
     };
 }
+
+// Add floating label effect
+$('.form-floating .form-control').each(function () {
+    if ($(this).val() !== '') {
+        $(this).addClass('has-value');
+    }
+});
+
+$('.form-floating .form-control').on('blur', function () {
+    if ($(this).val() !== '') {
+        $(this).addClass('has-value');
+    } else {
+        $(this).removeClass('has-value');
+    }
+});
+
+// Input animations
+$('.form-control').on('focus', function () {
+    $(this).parent().addClass('focused');
+});
+
+$('.form-control').on('blur', function () {
+    if ($(this).val() === '') {
+        $(this).parent().removeClass('focused');
+    }
+});

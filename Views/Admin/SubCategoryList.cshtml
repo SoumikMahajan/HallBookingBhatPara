@@ -3,9 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
     body {
         background: #f2f4f8;
@@ -230,38 +227,36 @@
 <div class="main-container">
     <!-- Left Side - Entry Section -->
     <div class="entry-section">
-        <h2 class="section-title">*** Category Entry ***</h2>
+        <h2 class="section-title">*** Hall Details Entry ***</h2>
 
         <div class="success-message" id="successMessage">
-            <i class="fas fa-check-circle me-2"></i>Category saved successfully!
+            <i class="fas fa-check-circle me-2"></i>Hall saved successfully!
         </div>
 
         <form id="notificationForm">
             @* <input type="hidden" id="editingId" value=""> *@
 
-            @* <div class="mb-3">
-                <label for="notificationStatus" class="form-label">Status</label>
-                <select id="notificationStatus" class="form-select" required>
-                    <option value="">Select Status</option>
-                    <option value="New">New</option>
-                    <option value="Active">Active</option>
-                </select>
-            </div> *@
-            <form id="addCategoryForm">
+            <form id="addSubCategoryForm">
                 <div class="mb-3">
-                    <label for="categoryName" class="form-label">Category Name</label>
-                    <input type="text" id="categoryName" class="form-control" placeholder="Enter Category Name" required>
+                    <label for="notificationStatus" class="form-label">Category</label>
+                    <select id="notificationStatus" class="form-select" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="hallName" class="form-label">Hall Name</label>
+                    <input type="text" id="hallName" class="form-control" placeholder="Enter Hall Name" required>
                 </div>
 
-                <div class="mb-3">
+                @* <div class="mb-3">
                     <label for="notificationDetails" class="form-label">Notification Details</label>
                     <textarea id="notificationDetails" class="form-control" rows="4" placeholder="Enter notification details" required></textarea>
-                </div>
+                </div> *@
 
                 <div class="file-upload-section">
-                    <label class="form-label">Upload Document</label>
+                    <label class="form-label">Upload Hall Image</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="fileUpload" class="d-none" accept=".pdf,.doc,.docx,.jpg,.png">
+                        <input type="file" id="fileUpload" class="d-none" accept=".jpg,.png">
                         <div class="file-input" onclick="document.getElementById('fileUpload').click()">
                             <i class="fas fa-cloud-upload-alt me-2"></i>
                             <span id="fileText">Browse... No file selected.</span>
@@ -273,16 +268,12 @@
                     <i class="fas fa-save me-2"></i><span id="submitText">Submit</span>
                 </button>
             </form>
-
-            @*   <button type="button" class="btn btn-secondary mt-2" id="cancelEdit" style="display: none; width: 100%;" onclick="cancelEdit()">
-                <i class="fas fa-times me-2"></i>Cancel Edit
-            </button> *@
         </form>
     </div>
 
     <!-- Right Side - List Section -->
     <div class="list-section">
-        <h2 class="section-title">*** All Categories ***</h2>
+        <h2 class="section-title">*** All Hall Details ***</h2>
 
         <div class="controls-section">
             <div class="show-entries">
@@ -298,7 +289,7 @@
 
             <div class="search-box">
                 <span>Search:</span>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search notifications..." onkeyup="searchNotifications()">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search Hall..." onkeyup="searchNotifications()">
             </div>
         </div>
 
@@ -323,182 +314,3 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script>
-    let notifications = [];
-    let filteredNotifications = [];
-    let currentPage = 1;
-    let entriesPerPage = 10;
-    let editingMode = false;
-
-    // File upload handling
-    document.getElementById('fileUpload').addEventListener('change', function(e) {
-        const fileText = document.getElementById('fileText');
-        if (e.target.files.length > 0) {
-            fileText.textContent = e.target.files[0].name;
-        } else {
-            fileText.textContent = 'Browse... No file selected.';
-        }
-    });
-
-    // Form submission
-    document.getElementById('notificationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const formData = {
-            id: editingMode ? parseInt(document.getElementById('editingId').value) : Date.now(),
-            date: new Date().toLocaleDateString('en-GB'),
-            name: document.getElementById('notificationName').value,
-            type: document.getElementById('notificationType').value,
-            details: document.getElementById('notificationDetails').value,
-            status: document.getElementById('notificationStatus').value
-        };
-
-        if (editingMode) {
-            // Update existing notification
-            const index = notifications.findIndex(n => n.id === formData.id);
-            if (index !== -1) {
-                notifications[index] = formData;
-            }
-            editingMode = false;
-            document.getElementById('submitText').textContent = 'Submit';
-            document.getElementById('cancelEdit').style.display = 'none';
-        } else {
-            // Add new notification
-            notifications.unshift(formData);
-        }
-
-        showSuccessMessage();
-        resetForm();
-        updateDisplay();
-    });
-
-    function showSuccessMessage() {
-        const successMessage = document.getElementById('successMessage');
-        successMessage.style.display = 'block';
-        setTimeout(() => {
-            successMessage.style.display = 'none';
-        }, 3000);
-    }
-
-    function resetForm() {
-        document.getElementById('notificationForm').reset();
-        document.getElementById('fileText').textContent = 'Browse... No file selected.';
-        document.getElementById('editingId').value = '';
-        editingMode = false;
-        document.getElementById('submitText').textContent = 'Submit';
-        document.getElementById('cancelEdit').style.display = 'none';
-    }
-
-    function updateDisplay() {
-        entriesPerPage = parseInt(document.getElementById('entriesPerPage').value);
-        searchNotifications();
-    }
-
-    function searchNotifications() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-
-        if (searchTerm === '') {
-            filteredNotifications = [...notifications];
-        } else {
-            filteredNotifications = notifications.filter(notification =>
-                notification.name.toLowerCase().includes(searchTerm) ||
-                notification.type.toLowerCase().includes(searchTerm) ||
-                notification.details.toLowerCase().includes(searchTerm) ||
-                notification.date.includes(searchTerm)
-            );
-        }
-
-        displayNotifications();
-    }
-
-    function displayNotifications() {
-        const tbody = document.getElementById('notificationsTableBody');
-        const startIndex = (currentPage - 1) * entriesPerPage;
-        const endIndex = startIndex + entriesPerPage;
-        const pageNotifications = filteredNotifications.slice(startIndex, endIndex);
-
-        if (pageNotifications.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No notifications found.</td></tr>';
-            document.getElementById('paginationInfo').textContent = '';
-            return;
-        }
-
-        let html = '';
-        pageNotifications.forEach((notification, index) => {
-            html += `
-                <tr>
-                    <td>${startIndex + index + 1}</td>
-                    <td>${notification.date}</td>
-                    <td>${notification.name}</td>
-                    <td>${notification.type}</td>
-                    <td>${notification.details}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-edit" onclick="editNotification(${notification.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn-delete" onclick="deleteNotification(${notification.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        });
-
-        tbody.innerHTML = html;
-
-        // Update pagination info
-        const totalEntries = filteredNotifications.length;
-        const startEntry = startIndex + 1;
-        const endEntry = Math.min(endIndex, totalEntries);
-        document.getElementById('paginationInfo').textContent =
-            `Showing ${startEntry} to ${endEntry} of ${totalEntries} entries`;
-    }
-
-    function editNotification(id) {
-        const notification = notifications.find(n => n.id === id);
-        if (!notification) return;
-
-        // Populate form with notification data
-        document.getElementById('editingId').value = notification.id;
-        document.getElementById('notificationStatus').value = notification.status;
-        document.getElementById('notificationName').value = notification.name;
-        document.getElementById('notificationType').value = notification.type;
-        document.getElementById('notificationDetails').value = notification.details;
-
-        // Switch to edit mode
-        editingMode = true;
-        document.getElementById('submitText').textContent = 'Update';
-        document.getElementById('cancelEdit').style.display = 'block';
-
-        // Scroll to form
-        document.querySelector('.entry-section').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function cancelEdit() {
-        resetForm();
-    }
-
-    function deleteNotification(id) {
-        if (confirm('Are you sure you want to delete this notification?')) {
-            notifications = notifications.filter(n => n.id !== id);
-            updateDisplay();
-
-            // Show success message
-            const successMessage = document.getElementById('successMessage');
-            successMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i>Notification deleted successfully!';
-            successMessage.style.background = '#e74c3c';
-            successMessage.style.display = 'block';
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-                successMessage.style.background = '#27ae60';
-                successMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i>Notification saved successfully!';
-            }, 3000);
-        }
-    }
-
-    // Initialize the page
-
-</script>

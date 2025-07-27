@@ -36,6 +36,24 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 return result;
             }
         }
+
+        public async Task<long> RegistrationAsync(UserRegistrationDto model)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Name", model.FirstName, DbType.String);
+                parameters.Add("@Email", model.Email, DbType.String);
+                parameters.Add("@HashedPassword", PasswordHasher.ComputeSha256Hash(model.Password), DbType.String);
+                parameters.Add("@OperationId", 2, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<long>(
+                    "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
         #endregion
 
 

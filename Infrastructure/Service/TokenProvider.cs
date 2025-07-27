@@ -3,7 +3,6 @@ using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.Utility;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 
 namespace HallBookingBhatPara.Infrastructure.Repository
@@ -91,10 +90,10 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 
                 return new UserClaims
                 {
-                    Id = jwt.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? "",
-                    Email = jwt.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value ?? "",
-                    Name = jwt.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value ?? "",
-                    Roles = jwt.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList()
+                    Id = jwt.Claims.FirstOrDefault(x => x.Type == "nameid")?.Value ?? "",
+                    Email = jwt.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "",
+                    Name = jwt.Claims.FirstOrDefault(x => x.Type == "unique_name")?.Value ?? "",
+                    Roles = jwt.Claims.Where(x => x.Type == "role").Select(x => x.Value).ToList()
                 };
             }
             catch

@@ -79,5 +79,38 @@ namespace HallBookingBhatPara.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Registration([FromForm] UserRegistrationDto model)
+        {
+            var validator = new RegistrationValidator();
+            var validationResult = validator.Validate(model);
+
+            if (!validationResult.IsValid)
+            {
+                return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
+            }
+
+            model.EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
+
+            model.CreatedBy = 1;
+
+            if (model.ProfilePic != null && model.ProfilePic.Length > 0)
+            {
+                model.ImageData = await FileHelper.ConvertToByteArrayAsync(model.ProfilePic);
+            }
+
+            var EncriptedPassword = PasswordHasher.ComputeSha256Hash(model.Password);
+            model.Password = EncriptedPassword;
+
+            var userId = await _unitOfWork.SPRepository.RegistrationAsync(model);
+            if (userId <= 0)
+            {
+                return Json(ResponseService.InternalServerResponse<object>("Registration failed. Please try again."));
+            }
+
+            return Json(ResponseService.SuccessResponse<object>("Registration successful!"));
+
+        }
+
     }
 }

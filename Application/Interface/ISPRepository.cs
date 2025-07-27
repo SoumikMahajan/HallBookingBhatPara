@@ -6,6 +6,7 @@ namespace HallBookingBhatPara.Application.Interface
     {
         #region :: User
         Task<LoginResponseDTO> LoginAsync(LoginRequestDTO model);
+        Task<long> RegistrationAsync(UserRegistrationDto model);
         #endregion
 
 

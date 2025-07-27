@@ -193,183 +193,147 @@
             $input.removeClass('is-invalid');
             $container.find('.invalid-feedback').hide();
         }
-
-        //// Field validation on blur
-        //$('.form-control, .form-select').on('blur', function () {
-        //    if ($(this).hasClass('is-invalid')) {
-        //        $(this).removeClass('is-invalid');
-        //        $(this).closest('.form-group').find('.invalid-feedback').hide();
-        //    }
-        //});
+        
 
         // On form submit
         $('#singleRegisterForm').on('submit', function (e) {
             e.preventDefault();
 
+            if (validateRegistrationForm()) {
+                submitRegistrationForm();
+            }
+        });
+        
+        function validateRegistrationForm() {
             let hasError = false;
 
-            const firstName = $('#firstname').val()?.trim() || "";
-            const lastName = $('#lastname').val()?.trim() || "";
+            const firstName = $('#firstName').val()?.trim() || "";
+            const lastName = $('#lastName').val()?.trim() || "";
             const email = $('#email').val()?.trim() || "";
             const phone = $('#phone').val()?.trim() || "";
             const gender = $('#gender').val();
-            const dob = $('#dob').val().trim();
+            const dob = $('#dob').val()?.trim() || "";
             const address = $('#address').val()?.trim() || "";
             const city = $('#city').val()?.trim() || "";
             const pincode = $('#pincode').val()?.trim() || "";
 
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const phonePattern = /^\d{10}$/;           
+            const phonePattern = /^\d{10}$/;
             const pinPattern = /^\d{6}$/;
 
-            if (firstName == '') {
-                showError("#firstname", "Enter a valid First Name (only letters, min 2 chars).");
+            if (firstName === '') {
+                showError("#firstName", "Enter a valid First Name.");
                 hasError = true;
-            }
-            else {
+            } else {
                 showValid('#firstName');
             }
-            if (lastName == '') {
-                showError("#lastname", "Enter a valid Last Name (only letters, min 2 chars).");
+
+            if (lastName === '') {
+                showError("#lastName", "Enter a valid Last Name.");
                 hasError = true;
-            }
-            else {
+            } else {
                 showValid('#lastName');
             }
+
             if (!emailPattern.test(email)) {
                 showError("#email", "Enter a valid email address.");
                 hasError = true;
-            }
-            else {
+            } else {
                 showValid('#email');
             }
+
             if (!phonePattern.test(phone)) {
                 showError("#phone", "Enter a 10-digit mobile number.");
                 hasError = true;
-            }
-            else {
-                showValid('#email');
+            } else {
+                showValid('#phone');
             }
 
-            if (!gender) {
-                showError(document.getElementById("gender"), "Please select your gender.");
+            if (gender === '') {
+                showError("#gender", "Please select your gender.");
                 hasError = true;
+            } else {
+                showValid('#gender');
             }
-            else {
-                showValid('#email');
-            }
+
             if (!dob) {
                 showError("#dob", "Please enter your birthdate.");
                 hasError = true;
+            } else {
+                showValid('#dob');
             }
-            else {
-                showValid('#email');
-            }
+
             if (!address) {
                 showError("#address", "Enter your full address.");
                 hasError = true;
+            } else {
+                showValid('#address');
             }
-            else {
-                showValid('#email');
-            }
+
             if (!city) {
                 showError("#city", "Enter your city.");
                 hasError = true;
+            } else {
+                showValid('#city');
             }
-            else {
 
-            }
             if (!pinPattern.test(pincode)) {
                 showError("#pincode", "Enter a 6-digit PIN code.");
                 hasError = true;
+            } else {
+                showValid('#pincode');
             }
-            else {
 
+            return !hasError;
+        }
+
+        function submitRegistrationForm() {
+            const formData = new FormData();
+
+            formData.append("FirstName", $('#firstName').val()?.trim() || "");
+            formData.append("LastName", $('#lastName').val()?.trim() || "");
+            formData.append("Email", $('#email').val()?.trim() || "");
+            formData.append("Phone", $('#phone').val()?.trim() || "");
+            formData.append("Gender", $('#gender').val());
+            formData.append("DOB", $('#dob').val()?.trim() || "");
+            formData.append("Address", $('#address').val()?.trim() || "");
+            formData.append("City", $('#city').val()?.trim() || "");
+            formData.append("Pincode", $('#pincode').val()?.trim() || "");
+            formData.append("Password", $('#password').val());
+            formData.append("BasePassword", $('#password').val());
+
+            const fileInput = $('#profilePic')[0];
+            if (fileInput?.files?.length > 0) {
+                formData.append("ProfilePic", fileInput.files[0]);
             }
 
-            if (!hasError) {
-                const formData = new FormData(this);
-
-                $.ajax({
-                    url: '/your/api/register',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (res) {
-                        alert("Registration successful!");
-                    },
-                    error: function (err) {
-                        alert("An error occurred.");
+            $.ajax({
+                url: '/User/Registration',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                    $('.btn-register').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Registering...');
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    if (response.isSuccess) {
+                        notify(true, response.result, true);                        
+                        setTimeout(function () {
+                            window.location.href = '/User/Login';
+                        }, 1500);
                     }
-                });
-            }
-        });
-
-        //$('#singleRegisterForm').on('submit', function (e) {
-        //    e.preventDefault();
-
-        //    const isValid =
-        //        validateField('firstName', val => val !== '', 'Enter First Name.') &&
-        //        validateField('lastName', val => val !== '', 'Enter Last Name.') &&
-        //        validateField('email', val => emailPattern.test(val), 'Enter valid email.') &&
-        //        validateField('phone', val => phonePattern.test(val), 'Enter 10-digit mobile number.') &&
-        //        validateField('gender', val => val !== '', 'Select gender.') &&
-        //        validateField('dob', val => val !== '', 'Enter DOB.') &&
-        //        validateField('address', val => val !== '', 'Enter address.') &&
-        //        validateField('city', val => val !== '', 'Enter city.') &&
-        //        validateField('pincode', val => pincodePattern.test(val), 'Enter valid 6-digit PIN code.') &&
-        //        validateField('password', val => passwordPattern.test(val), 'Password too weak.') &&
-        //        validatePasswordMatch() &&
-        //        $('#terms').is(':checked');
-
-        //    if (!isValid) {
-        //        return;
-        //    }
-
-        //    // Prepare form data for AJAX
-        //    const formData = new FormData();
-        //    formData.append("FirstName", $('#firstName').val());
-        //    formData.append("LastName", $('#lastName').val());
-        //    formData.append("Email", $('#email').val());
-        //    formData.append("Phone", $('#phone').val());
-        //    formData.append("Gender", $('#gender').val());
-        //    formData.append("DOB", $('#dob').val());
-        //    formData.append("Address", $('#address').val());
-        //    formData.append("City", $('#city').val());
-        //    formData.append("Pincode", $('#pincode').val());
-        //    formData.append("Password", $('#password').val());
-        //    formData.append("ConfirmPassword", $('#confirmPassword').val());
-
-        //    const file = $('#profilePic')[0].files[0];
-        //    if (file) formData.append("ProfilePic", file);
-
-        //    // Replace this with your actual endpoint URL
-        //    $.ajax({
-        //        url: '/User/Register',
-        //        type: 'POST',
-        //        data: formData,
-        //        contentType: false,
-        //        processData: false,
-        //        beforeSend: function () {
-        //            $('.btn-register').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Registering...');
-        //        },
-        //        success: function (response) {
-        //            if (response.success) {
-        //                alert('Registration successful!');
-        //                window.location.href = '/User/Login';
-        //            } else {
-        //                alert(response.message || 'Registration failed!');
-        //            }
-        //        },
-        //        error: function () {
-        //            alert('Something went wrong. Please try again.');
-        //        },
-        //        complete: function () {
-        //            $('.btn-register').prop('disabled', false).html('<i class="fas fa-user-plus me-2"></i>Create Account');
-        //        }
-        //    });
-        //});
+                    else {
+                        notify(false, response.errorMessages, false);
+                    }
+                },
+                complete: function () {
+                    $('.btn-register').prop('disabled', false).html('<i class="fas fa-user-plus me-2"></i>Create Account');
+                }
+            });
+        }
     }
     // #endregion :: Registrion
 

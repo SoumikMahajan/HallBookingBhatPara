@@ -19,7 +19,6 @@ namespace HallBookingBhatPara.Infrastructure.Repository
         }
 
 
-
         #region :: User
         public async Task<LoginResponseDTO> LoginAsync(LoginRequestDTO model)
         {
@@ -31,6 +30,25 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 parameters.Add("@OperationId", 1, DbType.Int32);
                 var result = await connection.QueryFirstOrDefaultAsync<LoginResponseDTO>(
                     "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+        #endregion
+
+
+        #region :: HallType
+        public async Task<long> AddHallCategoryAsync(string categoryName)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@categoryName", categoryName, DbType.String);
+                parameters.Add("@OperationId", 1, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<long>(
+                    "adminHallCategorySp",
                     parameters,
                     commandType: CommandType.StoredProcedure
                 );

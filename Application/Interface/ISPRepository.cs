@@ -7,5 +7,10 @@ namespace HallBookingBhatPara.Application.Interface
         #region :: User
         Task<LoginResponseDTO> LoginAsync(LoginRequestDTO model);
         #endregion
+
+
+        #region :: HallType
+        Task<long> AddHallCategoryAsync(string categoryName);
+        #endregion
     }
 }

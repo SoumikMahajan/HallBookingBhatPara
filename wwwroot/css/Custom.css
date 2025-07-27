@@ -40,6 +40,13 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 9999;
 }
 
+svg {
+    width: 100px;
+    height: 100px;
+    margin: 20px;
+    display: inline-block;
+}
+
 /* Header Styles */
 .top-bar {
     background: linear-gradient(135deg, var(--orange), #ff8c42);

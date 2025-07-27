@@ -440,3 +440,126 @@ Main Content
 .fallback-icon {
     display: none;
 }
+
+
+/* === Main Container === */
+.main-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 30px;
+}
+
+/* === Entry Section === */
+.entry-section {
+    flex: 1;
+    min-width: 300px;
+    max-width: 450px;
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: #2257bf;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #2691d9;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.entry-section .form-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.entry-section .form-control {
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.entry-section .btn {
+    background: linear-gradient(to right, #2691d9, #2257bf);
+    border: none;
+    width: 100%;
+    padding: 10px;
+    font-weight: 500;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+/* === List Section === */
+.list-section {
+    flex: 2;
+    min-width: 500px;
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.controls-section {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.show-entries,
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-input {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* === Table Styles === */
+.notifications-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .notifications-table thead {
+        background-color: #2257bf;
+        color: white;
+    }
+
+    .notifications-table th,
+    .notifications-table td {
+        padding: 12px 15px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    .notifications-table tbody tr:hover {
+        background-color: #f2f7ff;
+    }
+
+.text-muted {
+    color: #888;
+    font-style: italic;
+}
+
+/* === Pagination === */
+.pagination-info {
+    text-align: center;
+    color: #333;
+    font-size: 14px;
+    margin-top: 10px;
+}
+

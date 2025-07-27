@@ -28,7 +28,35 @@ namespace HallBookingBhatPara.Model.Validator
             RuleFor(x => x.Email)
                 .NotNull().WithMessage("Email is required.")
                 .NotEmpty().WithMessage("Email is required")
-                .Must(BeTrimmed).WithMessage("Email must not have leading or trailing whitespace.");
+                .Must(BeTrimmed).WithMessage("Email must not have leading or trailing whitespace.")
+                .EmailAddress().WithMessage("Invalid email format.");
+            RuleFor(x => x.Password)
+                .NotNull().WithMessage("Password is required.")
+                .NotEmpty().WithMessage("Password cannot be empty.")
+                .Must(BeTrimmed).WithMessage("Password must not have leading or trailing whitespace.");
+        }
+    }
+    public class RegistrationValidator : GenericValidator<UserRegistrationDto>
+    {
+        public RegistrationValidator()
+        {
+            RuleFor(x => x.FirstName)
+                .NotNull().WithMessage("FirstName is required.")
+                .NotEmpty().WithMessage("FirstName is required")
+                .Must(BeTrimmed).WithMessage("FirstName must not have leading or trailing whitespace.");
+            RuleFor(x => x.LastName)
+                .NotNull().WithMessage("LastName is required.")
+                .NotEmpty().WithMessage("LastName is required")
+                .Must(BeTrimmed).WithMessage("LastName must not have leading or trailing whitespace.");
+            RuleFor(x => x.Email)
+                .NotNull().WithMessage("Email is required.")
+                .NotEmpty().WithMessage("Email is required")
+                .Must(BeTrimmed).WithMessage("Email must not have leading or trailing whitespace.")
+                .EmailAddress().WithMessage("Invalid email format.");
+            RuleFor(x => x.Phone)
+                .NotNull().WithMessage("Phone is required.")
+                .NotEmpty().WithMessage("Phone is required")
+                .Must(BeTrimmed).WithMessage("Phone must not have leading or trailing whitespace.");
             RuleFor(x => x.Password)
                 .NotNull().WithMessage("Password is required.")
                 .NotEmpty().WithMessage("Password cannot be empty.")

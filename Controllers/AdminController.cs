@@ -1,5 +1,4 @@
 ﻿using HallBookingBhatPara.Application.Interface;
-using HallBookingBhatPara.Domain.Entities;
 using HallBookingBhatPara.Infrastructure.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +8,12 @@ namespace HallBookingBhatPara.Controllers
     public class AdminController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITokenProvider _tokenProvider;
 
-        public AdminController(IUnitOfWork unitOfWork)
+        public AdminController(IUnitOfWork unitOfWork, ITokenProvider tokenProvider)
         {
             _unitOfWork = unitOfWork;
+            _tokenProvider = tokenProvider;
         }
 
         [Authorize]
@@ -23,8 +24,13 @@ namespace HallBookingBhatPara.Controllers
 
         [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddCategory(string categoryName)
         {
+            if (_tokenProvider.IsTokenValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             /// Validation will be done by Soumik
             var response = await _unitOfWork.SPRepository.AddHallCategoryAsync(categoryName);
 
@@ -34,7 +40,7 @@ namespace HallBookingBhatPara.Controllers
             }
 
             return Json(ResponseService.SuccessResponse<string>("Category Insert Successfully"));
-            
+
         }
 
         [Authorize]

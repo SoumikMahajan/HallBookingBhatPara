@@ -27,11 +27,10 @@ namespace HallBookingBhatPara.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddCategory(string categoryName)
         {
-            if (_tokenProvider.IsTokenValid())
+            if (string.IsNullOrEmpty(categoryName))
             {
-                return RedirectToAction("Index", "Home");
+                return Json(ResponseService.BadRequestResponse<string>("Category Name can not null or empty"));
             }
-            /// Validation will be done by Soumik
             var response = await _unitOfWork.SPRepository.AddHallCategoryAsync(categoryName);
 
             if (response == 0 || response == null)

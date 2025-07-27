@@ -444,10 +444,12 @@ Main Content
 
 /* === Main Container === */
 .main-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    padding: 1rem 1rem;
 }
 
 /* === Entry Section === */
@@ -502,64 +504,65 @@ Main Content
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.controls-section {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.show-entries,
-.search-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.search-input {
-    padding: 6px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-
-/* === Table Styles === */
-.notifications-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    background-color: #fff;
-    border: 1px solid #ddd;
+/* Modern DataTable Look */
+table.dataTable {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #dfe6f1;
     border-radius: 8px;
     overflow: hidden;
+    background-color: #fff;
+    width: 100%;
+    font-size: 15px;
 }
 
-    .notifications-table thead {
-        background-color: #2257bf;
-        color: white;
-    }
-
-    .notifications-table th,
-    .notifications-table td {
-        padding: 12px 15px;
-        text-align: center;
-        border-bottom: 1px solid #eee;
-    }
-
-    .notifications-table tbody tr:hover {
-        background-color: #f2f7ff;
-    }
-
-.text-muted {
-    color: #888;
-    font-style: italic;
+table.dataTable thead th {
+    background-color: #003a8c;
+    color: #fff;
+    font-weight: bold;
+    padding: 14px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
 }
 
-/* === Pagination === */
-.pagination-info {
-    text-align: center;
-    color: #333;
+table.dataTable tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+table.dataTable tbody tr:hover {
+    background-color: #f4f8ff;
+    cursor: pointer;
+}
+
+/* Edit Button Style */
+.btn-edit {
+    background-color: #2563eb;
+    color: #fff;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
     font-size: 14px;
-    margin-top: 10px;
 }
+
+.btn-edit i {
+        pointer-events: none;
+    }
+
+/* DataTable Buttons */
+.dt-button {
+    background-color: #2563eb !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 6px 12px !important;
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.dt-button:hover {
+        background-color: #1d4ed8 !important;
+    }
+
+
 

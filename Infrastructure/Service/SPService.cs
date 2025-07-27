@@ -64,9 +64,9 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@categoryName", categoryName, DbType.String);
-                parameters.Add("@OperationId", 1, DbType.Int32);
+                parameters.Add("@OperationId", 3, DbType.Int32);
                 var result = await connection.QueryFirstOrDefaultAsync<long>(
-                    "adminHallCategorySp",
+                    "adminHallMasterSp",
                     parameters,
                     commandType: CommandType.StoredProcedure
                 );

@@ -17,6 +17,7 @@ namespace HallBookingBhatPara.Infrastructure.Data
         // DbSet properties for your entities can be added here
         // public DbSet<YourEntity> YourEntities { get; set; }
         public DbSet<hall_stake_holder_login> hall_stake_holder_login { get; set; }
+        public DbSet<hall_category_master> hall_category_master { get; set; }
         //public DbSet<LoginResponseDTO> 
 
     }

@@ -41,6 +41,16 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse<string>("Category Insert Successfully"));
 
         }
+        [Authorize]
+        public async Task<IActionResult> GetAllCategoryList()
+        {
+            var categoryList = await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1);
+            if (categoryList == null || !categoryList.Any())
+            {
+                return Json(ResponseService.NotFoundResponse<string>("No Category Found."));
+            }
+            return Json(ResponseService.SuccessResponse(categoryList));
+        }
 
         [Authorize]
         public IActionResult SubCategoryList()

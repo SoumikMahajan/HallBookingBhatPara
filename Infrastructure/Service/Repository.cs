@@ -9,10 +9,10 @@ namespace HallBookingBhatPara.Infrastructure.Repository
     {
         internal DbSet<T> dbSet;
         private readonly ApplicationDbContext _db;
-        public Repository(ApplicationDbContext db, DbSet<T> dbSet)
+        public Repository(ApplicationDbContext db)
         {
             _db = db;
-            this.dbSet = dbSet;
+            dbSet = _db.Set<T>();
         }
 
         public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, bool tracked = true)

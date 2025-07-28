@@ -447,9 +447,9 @@ Main Content
     max-width: 1400px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 2fr; /* Default to one column */
     gap: 2rem;
-    padding: 1rem 1rem;
+    padding: 1rem;
 }
 
 /* === Entry Section === */

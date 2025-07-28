@@ -1,5 +1,7 @@
 ﻿using HallBookingBhatPara.Application.Interface;
+using HallBookingBhatPara.Application.Interface.User;
 using HallBookingBhatPara.Infrastructure.Data;
+using HallBookingBhatPara.Infrastructure.Service.User;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HallBookingBhatPara.Infrastructure.Repository
@@ -16,6 +18,10 @@ namespace HallBookingBhatPara.Infrastructure.Repository
         public ISPRepository SPRepository { get; private set; }
         #endregion
 
+        #region :: User
+        public ICategoryMasterRepository CategoryMasterRepository { get; private set; }
+        #endregion
+
         public UnitOfWork(ApplicationDbContext db, IConfiguration configuration, LogService logService)
         {
             _db = db;
@@ -24,6 +30,10 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 
             #region :: Stored Procedure           
             SPRepository = new SPService(_configuration, _logService);
+            #endregion
+
+            #region :: User
+            CategoryMasterRepository = new CategoryMasterService(_db);
             #endregion
         }
 

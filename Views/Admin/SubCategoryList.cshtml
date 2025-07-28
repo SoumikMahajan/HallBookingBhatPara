@@ -229,88 +229,66 @@
     <div class="entry-section">
         <h2 class="section-title">*** Hall Details Entry ***</h2>
 
-        <div class="success-message" id="successMessage">
-            <i class="fas fa-check-circle me-2"></i>Hall saved successfully!
-        </div>
+        <form id="addSubCategoryForm">
+            <div class="mb-3">
+                <label for="notificationStatus" class="form-label">Category</label>
+                <select id="notificationStatus" class="form-select" required>
+                    <option value="">Select Category</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                @Html.AntiForgeryToken()
+                <label for="hallName" class="form-label">Hall Name</label>
+                <input type="text" id="hallName" class="form-control" placeholder="Enter Hall Name" required>
+            </div>
 
-        <form id="notificationForm">
-            @* <input type="hidden" id="editingId" value=""> *@
-
-            <form id="addSubCategoryForm">
-                <div class="mb-3">
-                    <label for="notificationStatus" class="form-label">Category</label>
-                    <select id="notificationStatus" class="form-select" required>
-                        <option value="">Select Category</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="hallName" class="form-label">Hall Name</label>
-                    <input type="text" id="hallName" class="form-control" placeholder="Enter Hall Name" required>
-                </div>
-
-                @* <div class="mb-3">
+            @* <div class="mb-3">
                     <label for="notificationDetails" class="form-label">Notification Details</label>
                     <textarea id="notificationDetails" class="form-control" rows="4" placeholder="Enter notification details" required></textarea>
                 </div> *@
 
-                <div class="file-upload-section">
-                    <label class="form-label">Upload Hall Image</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="fileUpload" class="d-none" accept=".jpg,.png">
-                        <div class="file-input" onclick="document.getElementById('fileUpload').click()">
-                            <i class="fas fa-cloud-upload-alt me-2"></i>
-                            <span id="fileText">Browse... No file selected.</span>
-                        </div>
+            <div class="file-upload-section">
+                <label class="form-label">Upload Hall Image</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileUpload" class="d-none" accept=".jpg,.png">
+                    <div class="file-input" onclick="document.getElementById('fileUpload').click()">
+                        <i class="fas fa-cloud-upload-alt me-2"></i>
+                        <span id="fileText">Browse... No file selected.</span>
                     </div>
                 </div>
+            </div>
 
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-2"></i><span id="submitText">Submit</span>
-                </button>
-            </form>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i><span id="submitText">Submit</span>
+            </button>
         </form>
     </div>
 
     <!-- Right Side - List Section -->
     <div class="list-section">
-        <h2 class="section-title">*** All Hall Details ***</h2>
-
-        <div class="controls-section">
-            <div class="show-entries">
-                <span>Show</span>
-                <select id="entriesPerPage" class="form-select" style="width: auto;" onchange="updateDisplay()">
-                    <option value="5">5</option>
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                </select>
-                <span>entries</span>
-            </div>
-
-            <div class="search-box">
-                <span>Search:</span>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search Hall..." onkeyup="searchNotifications()">
-            </div>
-        </div>
+        <h2 class="section-title">*** All Categories ***</h2>
 
         <div class="table-responsive">
-            <table class="notifications-table">
+            <table class="SubcategoryTable">
                 <thead>
                     <tr>
                         <th>NO.</th>
+                        <th>Hall Name</th>
                         <th>Category Name</th>
                         <th>Edit</th>
                     </tr>
                 </thead>
-                <tbody id="notificationsTableBody">
+                <tbody id="SubcategoryTableBody">
                     <tr>
-                        <td colspan="3" class="text-center text-muted">No Category found.</td>
+                        @* <td colspan="3" class="text-center text-muted">No Category found.</td> *@
+                        <td>1</td>
+                        <td>Hall Name</td>
+                        <td>Category</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-        <div class="pagination-info mt-3" id="paginationInfo"></div>
     </div>
 </div>
 

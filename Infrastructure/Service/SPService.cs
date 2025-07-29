@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using HallBookingBhatPara.Application.Interface;
+using HallBookingBhatPara.Domain.DTO.Admin;
 using HallBookingBhatPara.Domain.DTO.User;
 using HallBookingBhatPara.Domain.Utility;
 using Microsoft.Data.SqlClient;
@@ -75,7 +76,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
         #endregion
 
 
-        #region :: HallType
+        #region :: Admin
         public async Task<long> AddHallCategoryAsync(string categoryName)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -89,6 +90,38 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                     commandType: CommandType.StoredProcedure
                 );
                 return result;
+            }
+        }
+        public async Task<long> AddHallSubCategoryAsync(InsertSubCategoryDTO model)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CategoryId", model.CategoryId, DbType.Int64);
+                parameters.Add("@HallName", model.SubCategoryName, DbType.String);
+                parameters.Add("@HallImg", model.ImageData, DbType.Binary);
+                parameters.Add("@CreatedBy", model.CreatedBy, DbType.Int64);
+                parameters.Add("@OperationId", 1, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<long>(
+                    "adminHallMasterSp",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+        public async Task<List<SubCategorieDTO>> GetALlSubcategorisAsync()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@OperationId", 2, DbType.Int32);
+                var result = await connection.QueryAsync<SubCategorieDTO>(
+                    "adminHallMasterSp",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result.ToList();
             }
         }
         #endregion

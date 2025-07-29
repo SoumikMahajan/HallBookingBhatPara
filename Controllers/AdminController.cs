@@ -1,4 +1,7 @@
 ﻿using HallBookingBhatPara.Application.Interface;
+using HallBookingBhatPara.Domain.DTO;
+using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Infrastructure.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +36,7 @@ namespace HallBookingBhatPara.Controllers
             }
             var response = await _unitOfWork.SPRepository.AddHallCategoryAsync(categoryName);
 
-            if (response == 0 || response == null)
+            if (response == 0)
             {
                 return Json(ResponseService.InternalServerResponse<string>("Insert Failed."));
             }
@@ -53,9 +56,64 @@ namespace HallBookingBhatPara.Controllers
         }
 
         [Authorize]
-        public IActionResult SubCategoryList()
+        public async Task<IActionResult> SubCategoryList()
         {
-            return View();
+            MultipleModel mm = new();
+            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+                             .ToList();
+
+            mm.dropDownListDTOs = dropDownList;
+            return View(mm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddSubCategory([FromForm] InsertSubCategoryDTO model)
+        {
+            if (model.CategoryId == 0)
+                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+
+            if (string.IsNullOrEmpty(model.SubCategoryName))
+                return Json(ResponseService.BadRequestResponse<string>("SubCategory Name can not null or empty"));
+            if (model.fileUpload == null || model.fileUpload.Length == 0)
+                return Json(ResponseService.BadRequestResponse<string>("Profile Picture can not null or empty"));
+
+            model.CreatedBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
+            if (model.fileUpload != null && model.fileUpload.Length > 0)
+            {
+                model.ImageData = await FileHelper.ConvertToByteArrayAsync(model.fileUpload);
+            }
+
+            var response = await _unitOfWork.SPRepository.AddHallSubCategoryAsync(model);
+
+            if (response == 0)
+            {
+                return Json(ResponseService.InternalServerResponse<string>("SubCategory Insert Failed."));
+            }
+
+            return Json(ResponseService.SuccessResponse<string>("SubCategory Insert Successfully"));
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> GetAllSubCategoryList()
+        {
+            var SubcategoryList = await _unitOfWork.SPRepository.GetALlSubcategorisAsync();
+            if (SubcategoryList == null || !SubcategoryList.Any())
+            {
+                return Json(ResponseService.NotFoundResponse<string>("No SubCategory Found."));
+            }
+
+            // Convert images using global FileHelper
+            foreach (var item in SubcategoryList)
+            {
+                item.hall_image_base64 = FileHelper.ConvertToBase64Image(item.hall_image);
+            }
+
+
+            return Json(ResponseService.SuccessResponse(SubcategoryList));
         }
 
         [Authorize]

@@ -47,10 +47,10 @@ namespace HallBookingBhatPara.Controllers
             return View();
         }
 
-        public IActionResult AddHallMaster()
-        {
-            return View();
-        }
+        //public IActionResult AddHallMaster()
+        //{
+        //    return View();
+        //}
 
         [HttpGet]
         public IActionResult Error(string? message = null)

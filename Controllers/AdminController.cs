@@ -57,5 +57,11 @@ namespace HallBookingBhatPara.Controllers
         {
             return View();
         }
+
+        [Authorize]
+        public IActionResult AddHallAvailabilityDetails()
+        {
+            return View();
+        }
     }
 }

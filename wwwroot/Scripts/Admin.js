@@ -188,4 +188,28 @@
     }
     // #endregion :: SubCategory
 
+
+    // #region :: HallAvailability
+    if (_ActionName === "addhallavailabilitydetails") {
+
+        $('.HallAvailabilityTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print'],
+            columnDefs: [
+                {
+                    targets: -1, // Assuming Edit is the last column
+                    data: null,
+                    defaultContent: '<button class="btn-edit"><i class="fas fa-edit"></i></button>',
+                    orderable: false
+                }
+            ],
+            language: {
+                searchPlaceholder: "Search category...",
+                search: ""
+            }
+        });
+        
+    }
+    // #endregion :: HallAvailability
+
 });

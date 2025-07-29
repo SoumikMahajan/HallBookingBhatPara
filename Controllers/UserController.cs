@@ -56,7 +56,7 @@ namespace HallBookingBhatPara.Controllers
                 Id = response.stake_holder_login_id_pk.ToString(),
                 Email = response.login_id,
                 Name = "User Name",
-                Roles = new List<string> { response.stake_holder_details }
+                Roles = new List<string> { response.stake_details }
             };
 
             var token = _jwtService.GenerateToken(userClaims);

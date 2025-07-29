@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Application\Utility\" />
-    <Folder Include="Domain\DTO\Admin\" />
     <Folder Include="Utility\" />
   </ItemGroup>
 

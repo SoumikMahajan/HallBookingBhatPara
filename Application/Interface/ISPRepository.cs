@@ -1,4 +1,5 @@
-﻿using HallBookingBhatPara.Domain.DTO.User;
+﻿using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.User;
 
 namespace HallBookingBhatPara.Application.Interface
 {
@@ -12,6 +13,8 @@ namespace HallBookingBhatPara.Application.Interface
 
         #region :: HallType
         Task<long> AddHallCategoryAsync(string categoryName);
+        Task<long> AddHallSubCategoryAsync(InsertSubCategoryDTO model);
+        Task<List<SubCategorieDTO>> GetALlSubcategorisAsync();
         #endregion
     }
 }

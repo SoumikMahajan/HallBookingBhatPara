@@ -40,6 +40,16 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 9999;
 }
 
+.form-control.is-valid {
+    border-color: var(--success-color);
+    background-image: none;
+}
+
+.form-control.is-invalid {
+    border-color: #ef4444;
+    background-image: none;
+}
+
 svg {
     width: 100px;
     height: 100px;

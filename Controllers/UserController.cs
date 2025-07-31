@@ -23,10 +23,10 @@ namespace HallBookingBhatPara.Controllers
         public IActionResult Login()
         {
             // If already authenticated and token is valid, redirect to Index
-            if (_tokenProvider.IsTokenValid())
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //if (_tokenProvider.IsTokenValid())
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
 
             return View();
         }
@@ -55,8 +55,10 @@ namespace HallBookingBhatPara.Controllers
             {
                 Id = response.stake_holder_login_id_pk.ToString(),
                 Email = response.login_id,
-                Name = "User Name",
-                Roles = new List<string> { response.stake_details }
+                Name = response.stake_holder_details,
+                Roles = response.stake_details,
+                RolesId = response.stake_details_id_fk.ToString(),
+                StackHolderId = response.stake_details_id_fk.ToString()
             };
 
             var token = _jwtService.GenerateToken(userClaims);

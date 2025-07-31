@@ -3,6 +3,7 @@ using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
 using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Infrastructure.Service;
+using HallBookingBhatPara.Model.Validator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -117,9 +118,60 @@ namespace HallBookingBhatPara.Controllers
         }
 
         [Authorize]
-        public IActionResult AddHallAvailabilityDetails()
+        public async Task<IActionResult> AddHallAvailabilityDetails()
         {
-            return View();
+            MultipleModel mm = new();
+            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+                             .ToList();
+
+            mm.dropDownListDTOs = dropDownList;
+            return View(mm);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> GetSubCategoriesByCatId(long categoryId)
+        {
+            if (categoryId <= 0)
+            {
+                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+            }
+            var SubcategoryList = (await _unitOfWork.SubCategoryMasterRepository.GetAllAsync(c => c.active_status == 1 && c.category_id_fk == categoryId))
+                        .Select(c => new DropDownListDTO { Id = c.hall_id_pk, Name = c.hall_name }).ToList();
+            if (SubcategoryList == null || !SubcategoryList.Any())
+            {
+                return Json(ResponseService.NotFoundResponse<string>("No SubCategory Found."));
+            }
+
+            return Json(ResponseService.SuccessResponse(SubcategoryList));
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddHallAvailable([FromForm] InsertHallAvailableDTO model)
+        {
+            var validator = new HallAvailableValidator();
+            var validationResult = validator.Validate(model);
+
+            if (!validationResult.IsValid)
+            {
+                return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
+            }
+
+            model.userClaims = _tokenProvider.GetUserClaims();
+
+
+
+            var response = await _unitOfWork.SPRepository.AddHallAvailableAsync(model);
+
+            if (response == 0)
+            {
+                return Json(ResponseService.InternalServerResponse<string>("Add Failed."));
+            }
+
+            return Json(ResponseService.SuccessResponse<string>("Insert Successfully"));
+
         }
     }
 }

@@ -25,14 +25,11 @@ namespace HallBookingBhatPara.Infrastructure.Service
             {
                 new Claim(ClaimTypes.NameIdentifier, userClaims.Id),
                 new Claim(ClaimTypes.Email, userClaims.Email),
-                new Claim(ClaimTypes.Name, userClaims.Name)
+                new Claim(ClaimTypes.Name, userClaims.Name),
+                new Claim(ClaimTypes.Role, userClaims.Roles),
+                new Claim("RolesId", userClaims.RolesId),
+                new Claim("StackHolderId", userClaims.StackHolderId)
             };
-
-            // Add roles
-            foreach (var role in userClaims.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -27,37 +27,10 @@ $(function () {
 
 $.ajaxSetup({
     statusCode: {
-        401: function (xhr) {
-            handleAuthRedirect(xhr);
-        },
-        403: function (xhr) {
-            handleAuthRedirect(xhr);
-        }
+        401: handleAuthRedirect,
+        403: handleAuthRedirect
     },
-    error: function (xhr, status, error) {
-        $(".loader").css("display", "none");
-
-        if (xhr.status === 401 || xhr.status === 403) return;
-
-        let errorMessage = "Something went wrong.";
-
-        try {
-            const response = JSON.parse(xhr.responseText);
-
-            if (response?.errorMessages?.length > 0) {
-                errorMessage = response.errorMessages[0];
-            } else if (response?.message) {
-                errorMessage = response.message;
-            } else if (xhr.statusText) {
-                errorMessage = xhr.statusText;
-            }
-        } catch {
-            errorMessage = error || xhr.statusText || "Unexpected error occurred.";
-        }
-
-        notify(false, errorMessage, false);
-        console.error(`[AJAX Error] ${xhr.status}: ${errorMessage}`);
-    }
+    error: handleAjaxError
 });
 function handleAuthRedirect(xhr) {
     try {
@@ -70,6 +43,29 @@ function handleAuthRedirect(xhr) {
     } catch {
         window.location.href = '/User/Login';
     }
+}
+
+function handleAjaxError(xhr, status, error) {
+    $(".loader").css("display", "none");
+
+    if (xhr.status === 401 || xhr.status === 403) return;
+
+    let errorMessage = "Something went wrong.";
+    try {
+        const response = JSON.parse(xhr.responseText);
+        if (response?.errorMessages?.length > 0) {
+            errorMessage = response.errorMessages[0];
+        } else if (response?.message) {
+            errorMessage = response.message;
+        } else if (xhr.statusText) {
+            errorMessage = xhr.statusText;
+        }
+    } catch {
+        errorMessage = error || xhr.statusText || "Unexpected error occurred.";
+    }
+
+    notify(false, errorMessage, false);
+    console.error(`[AJAX Error] ${xhr.status}: ${errorMessage}`);
 }
 
 function notify(IsSuccess, Title, IsValid, position, timeout) {

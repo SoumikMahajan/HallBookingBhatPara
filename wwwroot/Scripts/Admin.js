@@ -293,6 +293,134 @@
                 search: ""
             }
         });
+
+        $('#hallCategorylist').on('change', function (e) {
+            e.preventDefault();
+            const categoryId = $(this).val();
+            if (!categoryId || categoryId === "0") {
+                $('#hallSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
+                return;
+            }                      
+            $.ajax({
+                url: '/Admin/GetSubCategoriesByCatId',
+                type: 'GET',
+                data: { categoryid: categoryId },
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");                   
+                },
+                success: function (response) {
+                    if (response.isSuccess) {
+                        if (response.isSuccess && response.result && response.result.length > 0) {
+                            let html = '<option value="0">-- Select Subcategory --</option>';
+
+                            response.result.forEach(item => {
+                                html += `<option value="${item.id}">${item.name}</option>`;
+                            });
+                            $('#hallSubCategorylist').html(html);
+                        }
+                    } else {
+                        $('#hallSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
+                        notify(false, response.errorMessages, false);
+                    }
+
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");                    
+                },
+                error: function (xhr, status, error) {
+                    $('#hallSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
+                    handleAjaxError(xhr, status, error);
+                }
+            });
+        });
+
+        $('#addHallAvailabilityForm').on('submit', function (e) {            
+            e.preventDefault();
+            const categoryid = $('#hallCategorylist option:selected').val();
+            if (categoryid === '0' || categoryid === undefined) {
+                notify(false, "Please Select Category.", false);
+                $("#hallCategorylist").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#hallCategorylist").removeClass("is-invalid");
+            }
+            const SubcategoryId = $('#hallSubCategorylist option:selected').val();
+            if (SubcategoryId === '0' || SubcategoryId === undefined) {
+                notify(false, "Please Select Sub Category.", false);
+                $("#hallSubCategorylist").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#hallSubCategorylist").removeClass("is-invalid");
+            }
+
+            const AvailableFrom = $('#availableFrom').val();
+            if (AvailableFrom === '' || AvailableFrom === undefined) {
+                notify(false, "Please Select Date.", false);
+                $("#availableFrom").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#availableFrom").removeClass("is-invalid");
+            }
+
+            const AvailableTo = $('#availableTo').val();
+            if (AvailableTo === '' || AvailableTo === undefined) {
+                notify(false, "Please Select Date.", false);
+                $("#availableTo").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#availableTo").removeClass("is-invalid");
+            }
+
+            const ProposedRate = $('#proposedRate').val().trim();
+            if (ProposedRate === '' || ProposedRate === undefined) {
+                notify(false, "Please Fill Proposed Rate.", false);
+                $("#proposedRate").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#proposedRate").removeClass("is-invalid");
+            }
+
+            const SecurityMoney = $('#securityMoney').val().trim();
+            let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+            const formData = new FormData();
+            formData.append("CategoryId", categoryid);
+            formData.append("SubcategoryId", SubcategoryId);
+            formData.append("AvailableFrom", AvailableFrom);
+            formData.append("AvailableTo", AvailableTo);
+            formData.append("ProposedRate", ProposedRate);
+            formData.append("SecurityMoney", SecurityMoney);
+
+
+            $.ajax({
+                url: '/Admin/AddHallAvailable',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                    xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    if (response.isSuccess) {
+                        notify(true, response.result, true);
+                        //getAllSubcategories();
+                    } else {
+                        notify(false, response.errorMessages, false);
+                    }
+
+                }
+            });
+        });
         
     }
     // #endregion :: HallAvailability

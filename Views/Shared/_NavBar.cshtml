@@ -1,4 +1,11 @@
-﻿<!-- Top Bar -->
+﻿@inject HallBookingBhatPara.Application.Interface.ITokenProvider _tokenProvider
+
+@{
+    var userClaims = _tokenProvider.GetUserClaims();
+    var userName = userClaims?.Name ?? "Unknown User";
+}
+
+<!-- Top Bar -->
 <div class="top-bar py-2 text-white" style="background: linear-gradient(135deg, #ff6b35, #ff914d); font-size: 0.9rem;">
     <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
         <div class="d-flex gap-3 align-items-center flex-wrap">
@@ -21,7 +28,7 @@
         <div class="row align-items-center">
             <!-- Logo & Text -->
             <div class="col-lg-8 col-md-7 col-12 d-flex align-items-center flex-wrap gap-3">
-                <img src="~/assets/staticimages/bhat_logo_orginal.png" href="@Url.Action("Index", "Home")" alt="Municipality Seal" style="height: 70px;" class="rounded-circle shadow-sm">
+                <img src="@Url.Content("~/assets/staticimages/bhat_logo_orginal.png")" href="@Url.Action("Index", "Home")" alt="Municipality Seal" style="height: 70px;" class="rounded-circle shadow-sm">
                 <div>
                     <h1 class="h4 fw-bold text-primary mb-1" style="font-family: 'Poppins', sans-serif;">Bhatpara Municipality</h1>
                     <p class="text-muted small mb-0" style="font-family: 'Poppins', sans-serif;">Hall Booking System &nbsp;|&nbsp; Established 1899</p>
@@ -32,13 +39,13 @@
             <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0 text-end d-flex justify-content-md-end justify-content-between align-items-center">
                 <div class="me-3 text-end">
                     <div class="small text-muted">Welcome back,</div>
-                    <div class="fw-semibold text-dark" style="font-family: 'Poppins', sans-serif;">@ViewBag.UserName!</div>
+                    <div class="fw-semibold text-dark" style="font-family: 'Poppins', sans-serif;">@userName!</div>
                 </div>
                 <a class="btn btn-outline-danger rounded-pill px-3" asp-action="Logout" asp-controller="User">
                     <i class="fas fa-sign-out-alt me-2"></i> Logout
                 </a>
                 <!-- Flag Image: Hidden on screens <768px -->
-                <img src="~/assets/staticimages/flag.gif" alt="India Flag" class="d-none d-md-block ms-3" style="height: 70px; width: auto;">
+                <img src="@Url.Content("~/assets/staticimages/flag.gif")" alt="India Flag" class="d-none d-md-block ms-3" style="height: 70px; width: auto;">
             </div>
         </div>
     </div>

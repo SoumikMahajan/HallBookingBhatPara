@@ -93,7 +93,9 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                     Id = jwt.Claims.FirstOrDefault(x => x.Type == "nameid")?.Value ?? "",
                     Email = jwt.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "",
                     Name = jwt.Claims.FirstOrDefault(x => x.Type == "unique_name")?.Value ?? "",
-                    Roles = jwt.Claims.Where(x => x.Type == "role").Select(x => x.Value).ToList()
+                    Roles = jwt.Claims.FirstOrDefault(x => x.Type == "role")?.Value ?? "",
+                    RolesId = jwt.Claims.FirstOrDefault(x => x.Type == "RolesId")?.Value ?? "",
+                    StackHolderId = jwt.Claims.FirstOrDefault(x => x.Type == "StackHolderId")?.Value ?? ""
                 };
             }
             catch

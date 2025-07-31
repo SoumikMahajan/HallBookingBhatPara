@@ -127,7 +127,7 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-    app.ConfigureGlobalExceptionHandler();
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();

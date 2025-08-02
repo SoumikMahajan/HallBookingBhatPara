@@ -10,12 +10,13 @@ namespace HallBookingBhatPara.Application.Interface
         Task<long> RegistrationAsync(UserRegistrationDto model);
         #endregion
 
-
         #region :: HallType
         Task<long> AddHallCategoryAsync(string categoryName);
         Task<long> AddHallSubCategoryAsync(InsertSubCategoryDTO model);
         Task<List<SubCategorieDTO>> GetALlSubcategorisAsync();
         Task<long> AddHallAvailableAsync(InsertHallAvailableDTO model);
+        Task<List<HallAvailableDTO>> GetAllHallAvailableAsync();
+        Task<GetHallAvailableDTO> GetHallAvailableDetailsByIdAsync(long hallAvailabilityId);
         #endregion
     }
 }

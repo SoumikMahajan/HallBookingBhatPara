@@ -17,14 +17,14 @@
                     <option value="0" selected>Select Category</option>
                     @foreach (var item in Model.dropDownListDTOs)
                     {
-                        <option value="@item.Id">@item.Name</option>    
+                        <option value="@item.Id">@item.Name</option>
                     }
                 </select>
             </div>
-            <div class="mb-3">                
+            <div class="mb-3">
                 <label for="hallName" class="form-label">Hall Name</label>
                 <input type="text" id="hallName" class="form-control" placeholder="Enter Hall Name">
-            </div>            
+            </div>
 
             <div class="file-upload-section">
                 <label class="form-label">Upload Hall Image</label>
@@ -59,9 +59,30 @@
                     </tr>
                 </thead>
                 <tbody id="SubcategoryTableBody">
-                    
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<!-- Category Edit Modal -->
+<div class="modal fade" id="editSubCategoryModal" tabindex="-1" aria-labelledby="editSubCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content entry-section">
+            <div class="modal-header">
+                <h5 class="modal-title section-title" id="editSubCategoryModalLabel">*** Edit Sub Category ***</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editSubCategoryForm">
+                <div class="modal-body" id="parialSubCatEditModal">                    
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i><span id="updateSubCatText">Update</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

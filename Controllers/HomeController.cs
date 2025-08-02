@@ -21,8 +21,8 @@ namespace HallBookingBhatPara.Controllers
         public IActionResult Index()
         {
             var userClaims = _tokenProvider.GetUserClaims();
-            ViewBag.UserName = userClaims?.Name ?? "Unknown User";
-            ViewBag.UserEmail = userClaims?.Email ?? "";
+            //ViewBag.UserName = userClaims?.Name ?? "Unknown User";
+            //ViewBag.UserEmail = userClaims?.Email ?? "";
 
             return View();
         }

@@ -4,7 +4,7 @@
 
 @model HallBookingBhatPara.Domain.DTO.MultipleModel
 
-<div class="main-container">
+<div class="main-container" style="grid-template-columns: 0.8fr 2fr !important">
     <!-- Left Side - Entry Section -->
     <div class="entry-section">
         <h2 class="section-title">*** Hall Availability Entry ***</h2>
@@ -77,27 +77,42 @@
                 <thead>
                     <tr>
                         <th>NO.</th>
-                        <th>Hall Category</th>
-                        <th>Hall Name</th>
+                        <th>Category</th>
+                        <th>Name</th>
                         <th>Available From</th>
                         <th>Available To</th>
                         <th>Proposed Rate</th>
                         <th>Security Money</th>
+                        <th>Edit</th>
                     </tr>
                 </thead>
                 <tbody id="HallAvailabilityTableBody">
-                    <tr>
-                        @* <td colspan="3" class="text-center text-muted">No Category found.</td> *@
-                        <td>1</td>
-                        <td>Hall Name</td>
-                        <td>Category</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<!-- Hall avail Edit Modal -->
+<div class="modal fade" id="editHallAvailModal" tabindex="-1" aria-labelledby="editHallAvailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content model-section">
+            <div class="modal-header justify-content-center position-relative">
+                <h5 class="modal-title text-center w-100 fw-bold section-title" id="editHallAvailLabel">*** Edit Hall Available ***</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editHallAvailForm">
+                <div class="modal-body" id="parialHallAvailEditModal">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i><span id="updateHallAvailText">Update</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

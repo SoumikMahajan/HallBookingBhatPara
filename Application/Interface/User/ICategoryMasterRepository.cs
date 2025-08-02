@@ -4,5 +4,6 @@ namespace HallBookingBhatPara.Application.Interface.User
 {
     public interface ICategoryMasterRepository : IRepository<hall_category_master>
     {
+        Task<bool> UpdateAsync(long categoryId, string categoryName);
     }
 }

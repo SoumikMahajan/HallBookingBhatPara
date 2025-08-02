@@ -599,3 +599,13 @@ table.dataTable {
         background: #e9ecef;
         border-color: #2980b9;
     }
+
+.HallAvailabilityTable {
+    font-size: 12px !important;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545 !important; /* Bootstrap's red */
+    background-image: none !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}

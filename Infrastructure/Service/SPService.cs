@@ -146,6 +146,20 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 return result;
             }
         }
+        public async Task<List<HallAvailableDTO>> GetAllHallAvailableAsync()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@OperationId", 2, DbType.Int32);
+                var result = await connection.QueryAsync<HallAvailableDTO>(
+                    "adminHallAvailabilitySp",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result.ToList();
+            }
+        }
         #endregion
     }
 }

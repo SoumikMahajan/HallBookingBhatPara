@@ -4,7 +4,7 @@
 
 @model HallBookingBhatPara.Domain.DTO.MultipleModel
 
-<div class="main-container">
+<div class="main-container" style="grid-template-columns: 0.8fr 2fr !important">
     <!-- Left Side - Entry Section -->
     <div class="entry-section">
         <h2 class="section-title">*** Hall Availability Entry ***</h2>
@@ -77,27 +77,21 @@
                 <thead>
                     <tr>
                         <th>NO.</th>
-                        <th>Hall Category</th>
-                        <th>Hall Name</th>
+                        <th>Category</th>
+                        <th>Name</th>
                         <th>Available From</th>
                         <th>Available To</th>
                         <th>Proposed Rate</th>
                         <th>Security Money</th>
+                        <th>Edit</th>
                     </tr>
                 </thead>
                 <tbody id="HallAvailabilityTableBody">
-                    <tr>
-                        @* <td colspan="3" class="text-center text-muted">No Category found.</td> *@
-                        <td>1</td>
-                        <td>Hall Name</td>
-                        <td>Category</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+

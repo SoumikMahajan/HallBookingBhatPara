@@ -1,0 +1,57 @@
+﻿@model HallBookingBhatPara.Domain.DTO.MultipleModel
+
+@{
+    var imageSrc = Model.hall_Master.hall_image != null
+        ? $"data:image/jpeg;base64,{Convert.ToBase64String(Model.hall_Master.hall_image)}"
+        : "#";
+    var showImage = Model.hall_Master.hall_image != null;
+}
+
+<div>
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="editSubCategoryId" value="@Model.hall_Master.hall_id_pk">
+    <div class="mb-3">
+        <label for="editcategorylist" class="form-label">Category</label>
+        <select class="form-select editcategorylist">
+            <!option value="0">Select Category</!option>
+            @foreach (var item in Model.dropDownListDTOs)
+            {
+                if (Model.hall_Master.category_id_fk.ToString() == item.Id.ToString())
+                {
+                    <!option value="@item.Id" selected>@item.Name</!option>
+                }
+                else
+                {
+                    <!option value="@item.Id">@item.Name</!option>
+                }
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="editHallName" class="form-label">Hall Name</label>
+        <input type="text" id="editHallName" class="form-control" placeholder="Enter Hall Name" value="@Model.hall_Master.hall_name">
+    </div>
+
+    <!-- Image Upload Section -->
+    <div class="mb-3">
+        <label class="form-label">Upload Hall Image</label>
+
+        <div class="position-relative">
+            <!-- Transparent File Input -->
+            <input type="file" id="EditSubCatUpload" accept=".jpg,.png"
+                   class="position-absolute top-0 start-0 w-100 h-100 opacity-0" />
+
+            <!-- Custom Styled Button -->
+            <div id="customBrowseBtn" class="border border-primary rounded text-center py-2 bg-light">
+                <i class="fas fa-cloud-upload-alt me-2"></i>
+                <span id="editSubfileText">Browse... No file selected.</span>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="mb-3">
+        <img id="previewImage" src="@imageSrc" alt="Preview" class="img-thumbnail @(showImage ? "" : "d-none")" style="max-height: 200px;" />   
+       @*  <img id="previewImage" src="#" alt="Preview" class="img-thumbnail d-none)" style="max-height: 200px;" /> *@
+    </div>
+</div>

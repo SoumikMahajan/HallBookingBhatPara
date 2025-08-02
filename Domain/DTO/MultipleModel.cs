@@ -10,6 +10,7 @@ namespace HallBookingBhatPara.Domain.DTO
 
         #region :: Admin
         public List<hall_category_master> CategoryList { get; set; }
+        public hall_master hall_Master { get; set; }
         #endregion
     }
 }

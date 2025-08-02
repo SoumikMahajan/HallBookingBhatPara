@@ -259,6 +259,29 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse(HallAvailabilityList));
         }
 
+        [Authorize]
+        public async Task<IActionResult> GetHallAvailById(long hallId)
+        {
+            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+                             .ToList();
+
+            var SubcategoryList = (await _unitOfWork.SubCategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+                       .Select(c => new DropDownListDTO { Id = c.hall_id_pk, Name = c.hall_name }).ToList();
+
+            var HallAvailById = await _unitOfWork.SPRepository.GetHallAvailableDetailsByIdAsync(hallId);
+
+            MultipleModel mm = new()
+            {
+                dropDownListDTOs = dropDownList,
+                SubCategoryList = SubcategoryList,
+                hallAvailable = HallAvailById
+            };
+
+            return PartialView("_partialEditHallAvail", mm);
+
+        }
+
         #endregion
 
 

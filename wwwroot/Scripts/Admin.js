@@ -85,8 +85,8 @@
 
         function bindDataTable() {
             $('.categoryTable').DataTable({
-                dom: 'lBfrtip', // <-- B = Buttons, l = lengthMenu, f = filter, r = processing, t = table, i = info, p = pagination
-                buttons: ['pdfHtml5', 'print'],
+                //dom: 'lBfrtip', // <-- B = Buttons, l = lengthMenu, f = filter, r = processing, t = table, i = info, p = pagination
+                //buttons: ['pdfHtml5', 'print'],
                 responsive: true,
                 autoWidth: false,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -313,8 +313,8 @@
 
         function bindDataTable() {
             $('.SubcategoryTable').DataTable({
-                dom: 'lBfrtip', // <-- B = Buttons, l = lengthMenu, f = filter, r = processing, t = table, i = info, p = pagination
-                buttons: ['pdfHtml5', 'print'],
+                //dom: 'lBfrtip', // <-- B = Buttons, l = lengthMenu, f = filter, r = processing, t = table, i = info, p = pagination
+                //buttons: ['pdfHtml5', 'print'],
                 responsive: true,
                 autoWidth: false,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -621,7 +621,7 @@
                     $(".loader").css("display", "none");
                     if (response.isSuccess) {
                         notify(true, response.result, true);
-                        //getAllSubcategories();
+                        getHallAvailability();   
                     } else {
                         notify(false, response.errorMessages, false);
                     }
@@ -675,8 +675,8 @@
 
         function bindDataTable() {
             $('.HallAvailabilityTable').DataTable({
-                dom: 'lBfrtip', // <-- B = Buttons, l = lengthMenu, f = filter, r = processing, t = table, i = info, p = pagination
-                buttons: ['pdfHtml5', 'print'],
+                //dom: 'lBfrtip', // <-- B = Buttons, l = lengthMenu, f = filter, r = processing, t = table, i = info, p = pagination
+                //buttons: ['pdfHtml5', 'print'],
                 responsive: true,
                 autoWidth: false,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -689,7 +689,161 @@
                 ]
             });
         }
-        
+
+        $(document).on('click', '.btn-edit', function () {
+            const id = $(this).data('id');
+            $.ajax({
+                url: '/Admin/GetHallAvailById',
+                type: 'GET',
+                dataType: 'HTML',
+                data: { hallId: id },
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    $('#parialHallAvailEditModal').html('');
+                    $('#parialHallAvailEditModal').html(response);
+                    $('#editHallAvailModal').modal('show');
+                }
+            });
+
+        });
+        $(document).on('change', '#hallAvailCategorylist', function (e) {
+            e.preventDefault();
+            const categoryId = $(this).val();
+            if (!categoryId || categoryId === "0") {
+                $('#hallAvailSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
+                return;
+            }
+            $.ajax({
+                url: '/Admin/GetSubCategoriesByCatId',
+                type: 'GET',
+                data: { categoryid: categoryId },
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response.isSuccess) {
+                        if (response.isSuccess && response.result && response.result.length > 0) {
+                            let html = '<option value="0">-- Select Subcategory --</option>';
+
+                            response.result.forEach(item => {
+                                html += `<option value="${item.id}">${item.name}</option>`;
+                            });
+                            $('#hallAvailSubCategorylist').html(html);
+                        }
+                    } else {
+                        $('#hallAvailSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
+                        notify(false, response.errorMessages, false);
+                    }
+
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                },
+                error: function (xhr, status, error) {
+                    $('#hallAvailSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
+                    handleAjaxError(xhr, status, error);
+                }
+            });
+
+        });
+
+        $(document).on('submit', '#editHallAvailForm', function (e) {
+            e.preventDefault();
+            const HallId = $('#editHallAvailId').val();
+
+
+            const categoryid = $('#hallAvailCategorylist option:selected').val();
+            if (categoryid === '0' || categoryid === undefined) {
+                notify(false, "Please Select Category.", false);
+                $("#hallAvailCategorylist").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#hallAvailCategorylist").removeClass("is-invalid");
+            }
+            const SubcategoryId = $('#hallAvailSubCategorylist option:selected').val();
+            if (SubcategoryId === '0' || SubcategoryId === undefined) {
+                notify(false, "Please Select Sub Category.", false);
+                $("#hallAvailSubCategorylist").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#hallAvailSubCategorylist").removeClass("is-invalid");
+            }
+
+            const AvailableFrom = $('#UpAvailableFrom').val();
+            if (AvailableFrom === '' || AvailableFrom === undefined) {
+                notify(false, "Please Select Date.", false);
+                $("#UpAvailableFrom").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#UpAvailableFrom").removeClass("is-invalid");
+            }
+
+            const AvailableTo = $('#UpAvailableTo').val();
+            if (AvailableTo === '' || AvailableTo === undefined) {
+                notify(false, "Please Select Date.", false);
+                $("#UpAvailableTo").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#UpAvailableTo").removeClass("is-invalid");
+            }
+
+            const ProposedRate = $('#UpProposedRate').val().trim();
+            if (ProposedRate === '' || ProposedRate === undefined) {
+                notify(false, "Please Fill Proposed Rate.", false);
+                $("#UpProposedRate").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#UpProposedRate").removeClass("is-invalid");
+            }
+
+            const SecurityMoney = $('#UpSecurityMoney').val().trim();
+            let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+            const formData = new FormData();
+            formData.append("HallId", HallId);
+            formData.append("CategoryId", categoryid);
+            formData.append("SubcategoryId", SubcategoryId);
+            formData.append("AvailableFrom", AvailableFrom);
+            formData.append("AvailableTo", AvailableTo);
+            formData.append("ProposedRate", ProposedRate);
+            formData.append("SecurityMoney", SecurityMoney);
+
+
+            $.ajax({
+                url: '/Admin/UpdateHallAvailable',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                    xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    if (response.isSuccess) {
+                        notify(true, response.result, true);
+                        getHallAvailability();
+                        $('#editHallAvailModal').modal('hide');
+
+                    } else {
+                        notify(false, response.errorMessages, false);
+                    }
+
+                }
+            });
+        });
+       
     }
     // #endregion :: HallAvailability
 

@@ -16,6 +16,7 @@ namespace HallBookingBhatPara.Application.Interface
         Task<List<SubCategorieDTO>> GetALlSubcategorisAsync();
         Task<long> AddHallAvailableAsync(InsertHallAvailableDTO model);
         Task<List<HallAvailableDTO>> GetAllHallAvailableAsync();
+        Task<GetHallAvailableDTO> GetHallAvailableDetailsByIdAsync(long hallAvailabilityId);
         #endregion
     }
 }

@@ -1,0 +1,76 @@
+﻿@model HallBookingBhatPara.Domain.DTO.MultipleModel
+
+<div>
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="editHallAvailId" value="@Model.hallAvailable.hall_availability_id_pk">
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="hallAvailCategorylist" class="form-label">Hall Category</label>
+            <select id="hallAvailCategorylist" class="form-select">
+                <!option value="0">--Select Category--</!option>
+                @foreach (var item in Model.dropDownListDTOs)
+                {
+                    <!option value="@item.Id" @(Model.hallAvailable.category_id_pk.ToString() == item.Id.ToString() ? "selected" : "")>
+                        @item.Name
+                    </!option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label for="hallAvailSubCategorylist" class="form-label">Hall Name</label>
+            <select id="hallAvailSubCategorylist" class="form-select">
+                <!option value="0">-- Select Subcategory --</!option>
+                @foreach (var item in Model.dropDownListDTOs)
+                {
+                    <!option value="@item.Id" @(Model.hallAvailable.category_id_pk.ToString() == item.Id.ToString() ? "selected" : "")>
+                        @item.Name
+                    </!option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="UpAvailableFrom" class="form-label">
+                <i class="fas fa-calendar-alt me-1"></i>Available From
+            </label>
+            <input type="date" id="UpAvailableFrom" class="form-control" 
+                   value="@Model.hallAvailable.hall_availability_from_date.ToString("yyyy-MM-dd")">
+        </div>
+
+        <div class="col-md-6">
+            <label for="UpAvailableTo" class="form-label">
+                <i class="fas fa-calendar-check me-1"></i>Available To
+            </label>
+            <input type="date" id="UpAvailableTo" class="form-control" 
+                   value="@Model.hallAvailable.hall_availability_to_date.ToString("yyyy-MM-dd")">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="UpProposedRate" class="form-label">
+                <i class="fas fa-rupee-sign me-1"></i>Proposed Rate (per night)
+            </label>
+            <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input type="number" id="UpProposedRate" class="form-control" placeholder="Enter rate" min="0"
+                       value="@Model.hallAvailable.rate">
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="UpSecurityMoney" class="form-label">
+                <i class="fas fa-shield-alt me-1"></i>Security Money
+            </label>
+            <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input type="number" id="UpSecurityMoney" class="form-control" placeholder="Enter security amount" min="0"
+                       value="@Model.hallAvailable.security_money">
+            </div>
+        </div>
+    </div>
+</div>

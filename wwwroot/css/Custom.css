@@ -609,3 +609,12 @@ table.dataTable {
     background-image: none !important;
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
+
+.model-section {
+    flex: 1;
+    min-width: 300px;    
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}

@@ -12,7 +12,10 @@ namespace HallBookingBhatPara.Domain.Entities
         public long hall_id_fk { get; set; }
         public DateOnly hall_availability_from_date { get; set; }
         public DateOnly hall_availability_to_date { get; set; }
-        public float rate { get; set; }
-        public float security_money { get; set; }
+        public decimal rate { get; set; }
+        public decimal security_money { get; set; }
+        public short active_status { get; set; }
+        public DateTime entry_time { get; set; }
+        public long entry_by_stake_details_id_fk { get; set; }
     }
 }

@@ -618,3 +618,9 @@ table.dataTable {
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+.large-toast {
+    font-size: 18px;
+    padding: 25px 35px;
+    min-width: 350px;
+}

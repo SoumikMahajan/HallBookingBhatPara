@@ -70,13 +70,14 @@ function handleAjaxError(xhr, status, error) {
 
 function notify(IsSuccess, Title, IsValid, position, timeout) {
 
-    position = position == null || position == undefined ? "topRight" : position;
+    position = position == null || position == undefined ? "topCenter" : position;
 
     if (IsSuccess) {
         iziToast.success({
             title: 'SUCCESS',
             position: position,
             message: Title,
+            class: 'large-toast',
         });
     }
     else {
@@ -84,7 +85,7 @@ function notify(IsSuccess, Title, IsValid, position, timeout) {
             title: IsValid ? 'Error' : 'Caution',
             position: position,
             message: Title,
-
+            class: 'large-toast',
         };
 
         //optional timeout property set, else the default timeout of iziToast will work

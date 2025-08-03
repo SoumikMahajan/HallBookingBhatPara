@@ -11,6 +11,7 @@ namespace HallBookingBhatPara.Application.Interface
         #region :: User
         ICategoryMasterRepository CategoryMasterRepository { get; }
         ISubCategoryMasterRepository SubCategoryMasterRepository { get; }
+        IHallAvailMasterRepository HallAvailMasterRepository { get; }
         #endregion
         Task SaveAsync();
         Task BeginTransactionAsync();

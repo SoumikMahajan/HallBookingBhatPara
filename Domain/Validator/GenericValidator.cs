@@ -92,5 +92,33 @@ namespace HallBookingBhatPara.Model.Validator
         }
     }
 
+    public class UpdateHallAvailableValidator : GenericValidator<UpdateHallAvailableDTO>
+    {
+        public UpdateHallAvailableValidator()
+        {
+            RuleFor(x => x.HallId)
+                .NotNull().WithMessage("Id is required.")
+                .GreaterThan(0).WithMessage("Id must be greater than 0.");
+
+            RuleFor(x => x.CategoryId)
+                .NotNull().WithMessage("CategoryId is required.")
+                .GreaterThan(0).WithMessage("CategoryId must be greater than 0.");
+
+            RuleFor(x => x.SubcategoryId)
+                .NotNull().WithMessage("SubcategoryId is required.")
+                .GreaterThan(0).WithMessage("SubcategoryId must be greater than 0.");
+
+            RuleFor(x => x.AvailableFrom)
+                .NotNull().WithMessage("AvailableFrom is required.");
+            RuleFor(x => x.AvailableTo)
+                .NotNull().WithMessage("AvailableTo is required.");
+
+            RuleFor(x => x.ProposedRate)
+                .NotNull().WithMessage("ProposedRate is required.")
+                .GreaterThan(0).WithMessage("ProposedRate must be greater than 0.");
+
+        }
+    }
+
     #endregion
 }

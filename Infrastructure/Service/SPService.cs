@@ -45,7 +45,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@UserName", model.FirstName, DbType.String);
+                    parameters.Add("@UserName", $"{model.FirstName} {model.LastName}", DbType.String);
                     parameters.Add("@Mobile", model.Phone, DbType.String);
                     parameters.Add("@Email", model.Email, DbType.String);
                     parameters.Add("@EntryIp", model.EntryIP, DbType.String);

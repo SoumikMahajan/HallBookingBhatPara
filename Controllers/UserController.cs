@@ -64,6 +64,8 @@ namespace HallBookingBhatPara.Controllers
             var token = _jwtService.GenerateToken(userClaims);
             _tokenProvider.SetToken(token);
 
+            TempData["GlobalSuccessMessage"] = "Login successful! Redirecting...";
+
             response.RedirectUrl = Url.Action("Index", "Home");
 
             return Json(ResponseService.SuccessResponse<object>(response));

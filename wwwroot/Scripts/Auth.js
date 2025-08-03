@@ -6,7 +6,7 @@
     if (_ActionName === "login") {
         // Password toggle functionality
 
-        $("#togglePassword").on("click", function (e) {
+        $(".togglePassword").on("click", function (e) {
             const passwordInput = $('#passwordInput');
             const toggleIcon = $(this).find('i');
 
@@ -68,16 +68,13 @@
                     $('.loading').hide();
                     $('.btn-login').prop('disabled', false);
                     if (response.isSuccess) {
-                        notify(true, 'Login successful! Redirecting...', true);
+                        //notify(true, 'Login successful! Redirecting...', true);
 
-                        // Redirect after a short delay to show success message
-                        setTimeout(function () {
-                            if (response.result && response.result.redirectUrl) {
-                                window.location.href = response.result.redirectUrl;
-                            } else {
-                                window.location.href = '/Home/Index';
-                            }
-                        }, 1500);
+                        if (response.result && response.result.redirectUrl) {
+                            window.location.href = response.result.redirectUrl;
+                        } else {
+                            window.location.href = '/Home/Index';
+                        }
                     } else {
                         notify(false, 'Invalid email or password. Please try again.', false);
                     }
@@ -102,6 +99,21 @@
 
     // #region :: Registrion
     if (_ActionName === "registration") {
+
+        $(".togglePassword").on("click", function (e) {
+            const passwordInput = $('#password');
+            const toggleIcon = $(this).find('i');
+
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+                toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInput.attr('type', 'password');
+                toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
+
         const fileInput = $('#profilePic');
         const uploadArea = $('.upload-area');
         const previewImage = $('#previewImage');

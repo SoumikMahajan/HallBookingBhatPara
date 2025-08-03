@@ -21,6 +21,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
         #region :: User
         public ICategoryMasterRepository CategoryMasterRepository { get; private set; }
         public ISubCategoryMasterRepository SubCategoryMasterRepository { get; private set; }
+        public IHallAvailMasterRepository HallAvailMasterRepository { get; private set; }
         #endregion
 
         public UnitOfWork(ApplicationDbContext db, IConfiguration configuration, LogService logService)
@@ -36,6 +37,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             #region :: User
             CategoryMasterRepository = new CategoryMasterService(_db);
             SubCategoryMasterRepository = new SubCategoryMasterService(_db);
+            HallAvailMasterRepository = new HallAvailMasterService(_db);
             #endregion
         }
 

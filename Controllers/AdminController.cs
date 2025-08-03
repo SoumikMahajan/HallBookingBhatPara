@@ -282,6 +282,30 @@ namespace HallBookingBhatPara.Controllers
 
         }
 
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateHallAvailable([FromForm] UpdateHallAvailableDTO model)
+        {
+            var validator = new UpdateHallAvailableValidator();
+            var validationResult = validator.Validate(model);
+
+            if (!validationResult.IsValid)
+            {
+                return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
+            }
+
+            var response = await _unitOfWork.HallAvailMasterRepository.UpdateAsync(model);
+
+            if (!response)
+            {
+                return Json(ResponseService.InternalServerResponse<string>("Update Failed."));
+            }
+
+            return Json(ResponseService.SuccessResponse<string>("Update Successfully"));
+
+        }
+
         #endregion
 
 

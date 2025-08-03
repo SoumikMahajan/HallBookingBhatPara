@@ -641,7 +641,7 @@
                 success: function (response) {
                     $(".loader").css("display", "none");
                     // Destroy existing DataTable BEFORE updating table body
-                    if ($.fn.DataTable.isDataTable('.categoryTable')) {
+                    if ($.fn.DataTable.isDataTable('.HallAvailabilityTable')) {
                         $('.HallAvailabilityTable').DataTable().destroy();
                     }
                     if (response.isSuccess && response.result && response.result.length > 0) {
@@ -833,9 +833,8 @@
                     $(".loader").css("display", "none");
                     if (response.isSuccess) {
                         notify(true, response.result, true);
-                        getHallAvailability();
                         $('#editHallAvailModal').modal('hide');
-
+                        getHallAvailability();                        
                     } else {
                         notify(false, response.errorMessages, false);
                     }

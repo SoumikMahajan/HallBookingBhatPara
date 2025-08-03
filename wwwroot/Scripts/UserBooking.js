@@ -10,7 +10,23 @@
 
         // Update end date minimum when start date changes
         $('#startDate').on('change', function () {
-            $('#endDate').attr('min', this.value);
+            const startDate = this.value;
+            $('#endDate').attr('min', startDate);
+
+            // Optional: If endDate is already selected and now invalid, clear it
+            if ($('#endDate').val() && $('#endDate').val() < startDate) {
+                $('#endDate').val('');
+            }
+        });
+        // When end date changes, update the max for start date
+        $('#endDate').on('change', function () {
+            const endDate = this.value;
+            $('#startDate').attr('max', endDate);
+
+            // Optional: If startDate is already selected and now invalid, clear it
+            if ($('#startDate').val() && $('#startDate').val() > endDate) {
+                $('#startDate').val('');
+            }
         });
 
         // Form submission

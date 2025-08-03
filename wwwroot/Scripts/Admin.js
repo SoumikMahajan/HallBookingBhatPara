@@ -500,22 +500,55 @@
     // #region :: HallAvailability
     if (_ActionName === "addhallavailabilitydetails") {
 
+        const today = new Date().toISOString().split('T')[0];
+        $('#availableFrom, #availableTo').attr('min', today);
+
+        $(document).on('change', '#availableFrom', function () {
+            const startDate = this.value;
+            $('#availableTo').attr('min', startDate);
+            if ($('#availableTo').val() && $('#availableTo').val() < startDate) {
+                $('#availableTo').val('');
+            }
+        });
+        $(document).on('change', '#availableTo', function () {
+            const endDate = this.value;
+            $('#availableFrom').attr('max', endDate);
+            if ($('#availableFrom').val() && $('#availableFrom').val() > endDate) {
+                $('#availableFrom').val('');
+            }
+        });
+
+        $(document).on('change', '#UpAvailableFrom', function () {
+            const startDate = this.value;
+            $('#UpAvailableTo').attr('min', startDate);
+            if ($('#UpAvailableTo').val() && $('#UpAvailableTo').val() < startDate) {
+                $('#UpAvailableTo').val('');
+            }
+        });
+        $(document).on('change', '#UpAvailableTo', function () {
+            const endDate = this.value;
+            $('#UpAvailableFrom').attr('max', endDate);
+            if ($('#UpAvailableFrom').val() && $('#UpAvailableFrom').val() > endDate) {
+                $('#UpAvailableFrom').val('');
+            }
+        });
+        
         getHallAvailability();        
 
-        $('#hallCategorylist').on('change', function (e) {
+        $(document).on('change', 'hallCategorylist', function () {
             e.preventDefault();
             const categoryId = $(this).val();
             if (!categoryId || categoryId === "0") {
                 $('#hallSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
                 return;
-            }                      
+            }
             $.ajax({
                 url: '/Admin/GetSubCategoriesByCatId',
                 type: 'GET',
                 data: { categoryid: categoryId },
                 dataType: 'json',
                 beforeSend: function (xhr) {
-                    $(".loader").css("display", "flex");                   
+                    $(".loader").css("display", "flex");
                 },
                 success: function (response) {
                     if (response.isSuccess) {
@@ -534,16 +567,16 @@
 
                 },
                 complete: function () {
-                    $(".loader").css("display", "none");                    
+                    $(".loader").css("display", "none");
                 },
                 error: function (xhr, status, error) {
                     $('#hallSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
                     handleAjaxError(xhr, status, error);
                 }
             });
-        });
+        });  
 
-        $('#addHallAvailabilityForm').on('submit', function (e) {            
+        $(document).on('submit', '#addHallAvailabilityForm', function () {
             e.preventDefault();
             const categoryid = $('#hallCategorylist option:selected').val();
             if (categoryid === '0' || categoryid === undefined) {
@@ -621,14 +654,14 @@
                     $(".loader").css("display", "none");
                     if (response.isSuccess) {
                         notify(true, response.result, true);
-                        getHallAvailability();   
+                        getHallAvailability();
                     } else {
                         notify(false, response.errorMessages, false);
                     }
 
                 }
             });
-        });
+        });        
 
         function getHallAvailability() {
             $.ajax({

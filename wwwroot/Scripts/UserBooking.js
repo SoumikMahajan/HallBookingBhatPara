@@ -35,46 +35,79 @@
             searchHalls();
         });
         function searchHalls() {
-            const hallType = $('#hallType').val();
+            const hallType = $('#hallType option:selected').val();
             const startDate = $('#startDate').val();
             const endDate = $('#endDate').val();
 
-            if (!hallType || !startDate || !endDate) {
-                alert('Please fill in all fields');
+            if (hallType == '0' || hallType === undefined ) {
+                notify(false, 'Please select hall type', false);
+                $("#hallType").addClass("is-invalid");
                 return;
+            }
+            else {
+                $("#hallType").removeClass("is-invalid");
+            }
+
+            if (startDate == '') {
+                notify(false, 'Please select start date', false);
+                $("#startDate").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#startDate").removeClass("is-invalid");
+            }
+
+            if (endDate == '') {
+                notify(false, 'Please select end date', false);
+                $("#endDate").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#endDate").removeClass("is-invalid");
             }
 
             if (new Date(startDate) > new Date(endDate)) {
-                alert('End date must be after start date');
+                notify(false, 'End date must be after start date', false);
                 return;
             }
+            
+            $(".loader").css("display", "flex");                        
+            getHallAvailableSearchResult(hallType, startDate, endDate);
+           
+            //setTimeout(() => {
+            //    //const mockResults = generateMockResults(hallType);
+            //    //displayResults(mockResults);            
+                
+            //}, 1500);
+        }
 
-            // Show loading
-            $(".loader").css("display", "flex");
-            $('#resultsHeader').hide();
-            $('#resultsContainer').empty();
+        function getHallAvailableSearchResult(hallType, startDate, endDate) {
+            $.ajax({
+                url: '/UserBooking/HallAvailableSearchResult',
+                data: { hallType: hallType, startDate: startDate, endDate: endDate },
+                type: 'GET',
+                dataType: 'HTML',
+                success: function (response) {
+                    if (response != '') {
+                        $("#partailSearchResult").empty();
+                        $("#partailSearchResult").html(response);
+                        // After results are displayed, scroll to show results section properly
+                        setTimeout(() => {
+                            // Calculate scroll position to show search form at top and results below
+                            const searchHero = $('.search-hero');
+                            const searchHeroHeight = searchHero.outerHeight();
 
-            $('html, body').animate({
-                scrollTop: $('.results-section').offset().top - 80
-            }, 800);
+                            $('html, body').animate({
+                                scrollTop: searchHeroHeight - 50 // Small offset to show part of search form
+                            }, 800, 'swing');
+                        }, 100);
+                    }
 
-            // Simulate API call with setTimeout
-            setTimeout(() => {
-                const mockResults = generateMockResults(hallType);
-                displayResults(mockResults);
-
-                // After results are displayed, scroll to show results section properly
-                setTimeout(() => {
-                    // Calculate scroll position to show search form at top and results below
-                    const searchHero = $('.search-hero');
-                    const searchHeroHeight = searchHero.outerHeight();
-
-                    $('html, body').animate({
-                        scrollTop: searchHeroHeight - 50 // Small offset to show part of search form
-                    }, 800, 'swing');
-                }, 100);
-
-            }, 1500);
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                },
+            });
         }
 
         function generateMockResults(hallType) {
@@ -197,6 +230,9 @@
 
             $('#resultsContainer').html(resultsHtml);
         }
+
+
+        
     }
     // #endregion :: Dashboard
 });

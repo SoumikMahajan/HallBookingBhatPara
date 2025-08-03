@@ -535,7 +535,7 @@
         
         getHallAvailability();        
 
-        $(document).on('change', 'hallCategorylist', function () {
+        $(document).on('change', '#hallCategorylist', function (e) {
             e.preventDefault();
             const categoryId = $(this).val();
             if (!categoryId || categoryId === "0") {
@@ -576,7 +576,7 @@
             });
         });  
 
-        $(document).on('submit', '#addHallAvailabilityForm', function () {
+        $(document).on('submit', '#addHallAvailabilityForm', function (e) {
             e.preventDefault();
             const categoryid = $('#hallCategorylist option:selected').val();
             if (categoryid === '0' || categoryid === undefined) {

@@ -131,8 +131,8 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 var parameters = new DynamicParameters();
                 parameters.Add("@HallCategoryId", model.CategoryId, DbType.Int64);
                 parameters.Add("@HallId", model.SubcategoryId, DbType.Int64);
-                parameters.Add("@AvalFromDate", model.AvailableTo, DbType.Date);
-                parameters.Add("@AvalToDate", model.AvailableFrom, DbType.Date);
+                parameters.Add("@AvalFromDate", model.AvailableFrom, DbType.Date);
+                parameters.Add("@AvalToDate", model.AvailableTo, DbType.Date);
                 parameters.Add("@Rate", model.ProposedRate, DbType.Decimal);
                 parameters.Add("@SecurityMoney", model.SecurityMoney, DbType.Decimal);
                 parameters.Add("@GlobalUserId", model.userClaims.StackHolderId, DbType.Int64);

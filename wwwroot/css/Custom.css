@@ -43,13 +43,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .form-control.is-valid {
-    border-color: var(--success-color);
-    background-image: none;
+    border-color: var(--success-color) !important;
+    background-image: none !important;
 }
 
 .form-control.is-invalid {
-    border-color: #ef4444;
-    background-image: none;
+    border-color: #ef4444 !important;
+    background-image: none !important;
 }
 
 svg {

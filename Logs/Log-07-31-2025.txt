@@ -1,0 +1,6 @@
+
+Log Entry For Web Sln: 31 July 2025 11:50:08 PM
+  :[LoggedInUser]: 1
+  :[Error]: Cannot create a DbSet for 'hall_master' because this type is not included in the model for the context.
+  :[StackTrace]:    at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.get_EntityType()
+---------------------------------------------------------------------------------------------

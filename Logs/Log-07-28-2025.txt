@@ -1,0 +1,31 @@
+
+Log Entry For Web Sln: 28 July 2025 10:49:17 PM
+  :[LoggedInUser]: 0
+  :[Error]: @Name is not a parameter for procedure Bhatpara_HallBooking_Users.
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 28 July 2025 11:16:05 PM
+  :[LoggedInUser]: 0
+  :[Error]: Error parsing column 0 (Result=FAILED - String)
+  :[StackTrace]:    at Dapper.SqlMapper.ThrowDataException(Exception ex, Int32 index, IDataReader reader, Object value) in /_/Dapper/SqlMapper.cs:line 3966
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 28 July 2025 11:17:49 PM
+  :[LoggedInUser]: 0
+  :[Error]: Error parsing column 0 (Result=FAILED - String)
+  :[StackTrace]:    at Dapper.SqlMapper.ThrowDataException(Exception ex, Int32 index, IDataReader reader, Object value) in /_/Dapper/SqlMapper.cs:line 3966
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 28 July 2025 11:19:15 PM
+  :[LoggedInUser]: 0
+  :[Error]: Error parsing column 0 (Result=FAILED - String)
+  :[StackTrace]:    at Dapper.SqlMapper.ThrowDataException(Exception ex, Int32 index, IDataReader reader, Object value) in /_/Dapper/SqlMapper.cs:line 3966
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 28 July 2025 11:48:09 PM
+  :[LoggedInUser]: 0
+  :[Error]: Cannot insert the value NULL into column 'create_by', table 'Bhatpara_HallBooking.dbo.public_user_registration'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+---------------------------------------------------------------------------------------------

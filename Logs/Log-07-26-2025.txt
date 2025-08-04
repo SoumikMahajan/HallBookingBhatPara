@@ -1,0 +1,24 @@
+
+Log Entry For Web Sln: 26 July 2025 12:31:55 AM
+  :[LoggedInUser]: 0
+  :[Error]: RenderSectionAsync invocation in '/Views/Shared/_Script.cshtml' is invalid. RenderSectionAsync can only be called from a layout page.
+  :[StackTrace]:    at Microsoft.AspNetCore.Mvc.Razor.RazorPage.EnsureMethodCanBeInvoked(String methodName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 26 July 2025 04:23:42 PM
+  :[LoggedInUser]: 0
+  :[Error]: @OPERATION_ID is not a parameter for procedure Bhatpara_HallBooking_Users.
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 26 July 2025 04:23:55 PM
+  :[LoggedInUser]: 0
+  :[Error]: @OPERATION_ID is not a parameter for procedure Bhatpara_HallBooking_Users.
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 26 July 2025 04:25:18 PM
+  :[LoggedInUser]: 0
+  :[Error]: @OPERATION_ID is not a parameter for procedure Bhatpara_HallBooking_Users.
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+---------------------------------------------------------------------------------------------

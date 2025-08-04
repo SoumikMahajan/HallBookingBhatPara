@@ -1,0 +1,30 @@
+
+Log Entry For Web Sln: 04 August 2025 12:15:22 AM
+  :[LoggedInUser]: 1
+  :[Error]: Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 04 August 2025 12:18:55 AM
+  :[LoggedInUser]: 1
+  :[Error]: Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 04 August 2025 12:20:42 AM
+  :[LoggedInUser]: 1
+  :[Error]: Error parsing column 0 (Result=n/a - Null object cannot be converted to a value type.)
+  :[StackTrace]:    at Dapper.SqlMapper.ThrowDataException(Exception ex, Int32 index, IDataReader reader, Object value) in /_/Dapper/SqlMapper.cs:line 3966
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 04 August 2025 12:30:22 AM
+  :[LoggedInUser]: 1
+  :[Error]: Unable to cast object of type 'System.Collections.Generic.List`1[System.Collections.Generic.List`1[System.String]]' to type 'System.Collections.Generic.List`1[System.String]'.
+  :[StackTrace]:    at HallBookingBhatPara.Infrastructure.Repository.SPService.AddHallAvailableAsync(InsertHallAvailableDTO model) in D:\Live_Projects\ASP.netCore\HallBookingBhatPara\Infrastructure\Service\SPService.cs:line 146
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 04 August 2025 12:31:31 AM
+  :[LoggedInUser]: 1
+  :[Error]: Unable to cast object of type 'System.Collections.Generic.List`1[System.Collections.Generic.List`1[System.String]]' to type 'System.Collections.Generic.List`1[System.String]'.
+  :[StackTrace]:    at HallBookingBhatPara.Infrastructure.Repository.SPService.AddHallAvailableAsync(InsertHallAvailableDTO model) in D:\Live_Projects\ASP.netCore\HallBookingBhatPara\Infrastructure\Service\SPService.cs:line 146
+---------------------------------------------------------------------------------------------

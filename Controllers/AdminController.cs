@@ -220,6 +220,23 @@ namespace HallBookingBhatPara.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> GetFloorListBySubCatId(long SubCategoryid)
+        {
+            if (SubCategoryid <= 0)
+                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+            var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(SubCategoryid);
+
+            if (FloorList == null)
+                return Json(ResponseService.NotFoundResponse<string>("Something Went Wrong"));
+            if (!FloorList.Any())
+            {
+                return Json(ResponseService.SuccessResponse<string>(""));
+            }
+
+            return Json(ResponseService.SuccessResponse(FloorList));
+        }
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddHallAvailable([FromForm] InsertHallAvailableDTO model)
@@ -234,6 +251,11 @@ namespace HallBookingBhatPara.Controllers
 
             model.userClaims = _tokenProvider.GetUserClaims();
 
+            var IsHallAvail = await _unitOfWork.SPRepository.CheckDatesOfHallAvailAsync(model);
+            if (IsHallAvail > 0)
+            {
+                return Json(ResponseService.BadRequestResponse<string>("This Hall is already booked for the selected date."));
+            }
 
 
             var response = await _unitOfWork.SPRepository.AddHallAvailableAsync(model);

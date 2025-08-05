@@ -1,4 +1,5 @@
-﻿using HallBookingBhatPara.Domain.DTO.Admin;
+﻿using HallBookingBhatPara.Domain.DTO;
+using HallBookingBhatPara.Domain.DTO.Admin;
 using HallBookingBhatPara.Domain.DTO.User;
 
 namespace HallBookingBhatPara.Application.Interface
@@ -17,6 +18,9 @@ namespace HallBookingBhatPara.Application.Interface
         Task<long> AddHallAvailableAsync(InsertHallAvailableDTO model);
         Task<List<HallAvailableDTO>> GetAllHallAvailableAsync();
         Task<GetHallAvailableDTO> GetHallAvailableDetailsByIdAsync(long hallAvailabilityId);
+        Task<List<DropDownListDTO>> GetFloorListBySubCatIdAsync(long subCategoryId);
+        Task<int> CheckDatesOfHallAvailAsync(InsertHallAvailableDTO model);
+
         #endregion
     }
 }

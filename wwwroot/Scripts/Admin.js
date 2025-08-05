@@ -32,6 +32,7 @@
                 success: function (response) {                                        
                     if (response.isSuccess) {
                         notify(true, response.result, true);
+                        $('#addCategoryForm').trigger("reset");
                         getAllcategories();
                     } else {
                         notify(false, response.errorMessages, false);
@@ -258,6 +259,7 @@
                     $(".loader").css("display", "none");
                     if (response.isSuccess) {
                         notify(true, response.result, true);
+                        $('#addSubCategoryForm').trigger("reset");
                         getAllSubcategories();
                     } else {
                         notify(false, response.errorMessages, false);
@@ -574,7 +576,56 @@
                     handleAjaxError(xhr, status, error);
                 }
             });
-        });  
+        }); 
+
+        $(document).on('change', '#hallSubCategorylist', function (e) {
+            e.preventDefault();
+            const SubcategoryId = $(this).val();
+            if (!SubcategoryId || SubcategoryId === "0") {
+                $("#IsHasFloor").addClass('d-none');
+                $('#hallFloorlist').html('<option value="0">-- Select Floor --</option>');
+                return;
+            }
+            $.ajax({
+                url: '/Admin/GetFloorListBySubCatId',
+                type: 'GET',
+                data: { SubCategoryid: SubcategoryId },
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response.isSuccess) {
+                        if (response.isSuccess && response.result && response.result.length > 0) {
+                            $("#IsHasFloor").removeClass('d-none');
+                            let html = '<option value="0">-- Select Floor --</option>';
+
+                            response.result.forEach(item => {
+                                html += `<option value="${item.id}">${item.name}</option>`;
+                            });
+                            $('#hallFloorlist').html(html);
+                        }
+                        else {
+                            $("#IsHasFloor").addClass('d-none');
+                        }
+                    }
+                    else {
+                        $("#IsHasFloor").addClass('d-none');
+                        $('#hallFloorlist').html('<option value="0">-- Select Floor --</option>');
+                        notify(false, response.errorMessages, false);
+                    }
+
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                },
+                error: function (xhr, status, error) {
+                    $("#IsHasFloor").addClass('d-none');
+                    $('#hallFloorlist').html('<option value="0">-- Select Floor --</option>');
+                    handleAjaxError(xhr, status, error);
+                }
+            });
+        });
 
         $(document).on('submit', '#addHallAvailabilityForm', function (e) {
             e.preventDefault();
@@ -595,6 +646,20 @@
             }
             else {
                 $("#hallSubCategorylist").removeClass("is-invalid");
+            }
+
+            var IsHasFloor = $("#IsHasFloor").hasClass('d-none');
+            var FloorId = 0;
+            if (!IsHasFloor) {
+                FloorId = $("#hallFloorlist option:selected").val();
+                if (FloorId == 0) {
+                    notify(false, "Please Select Floor.", false);
+                    $("#hallFloorlist").addClass("is-invalid");
+                    return;
+                }
+                else {
+                    $("#hallFloorlist").removeClass("is-invalid");
+                }
             }
 
             const AvailableFrom = $('#availableFrom').val();
@@ -637,6 +702,7 @@
             formData.append("AvailableTo", AvailableTo);
             formData.append("ProposedRate", ProposedRate);
             formData.append("SecurityMoney", SecurityMoney);
+            formData.append("FloorId", FloorId);
 
 
             $.ajax({
@@ -654,9 +720,10 @@
                     $(".loader").css("display", "none");
                     if (response.isSuccess) {
                         notify(true, response.result, true);
+                        $('#addHallAvailabilityForm').trigger("reset");
                         getHallAvailability();
                     } else {
-                        notify(false, response.errorMessages, false);
+                        notify(false, response.errorMessages, true);
                     }
 
                 }

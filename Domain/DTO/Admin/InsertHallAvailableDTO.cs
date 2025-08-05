@@ -8,6 +8,7 @@
         public string AvailableTo { get; set; }
         public long ProposedRate { get; set; }
         public long SecurityMoney { get; set; }
+        public long FloorId { get; set; }
         public UserClaims userClaims { get; set; } = new UserClaims();
     }
 }

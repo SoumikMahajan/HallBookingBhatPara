@@ -702,7 +702,7 @@ table.dataTable {
     position: relative;
 }
 
-    .form-floating .form-select,
+    
     .form-floating .form-control {
         border: 2px solid #e2e8f0;
         border-radius: 12px;
@@ -712,7 +712,7 @@ table.dataTable {
         background: #f8fafc;
     }
 
-        .form-floating .form-select:focus,
+        
         .form-floating .form-control:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
@@ -979,3 +979,17 @@ table.dataTable {
         font-size: 2rem;
     }
 }
+
+
+#hallType {    
+    border-radius: 12px;
+    padding: 1rem 0.75rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#hallType:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+        background: white;
+    }

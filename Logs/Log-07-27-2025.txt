@@ -1,0 +1,12 @@
+
+Log Entry For Web Sln: 27 July 2025 11:29:37 AM
+  :[LoggedInUser]: 0
+  :[Error]: A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: SQL Network Interfaces, error: 26 - Error Locating Server/Instance Specified)
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 27 July 2025 10:56:21 PM
+  :[LoggedInUser]: 0
+  :[Error]: Procedure or function Bhatpara_HallBooking_Users has too many arguments specified.
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+---------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 const currentlocation = window.location.href;
 const _QueryParameter = window.location.pathname.split('/');
 const actionName = _QueryParameter[2] || '';
+const currentPath = window.location.pathname.toLowerCase();
 
 
 const styles = [
@@ -21,7 +22,13 @@ console.log('%c Thank you for using Bhatpara Municipality Hall Booking.', styles
 console.log('%c This console is used by developers for development purpose, please avoid writing codes here to avoid malfunction of Website.', styles);
 
 $(function () {
-    
+    $('.navbar-nav .nav-link').each(function () {
+        const linkPath = $(this).attr('href').toLowerCase();
+        if (currentPath === linkPath || currentPath.startsWith(linkPath)) {
+            $('.navbar-nav .nav-link').removeClass('active');
+            $(this).addClass('active');
+        }
+    });
 });
 
 

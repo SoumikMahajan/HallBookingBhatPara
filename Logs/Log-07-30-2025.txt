@@ -1,0 +1,186 @@
+
+Log Entry For Web Sln: 30 July 2025 12:13:23 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:24 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:24 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:25 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:26 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:26 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:27 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:27 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:27 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:27 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:27 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:28 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:28 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:29 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:29 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:29 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:29 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:29 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:30 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:13:30 AM
+  :[LoggedInUser]: 1
+  :[Error]: Attempt by method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()' to access method 'AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList+<ExecuteAsync>d__11..ctor()' failed.
+  :[StackTrace]:    at AspNetCoreGeneratedDocument.Views_Admin_SubCategoryList#1.ExecuteAsync()
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:39:48 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:46:40 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:49:11 AM
+  :[LoggedInUser]: 0
+  :[Error]: A connection was successfully established with the server, but then an error occurred during the login process. (provider: SSL Provider, error: 0 - The certificate chain was issued by an authority that is not trusted.)
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:49:38 AM
+  :[LoggedInUser]: 0
+  :[Error]: A connection was successfully established with the server, but then an error occurred during the login process. (provider: SSL Provider, error: 0 - The certificate chain was issued by an authority that is not trusted.)
+  :[StackTrace]:    at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:50:12 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:53:39 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 12:57:12 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 01:08:46 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 01:09:27 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 01:14:06 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------
+
+Log Entry For Web Sln: 30 July 2025 01:17:18 AM
+  :[LoggedInUser]: 0
+  :[Error]: Value cannot be null. (Parameter 'value')
+  :[StackTrace]:    at System.ArgumentNullException.Throw(String paramName)
+---------------------------------------------------------------------------------------------

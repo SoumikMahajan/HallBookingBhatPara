@@ -12,6 +12,7 @@ namespace HallBookingBhatPara.Application.Interface
         ICategoryMasterRepository CategoryMasterRepository { get; }
         ISubCategoryMasterRepository SubCategoryMasterRepository { get; }
         IHallAvailMasterRepository HallAvailMasterRepository { get; }
+        IHallFloorMasterRepository HallFloorMasterRepository { get; }
         #endregion
         Task SaveAsync();
         Task BeginTransactionAsync();

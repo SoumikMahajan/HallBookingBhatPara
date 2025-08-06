@@ -288,16 +288,21 @@ namespace HallBookingBhatPara.Controllers
                              .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
                              .ToList();
 
-            var SubcategoryList = (await _unitOfWork.SubCategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
-                       .Select(c => new DropDownListDTO { Id = c.hall_id_pk, Name = c.hall_name }).ToList();
+
 
             var HallAvailById = await _unitOfWork.SPRepository.GetHallAvailableDetailsByIdAsync(hallId);
+
+            var SubcategoryList = (await _unitOfWork.SubCategoryMasterRepository.GetAllAsync(c => c.active_status == 1 && c.category_id_fk == HallAvailById.category_id_pk))
+                       .Select(c => new DropDownListDTO { Id = c.hall_id_pk, Name = c.hall_name }).ToList();
+
+            var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(HallAvailById.hall_id_pk);
 
             MultipleModel mm = new()
             {
                 dropDownListDTOs = dropDownList,
                 SubCategoryList = SubcategoryList,
-                hallAvailable = HallAvailById
+                hallAvailable = HallAvailById,
+                FloorList = FloorList
             };
 
             return PartialView("_partialEditHallAvail", mm);
@@ -317,9 +322,17 @@ namespace HallBookingBhatPara.Controllers
                 return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
             }
 
-            var response = await _unitOfWork.HallAvailMasterRepository.UpdateAsync(model);
+            //var IsHallAvail = await _unitOfWork.SPRepository.CheckDatesOfHallAvailInUpdateAsync(model);
+            //if (IsHallAvail > 0)
+            //{
+            //    return Json(ResponseService.BadRequestResponse<string>("This Hall is already booked for the selected date."));
+            //}
 
-            if (!response)
+            model.userClaims = _tokenProvider.GetUserClaims();
+
+            var response = await _unitOfWork.SPRepository.UpdateHallAvailableAsync(model);
+
+            if (response <= 0)
             {
                 return Json(ResponseService.InternalServerResponse<string>("Update Failed."));
             }

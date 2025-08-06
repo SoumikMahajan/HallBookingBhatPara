@@ -748,11 +748,14 @@
                         const hallavail = response.result;
                         let html = '';
                         hallavail.forEach((item, index) => {
+
+                            const floorDisplay = (item.floor_id_fk !== 0) ? `(${item.floor_name})` : '';
+
                             html += `
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${item.category_name}</td>
-                                    <td>${item.hall_name}</td>
+                                    <td>${item.hall_name}${floorDisplay}</td>
                                     <td>${item.hall_availability_from_date.split('T')[0]}</td>
                                     <td>${item.hall_availability_to_date.split('T')[0]}</td>
                                     <td>${item.rate}</td>
@@ -906,16 +909,33 @@
             }
 
             const SecurityMoney = $('#UpSecurityMoney').val().trim();
+
+            var IsHasFloor = $("#IsHasFloorForUpdate").hasClass('d-none');
+            var FloorId = 0;
+            if (!IsHasFloor) {
+                FloorId = $("#UphallFloorlist option:selected").val();
+                if (FloorId == 0) {
+                    notify(false, "Please Select Floor.", false);
+                    $("#UphallFloorlist").addClass("is-invalid");
+                    return;
+                }
+                else {
+                    $("#UphallFloorlist").removeClass("is-invalid");
+                }
+            }            
+
+
             let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
 
             const formData = new FormData();
-            formData.append("HallId", HallId);
+            formData.append("HallAvailId", HallId);
             formData.append("CategoryId", categoryid);
             formData.append("SubcategoryId", SubcategoryId);
             formData.append("AvailableFrom", AvailableFrom);
             formData.append("AvailableTo", AvailableTo);
             formData.append("ProposedRate", ProposedRate);
             formData.append("SecurityMoney", SecurityMoney);
+            formData.append("FloorId", FloorId);
 
 
             $.ajax({

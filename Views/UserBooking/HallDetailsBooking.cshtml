@@ -1,0 +1,279 @@
+﻿<!-- Header Section -->
+<section class="booking-header">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="booking-title">
+                    <i class="fas fa-calendar-plus"></i> Book Your Hall
+                </h1>
+                <p class="booking-subtitle">Complete your booking for the perfect venue</p>
+
+                @* <nav class="breadcrumb-nav">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item">
+                            <a href="#"><i class="fas fa-home"></i> Home</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="#"><i class="fas fa-search"></i> Search Halls</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <i class="fas fa-calendar-plus"></i> Book Hall
+                        </li>
+                    </ol>
+                </nav> *@
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Hall Information Card -->
+    <div class="hall-info-card">
+        <div class="hall-summary">
+            <div class="hall-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="hall-details">
+                <h3>Royal Marriage Palace</h3>
+                <div class="hall-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt text-danger"></i>
+                        <span>Bhatpara</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users text-primary"></i>
+                        <span>500 Guests</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag text-success"></i>
+                        <span>Marriage Hall</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-rupee-sign text-warning"></i>
+                        <span>₹25,000/day</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="booking-form-container">
+        <form id="bookingForm">
+            <!-- Personal Information -->
+            <div class="form-section">
+                <h4 class="section-title">
+                    <i class="fas fa-user"></i> Personal Information
+                </h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="fullName" required>
+                        <div class="invalid-feedback">Please enter your full name.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                        <input type="email" class="form-control" id="email" required>
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
+                        <input type="tel" class="form-control" id="phone" required>
+                        <div class="invalid-feedback">Please enter your phone number.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="alternatePhone" class="form-label">Alternate Phone</label>
+                        <input type="tel" class="form-control" id="alternatePhone">
+                    </div>
+                    <div class="col-12">
+                        <label for="address" class="form-label">Full Address <span class="required">*</span></label>
+                        <textarea class="form-control" id="address" rows="3" required></textarea>
+                        <div class="invalid-feedback">Please enter your full address.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Details -->
+            <div class="form-section">
+                <h4 class="section-title">
+                    <i class="fas fa-calendar-alt"></i> Event Details
+                </h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="eventName" class="form-label">Event Name <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="eventName" placeholder="e.g., Wedding Reception" required>
+                        <div class="invalid-feedback">Please enter the event name.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="eventType" class="form-label">Event Type <span class="required">*</span></label>
+                        <select class="form-select" id="eventType" required>
+                            <option value="">Select Event Type</option>
+                            <option value="wedding">Wedding</option>
+                            <option value="reception">Reception</option>
+                            <option value="birthday">Birthday Party</option>
+                            <option value="anniversary">Anniversary</option>
+                            <option value="conference">Conference</option>
+                            <option value="seminar">Seminar</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="invalid-feedback">Please select an event type.</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
+                        <input type="date" class="form-control" id="eventDate" required>
+                        <div class="invalid-feedback">Please select event date.</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="startTime" class="form-label">Start Time <span class="required">*</span></label>
+                        <input type="time" class="form-control" id="startTime" required>
+                        <div class="invalid-feedback">Please select start time.</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="endTime" class="form-label">End Time <span class="required">*</span></label>
+                        <input type="time" class="form-control" id="endTime" required>
+                        <div class="invalid-feedback">Please select end time.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="guestCount" class="form-label">Expected Guests <span class="required">*</span></label>
+                        <input type="number" class="form-control" id="guestCount" min="1" max="500" required>
+                        <div class="invalid-feedback">Please enter expected number of guests (1-500).</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="duration" class="form-label">Duration (Hours)</label>
+                        <input type="number" class="form-control" id="duration" min="1" value="8" readonly>
+                    </div>
+                    <div class="col-12">
+                        <label for="eventDescription" class="form-label">Event Description</label>
+                        <textarea class="form-control" id="eventDescription" rows="3" placeholder="Brief description of your event..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Event Timeline -->
+                <div class="event-timeline">
+                    <h6><i class="fas fa-clock"></i> Event Timeline</h6>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div>
+                            <strong>Hall Access:</strong> 2 hours before event start
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div>
+                            <strong>Event Duration:</strong> As per selected time
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-broom"></i>
+                        </div>
+                        <div>
+                            <strong>Cleanup Time:</strong> 1 hour after event end
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Services -->
+            <div class="form-section">
+                <h4 class="section-title">
+                    <i class="fas fa-plus-circle"></i> Additional Services
+                </h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="catering" value="5000">
+                            <label class="form-check-label" for="catering">
+                                <strong>Catering Service</strong> - ₹5,000
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="decoration" value="3000">
+                            <label class="form-check-label" for="decoration">
+                                <strong>Event Decoration</strong> - ₹3,000
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="security" value="2000">
+                            <label class="form-check-label" for="security">
+                                <strong>Security Service</strong> - ₹2,000
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="photography" value="8000">
+                            <label class="form-check-label" for="photography">
+                                <strong>Photography Package</strong> - ₹8,000
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Summary -->
+            <div class="form-section">
+                <h4 class="section-title">
+                    <i class="fas fa-calculator"></i> Price Summary
+                </h4>
+                <div class="price-summary">
+                    <div class="price-item">
+                        <span>Hall Rental (1 day)</span>
+                        <span>₹25,000</span>
+                    </div>
+                    <div class="price-item" id="additionalServices" style="display: none;">
+                        <span>Additional Services</span>
+                        <span id="servicesTotal">₹0</span>
+                    </div>
+                    <div class="price-item">
+                        <span>Security Deposit</span>
+                        <span>₹5,000</span>
+                    </div>
+                    <div class="total-price">
+                        <span>Total Amount</span>
+                        <span id="totalAmount">₹30,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="terms-section">
+                <h6><i class="fas fa-file-contract"></i> Terms & Conditions</h6>
+                <ul class="terms-list">
+                    <li>50% advance payment required to confirm booking</li>
+                    <li>Remaining amount to be paid 24 hours before event</li>
+                    <li>Security deposit is refundable after event completion</li>
+                    <li>Cancellation must be made 72 hours in advance</li>
+                    <li>Any damage to property will be charged separately</li>
+                </ul>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                    <label class="form-check-label" for="agreeTerms">
+                        I agree to all terms and conditions <span class="required">*</span>
+                    </label>
+                    <div class="invalid-feedback">You must agree to the terms and conditions.</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="button" class="btn-secondary-custom">
+                    <i class="fas fa-arrow-left"></i> Back to Search
+                </button>
+                <button type="submit" class="btn-primary-custom">
+                    <i class="fas fa-credit-card"></i> Proceed to Payment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

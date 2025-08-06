@@ -25,5 +25,10 @@ namespace HallBookingBhatPara.Controllers
 
             return PartialView("_partialHallAvailableSearchResult", mm);
         }
+
+        public IActionResult HallDetailsBooking()
+        {
+            return View();
+        }
     }
 }

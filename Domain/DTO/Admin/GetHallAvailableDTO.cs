@@ -15,5 +15,6 @@ namespace HallBookingBhatPara.Domain.DTO.Admin
         public Double rate { get; set; }
         public Double security_money { get; set; }
         public short active_status { get; set; }
+        public long floor_id_fk { get; set; }
     }
 }

@@ -20,6 +20,8 @@ namespace HallBookingBhatPara.Application.Interface
         Task<GetHallAvailableDTO> GetHallAvailableDetailsByIdAsync(long hallAvailabilityId);
         Task<List<DropDownListDTO>> GetFloorListBySubCatIdAsync(long subCategoryId);
         Task<int> CheckDatesOfHallAvailAsync(InsertHallAvailableDTO model);
+        Task<long> UpdateHallAvailableAsync(UpdateHallAvailableDTO model);
+        Task<int> CheckDatesOfHallAvailInUpdateAsync(UpdateHallAvailableDTO model);
 
         #endregion
     }

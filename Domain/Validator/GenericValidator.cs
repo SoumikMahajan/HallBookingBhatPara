@@ -96,7 +96,7 @@ namespace HallBookingBhatPara.Model.Validator
     {
         public UpdateHallAvailableValidator()
         {
-            RuleFor(x => x.HallId)
+            RuleFor(x => x.HallAvailId)
                 .NotNull().WithMessage("Id is required.")
                 .GreaterThan(0).WithMessage("Id must be greater than 0.");
 

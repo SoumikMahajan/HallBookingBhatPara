@@ -993,3 +993,297 @@ table.dataTable {
         box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
         background: white;
     }
+
+
+
+/* Header Section */
+.booking-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+    .booking-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+        opacity: 0.3;
+    }
+
+.booking-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.booking-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Hall Info Card */
+.hall-info-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin: -60px 0 2rem 0;
+    position: relative;
+    z-index: 2;
+    border-left: 5px solid var(--accent-color);
+}
+
+.hall-summary {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.hall-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--accent-color), #f59e0b);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+}
+
+.hall-details h3 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.hall-meta {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    color: #64748b;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Booking Form */
+.booking-form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+}
+
+.form-control, .form-select {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+        background: white;
+    }
+.form-label {
+    font-weight: 500;
+    color: var(--dark-text);
+    margin-bottom: 0.5rem;
+}
+
+.required {
+    color: #dc3545;
+}
+
+/* Event Timeline */
+.event-timeline {
+    background: #f8fafc;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.timeline-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+}
+
+/* Price Summary */
+.price-summary {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-radius: 15px;
+    padding: 2rem;
+    border-left: 5px solid var(--success-color);
+}
+
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.total-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+    padding-top: 1rem;
+    border-top: 2px solid var(--success-color);
+}
+
+/* Terms and Conditions */
+.terms-section {
+    background: #fef7cd;
+    border-radius: 15px;
+    padding: 1.5rem;
+    border-left: 5px solid var(--accent-color);
+    margin-top: 2rem;
+}
+
+.terms-list {
+    list-style: none;
+    margin-bottom: 0;
+}
+
+    .terms-list li {
+        padding: 0.3rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+        .terms-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    flex: 1;
+    min-width: 200px;
+}
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+.btn-secondary-custom {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 200px;
+}
+
+    .btn-secondary-custom:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #4b5563, #374151);
+    }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .booking-title {
+        font-size: 2rem;
+    }
+
+    .hall-summary {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hall-meta {
+        justify-content: center;
+    }
+
+    .booking-form-container {
+        padding: 1.5rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .btn-primary-custom, .btn-secondary-custom {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-header {
+        padding: 1.5rem 0;
+    }
+
+    .booking-title {
+        font-size: 1.8rem;
+    }
+
+    .hall-info-card {
+        margin: -40px 1rem 2rem 1rem;
+        padding: 1.5rem;
+    }
+
+    .booking-form-container {
+        margin: 0 1rem 2rem 1rem;
+        padding: 1rem;
+    }
+}

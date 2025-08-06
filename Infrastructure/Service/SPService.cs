@@ -213,6 +213,53 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             }
         }
 
+        public async Task<long> UpdateHallAvailableAsync(UpdateHallAvailableDTO model)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@HallAvailabilityIdPk", model.HallAvailId, DbType.Int64);
+                parameters.Add("@HallCategoryId", model.CategoryId, DbType.Int64);
+                parameters.Add("@HallId", model.SubcategoryId, DbType.Int64);
+                parameters.Add("@AvalFromDate", model.AvailableFrom, DbType.Date);
+                parameters.Add("@AvalToDate", model.AvailableTo, DbType.Date);
+                parameters.Add("@Rate", model.ProposedRate, DbType.Decimal);
+                parameters.Add("@SecurityMoney", model.SecurityMoney, DbType.Decimal);
+                parameters.Add("@GlobalUserId", model.userClaims.StackHolderId, DbType.Int64);
+                parameters.Add("@RoleId", model.userClaims.RolesId, DbType.Int64);
+                parameters.Add("@FloorId", model.FloorId, DbType.Int64);
+
+                parameters.Add("@OperationId", 6, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<long>(
+                    "adminHallAvailabilitySp",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+
+        public async Task<int> CheckDatesOfHallAvailInUpdateAsync(UpdateHallAvailableDTO model)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@HallAvailabilityIdPk", model.HallAvailId, DbType.Int64);
+                parameters.Add("@HallCategoryId", model.CategoryId, DbType.Int64);
+                parameters.Add("@HallId", model.SubcategoryId, DbType.Int64);
+                parameters.Add("@AvalFromDate", model.AvailableFrom, DbType.Date);
+                parameters.Add("@AvalToDate", model.AvailableTo, DbType.Date);
+                parameters.Add("@FloorId", model.FloorId, DbType.Int64);
+                parameters.Add("@OperationId", 7, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<int>(
+                    "adminHallAvailabilitySp",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+
         #endregion
     }
 }

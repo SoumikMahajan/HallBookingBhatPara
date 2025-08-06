@@ -16,7 +16,7 @@ namespace HallBookingBhatPara.Infrastructure.Service.User
 
         public async Task<bool> UpdateAsync(UpdateHallAvailableDTO model)
         {
-            var HallAvail = await _db.hall_availability_details.FindAsync(model.HallId);
+            var HallAvail = await _db.hall_availability_details.FindAsync(model.HallAvailId);
             if (HallAvail == null)
                 return false;
 

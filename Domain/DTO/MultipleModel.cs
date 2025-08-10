@@ -1,4 +1,5 @@
 ﻿using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.HallBooking;
 using HallBookingBhatPara.Domain.Entities;
 
 namespace HallBookingBhatPara.Domain.DTO
@@ -15,6 +16,7 @@ namespace HallBookingBhatPara.Domain.DTO
         public GetHallAvailableDTO hallAvailable { get; set; }
         public List<DropDownListDTO> SubCategoryList { get; set; }
         public List<DropDownListDTO> FloorList { get; set; }
+        public List<HallSearchDTO> hallSearchList { get; set; }
         #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.HallBooking;
 using HallBookingBhatPara.Domain.DTO.User;
 
 namespace HallBookingBhatPara.Application.Interface
@@ -22,6 +23,9 @@ namespace HallBookingBhatPara.Application.Interface
         Task<int> CheckDatesOfHallAvailAsync(InsertHallAvailableDTO model);
         Task<long> UpdateHallAvailableAsync(UpdateHallAvailableDTO model);
         Task<int> CheckDatesOfHallAvailInUpdateAsync(UpdateHallAvailableDTO model);
+        Task<string> UpdateProfileImagePathAsync(long userId, string imagePath);
+
+        Task<List<HallSearchDTO>> HallAvailableSearchResultAsync(long hallType, string startDate, string endDate);
 
         #endregion
     }

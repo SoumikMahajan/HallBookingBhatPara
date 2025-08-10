@@ -1,9 +1,12 @@
 ﻿using HallBookingBhatPara.Application.Interface;
 using HallBookingBhatPara.Domain.DTO;
+using HallBookingBhatPara.Domain.DTO.HallBooking;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HallBookingBhatPara.Controllers
 {
+    [Authorize(Roles = "Public User,Dev")]
     public class UserBookingController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -14,6 +17,7 @@ namespace HallBookingBhatPara.Controllers
             _unitOfWork = unitOfWork;
             _tokenProvider = tokenProvider;
         }
+
         public IActionResult UserHallBooking()
         {
             return View();
@@ -22,6 +26,11 @@ namespace HallBookingBhatPara.Controllers
         public async Task<IActionResult> HallAvailableSearchResult(long hallType, string startDate, string endDate)
         {
             MultipleModel mm = new();
+            List<HallSearchDTO> hallSearchList = new();
+
+            var response = await _unitOfWork.SPRepository.HallAvailableSearchResultAsync(hallType, startDate, endDate);
+
+            mm.hallSearchList = response ?? new List<HallSearchDTO>();
 
             return PartialView("_partialHallAvailableSearchResult", mm);
         }

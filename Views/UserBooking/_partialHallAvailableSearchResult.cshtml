@@ -6,7 +6,65 @@
 </div>
 
 <div id="resultsContainer" class="results-grid">
-    <div class="hall-card">
+
+    @if (Model.hallSearchList.Count > 0)
+    {
+        foreach (var item in Model.hallSearchList)
+        {
+            <div class="hall-card">
+                <div class="hall-card-header">
+                    <h4 class="hall-title">@item.category_name</h4>
+                    <span class="hall-type">@item.hall_name</span>
+                </div>
+                <div class="hall-card-body">
+                    <div class="hall-info">
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <span>City: Bhatpara</span>
+                        </div>
+                        @* <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-users"></i></div>
+                            <span>Capacity: 500 Guest</span>
+                        </div> *@
+                        @* <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-star"></i></div>
+                            <span>Amenities: Air Condition,Parking</span>
+                        </div> *@
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-users"></i></div>
+                            <span>Floor Type: @item.floor_name</span>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-users"></i></div>
+                            <span>Security Monry: @item.security_money</span>
+                        </div>
+                    </div>
+
+                    <div class="price-section">
+                        <div>
+                            <div class="price">₹@item.rate</div>
+                            <div class="price-label">per day</div>
+                        </div>
+                        <a asp-action="HallDetailsBooking" asp-controller="UserBooking" class="btn btn-primary book-btn">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>No Halls Found</h3>
+                <p>Sorry, no halls are available for your selected criteria. Please try different dates or hall type.</p>
+            </div>
+        </div>
+    }
+
+    @* <div class="hall-card">
         <div class="hall-card-header">
             <h4 class="hall-title"></h4>
             <span class="hall-type"></span>
@@ -101,7 +159,7 @@
                 </button>
             </div>
         </div>
-    </div>
+    </div> *@
 </div>
 
 

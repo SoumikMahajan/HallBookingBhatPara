@@ -2,7 +2,16 @@
     ViewData["Title"] = "Hall Booking";
 }
 
+@model HallBookingBhatPara.Domain.DTO.MultipleModel
 
+@{
+    var allowedDates = Model.hallBookingDTO.hallAvailableDateDTOs
+        ?.Where(d => !string.IsNullOrEmpty(d.available_date))
+        .Select(d => DateTime.Parse(d.available_date).ToString("yyyy-MM-dd"))
+        .ToList() ?? new List<string>();
+
+    var allowedDatesJson = System.Text.Json.JsonSerializer.Serialize(allowedDates);
+}
 
 <!-- Header Section -->
 <section class="booking-header">
@@ -42,23 +51,24 @@
                 <i class="fas fa-building"></i>
             </div>
             <div class="hall-details">
-                <h3>Royal Marriage Palace</h3>
+                <input type="hidden" id="allowedDatesHidden" value='@allowedDatesJson' />
+                <h3>@Model.hallBookingDTO.category_name</h3>
                 <div class="hall-meta">
                     <div class="meta-item">
                         <i class="fas fa-map-marker-alt text-danger"></i>
                         <span>Bhatpara</span>
                     </div>
-                    <div class="meta-item">
+                    @* <div class="meta-item">
                         <i class="fas fa-users text-primary"></i>
                         <span>500 Guests</span>
-                    </div>
+                    </div> *@
                     <div class="meta-item">
                         <i class="fas fa-tag text-success"></i>
-                        <span>Marriage Hall</span>
+                        <span>@Model.hallBookingDTO.hall_name</span>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-rupee-sign text-warning"></i>
-                        <span>₹25,000/day</span>
+                        <span>₹@Model.hallBookingDTO.rate/day</span>
                     </div>
                 </div>
             </div>
@@ -128,7 +138,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
-                        <input type="date" class="form-control" id="eventDate" required>
+                        <input type="text" class="form-control" id="eventDate">
                         <div class="invalid-feedback">Please select event date.</div>
                     </div>
                     <div class="col-md-4">

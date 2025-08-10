@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "User Search";
 }
+@model HallBookingBhatPara.Domain.DTO.MultipleModel
 
 <!-- Search Hero Section -->
 <section class="search-hero">
@@ -24,11 +25,11 @@
                             <div class="col-md-4">
                                 <div class="form-floating">
                                     <select id="hallType" class="form-select">
-                                        <option value="0">Choose Hall Type</option>
-                                        <option value="1">Marriage Hall</option>
-                                        <option value="2">Auditorium</option>
-                                        <option value="3">Seminar Hall</option>
-                                        <option value="4">Community Center</option>
+                                        <option value="0" selected>Select HallType</option>
+                                        @foreach (var item in Model.dropDownListDTOs)
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
                                     </select>
                                     @* <label for="hallType"><i class="fas fa-building"></i> Hall Type</label> *@
                                 </div>
@@ -64,14 +65,8 @@
 </section>
 
 <!-- Results Section -->
-<section class="results-section">
-    <div class="container" id="partailSearchResult">
-        @* <div class="section-header" id="resultsHeader" style="display: none;">
-            <h3><i class="fas fa-list"></i> Available Halls</h3>
-            <p>Choose from our selection of premium venues for your event</p>
-        </div>        
+<div id="partailSearchResult">
 
-        <div id="resultsContainer" class="results-grid"></div> *@
-    </div>
-</section>
+</div>
+
 

@@ -296,6 +296,46 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             }
         }
 
+        public async Task<HallBookingDTO> GetHallDetailsAfterSearchAsync(long hallAvlId)
+        {
+            //using (var connection = new SqlConnection(_connectionString))
+            //{
+            //    var parameters = new DynamicParameters();
+            //    parameters.Add("@HallAvlId", hallAvlId, DbType.Int64);
+            //    parameters.Add("@OperationId", 5, DbType.Int32);
+            //    var result = await connection.QueryFirstOrDefaultAsync<HallBookingDTO>(
+            //        "Bhatpara_HallBooking_Users",
+            //        parameters,
+            //        commandType: CommandType.StoredProcedure
+            //    );
+            //    return result;
+            //}
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@HallAvlId", hallAvlId, DbType.Int64);
+                parameters.Add("@OperationId", 5, DbType.Int32);
+
+                using (var multi = await connection.QueryMultipleAsync(
+                    "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure))
+                {
+                    // First result set — single booking
+                    var booking = await multi.ReadFirstOrDefaultAsync<HallBookingDTO>();
+
+                    if (booking == null)
+                        return null;
+
+                    // Second result set — dates for that booking
+                    booking.hallAvailableDateDTOs = (await multi.ReadAsync<HallAvailableDateDTO>()).ToList();
+
+                    return booking;
+                }
+            }
+        }
+
         #endregion
     }
 }

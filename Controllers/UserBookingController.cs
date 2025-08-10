@@ -18,9 +18,15 @@ namespace HallBookingBhatPara.Controllers
             _tokenProvider = tokenProvider;
         }
 
-        public IActionResult UserHallBooking()
+        public async Task<IActionResult> UserHallBooking()
         {
-            return View();
+            MultipleModel mm = new();
+            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+                             .ToList();
+
+            mm.dropDownListDTOs = dropDownList;
+            return View(mm);
         }
 
         public async Task<IActionResult> HallAvailableSearchResult(long hallType, string startDate, string endDate)
@@ -35,9 +41,14 @@ namespace HallBookingBhatPara.Controllers
             return PartialView("_partialHallAvailableSearchResult", mm);
         }
 
-        public IActionResult HallDetailsBooking()
+        public async Task<IActionResult> HallDetailsBooking(long hallAvlId)
         {
-            return View();
+            MultipleModel mm = new();
+            var hallDetails = await _unitOfWork.SPRepository.GetHallDetailsAfterSearchAsync(hallAvlId);
+
+            mm.hallBookingDTO = hallDetails;
+
+            return View(mm);
         }
     }
 }

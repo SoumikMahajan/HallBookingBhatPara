@@ -1315,3 +1315,52 @@ input.form-control, select.form-select, textarea.form-control {
         padding: 1rem;
     }
 }
+
+/* Airbnb base + Material Orange header merge */
+
+/* Header container */
+.flatpickr-months {
+    background-color: #f57c00 !important; /* Material Orange color */
+    color: white !important;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Month & Year text */
+.flatpickr-current-month,
+.flatpickr-current-month input.cur-year {
+    color: white !important;
+}
+
+/* Arrows */
+.flatpickr-prev-month svg,
+.flatpickr-next-month svg {
+    fill: white !important;
+}
+
+/* Dropdown month/year select menu background */
+.flatpickr-monthDropdown-months,
+.flatpickr-monthDropdown-months .flatpickr-monthDropdown-month,
+.numInputWrapper {
+    background-color: #f57c00 !important;
+    color: white !important;
+}
+
+    /* Dropdown items (month list when opened) */
+    .flatpickr-monthDropdown-months option {
+        background-color: #f57c00 !important;
+        color: white !important;
+    }
+
+        /* Hover/selected state in dropdown */
+        .flatpickr-monthDropdown-months option:hover,
+        .flatpickr-monthDropdown-months option:checked {
+            background-color: #ef6c00 !important; /* Slightly darker orange */
+        }
+
+/* Selected date circle in calendar */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    background: #f57c00 !important;
+    color: white !important;
+}

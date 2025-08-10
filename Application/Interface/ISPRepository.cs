@@ -26,6 +26,7 @@ namespace HallBookingBhatPara.Application.Interface
         Task<string> UpdateProfileImagePathAsync(long userId, string imagePath);
 
         Task<List<HallSearchDTO>> HallAvailableSearchResultAsync(long hallType, string startDate, string endDate);
+        Task<HallBookingDTO> GetHallDetailsAfterSearchAsync(long hallAvlId);
 
         #endregion
     }

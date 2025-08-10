@@ -235,4 +235,25 @@
         
     }
     // #endregion :: Dashboard
+
+    if (_ActionName === "halldetailsbooking") {
+        
+        var allowedDatesStr = $("#allowedDatesHidden").val();
+
+        var allowedDates = [];
+        try {
+            allowedDates = JSON.parse(allowedDatesStr);
+        } catch (e) {
+            console.error("Error parsing allowed dates:", e);
+        }
+
+        if (allowedDates.length > 0) {
+            flatpickr("#eventDate", {
+                dateFormat: "Y-m-d",
+                enable: allowedDates,
+                minDate: allowedDates[0],
+                maxDate: allowedDates[allowedDates.length - 1]
+            });
+        }
+    }
 });

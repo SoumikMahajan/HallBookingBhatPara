@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HallBookingBhatPara.Controllers
 {
+    [Authorize(Roles = "Super Admin,Admin,Dev")]
     public class AdminController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -20,14 +21,12 @@ namespace HallBookingBhatPara.Controllers
             _tokenProvider = tokenProvider;
         }
 
-        #region :: Category
-        [Authorize]
+        #region :: Category        
         public IActionResult CategoryList()
         {
             return View();
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddCategory(string categoryName)
@@ -46,7 +45,6 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse<string>("Category Insert Successfully"));
 
         }
-        [Authorize]
         public async Task<IActionResult> GetAllCategoryList()
         {
             var categoryList = await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1);
@@ -57,7 +55,6 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse(categoryList));
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCategory(long categoryId, string categoryName)
@@ -77,8 +74,7 @@ namespace HallBookingBhatPara.Controllers
         }
         #endregion
 
-        #region :: SubCategory
-        [Authorize]
+        #region :: SubCategory       
         public async Task<IActionResult> SubCategoryList()
         {
             MultipleModel mm = new();
@@ -90,7 +86,6 @@ namespace HallBookingBhatPara.Controllers
             return View(mm);
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddSubCategory([FromForm] InsertSubCategoryDTO model)
@@ -120,7 +115,6 @@ namespace HallBookingBhatPara.Controllers
 
         }
 
-        [Authorize]
         public async Task<IActionResult> GetAllSubCategoryList()
         {
             var SubcategoryList = await _unitOfWork.SPRepository.GetALlSubcategorisAsync();
@@ -139,7 +133,6 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse(SubcategoryList));
         }
 
-        [Authorize]
         public async Task<IActionResult> GetSubCategoryById(long SubCategoryId)
         {
             var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
@@ -156,7 +149,6 @@ namespace HallBookingBhatPara.Controllers
 
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateSubCategory([FromForm] UpdateSubCategoryDTO model)
@@ -189,8 +181,7 @@ namespace HallBookingBhatPara.Controllers
 
         #endregion
 
-        #region :: Hall Availability
-        [Authorize]
+        #region :: Hall Availability        
         public async Task<IActionResult> AddHallAvailabilityDetails()
         {
             MultipleModel mm = new();
@@ -202,7 +193,6 @@ namespace HallBookingBhatPara.Controllers
             return View(mm);
         }
 
-        [Authorize]
         public async Task<IActionResult> GetSubCategoriesByCatId(long categoryId)
         {
             if (categoryId <= 0)
@@ -219,7 +209,6 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse(SubcategoryList));
         }
 
-        [Authorize]
         public async Task<IActionResult> GetFloorListBySubCatId(long SubCategoryid)
         {
             if (SubCategoryid <= 0)
@@ -236,7 +225,6 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse(FloorList));
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddHallAvailable([FromForm] InsertHallAvailableDTO model)
@@ -269,7 +257,6 @@ namespace HallBookingBhatPara.Controllers
 
         }
 
-        [Authorize]
         public async Task<IActionResult> GetAllHallAvailabilityList()
         {
             var HallAvailabilityList = await _unitOfWork.SPRepository.GetAllHallAvailableAsync();
@@ -281,7 +268,6 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse(HallAvailabilityList));
         }
 
-        [Authorize]
         public async Task<IActionResult> GetHallAvailById(long hallId)
         {
             var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
@@ -309,7 +295,6 @@ namespace HallBookingBhatPara.Controllers
 
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateHallAvailable([FromForm] UpdateHallAvailableDTO model)

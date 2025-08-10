@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Application\Utility\" />
     <Folder Include="Utility\" />
+    <Folder Include="wwwroot\Assets\ProfilePic\" />
   </ItemGroup>
 
   <ItemGroup>

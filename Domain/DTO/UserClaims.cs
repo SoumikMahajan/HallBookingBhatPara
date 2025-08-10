@@ -8,5 +8,6 @@
         public string Roles { get; set; } = string.Empty;
         public string RolesId { get; set; } = string.Empty;
         public string StackHolderId { get; set; } = string.Empty;
+        public string ProfileImagePath { get; set; } = string.Empty;
     }
 }

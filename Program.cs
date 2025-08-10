@@ -1,4 +1,4 @@
-using HallBookingBhatPara.Application.Interface;
+﻿using HallBookingBhatPara.Application.Interface;
 using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Extension;
 using HallBookingBhatPara.Infrastructure.Data;
@@ -103,6 +103,12 @@ builder.Services.AddAuthentication(options =>
 
             // For regular requests, redirect to login
             context.Response.Redirect("/User/Login");
+            return Task.CompletedTask;
+        },
+        OnForbidden = context =>
+        {
+            // User is logged in but doesn't have permission → redirect to Home/Index
+            context.Response.Redirect("/Home/Index");
             return Task.CompletedTask;
         }
     };

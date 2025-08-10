@@ -2,6 +2,7 @@
 using HallBookingBhatPara.Application.Interface;
 using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.HallBooking;
 using HallBookingBhatPara.Domain.DTO.User;
 using HallBookingBhatPara.Domain.Utility;
 using Microsoft.Data.SqlClient;
@@ -257,6 +258,41 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                     commandType: CommandType.StoredProcedure
                 );
                 return result;
+            }
+        }
+
+        public async Task<string> UpdateProfileImagePathAsync(long userId, string imagePath)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@LoginId", userId, DbType.Int64);
+                parameters.Add("@ProfilePicPath", imagePath, DbType.String);
+                parameters.Add("@OperationId", 3, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<string>(
+                    "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+
+        public async Task<List<HallSearchDTO>> HallAvailableSearchResultAsync(long hallType, string startDate, string endDate)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@HallId", hallType, DbType.Int64);
+                parameters.Add("@AvalFromDate", startDate, DbType.Date);
+                parameters.Add("@AvalToDate", endDate, DbType.Date);
+                parameters.Add("@OperationId", 4, DbType.Int32);
+                var result = await connection.QueryAsync<HallSearchDTO>(
+                    "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result.ToList();
             }
         }
 

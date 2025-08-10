@@ -112,6 +112,28 @@ namespace HallBookingBhatPara.Controllers
                 return Json(ResponseService.InternalServerResponse<object>("Registration failed. Please try again."));
             }
 
+            if (model.ProfilePic != null && model.ProfilePic.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Assets", "ProfilePic");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                var fileExtension = Path.GetExtension(model.ProfilePic.FileName);
+                var fileName = $"{userId}{fileExtension}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                // Save file
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.ProfilePic.CopyToAsync(fileStream);
+                }
+
+                var imagePath = $"/Assets/ProfilePic/{fileName}";
+                await _unitOfWork.SPRepository.UpdateProfileImagePathAsync(userId, imagePath);
+            }
+
+
             return Json(ResponseService.SuccessResponse<object>("Registration successful!"));
 
         }

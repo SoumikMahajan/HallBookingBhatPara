@@ -141,11 +141,11 @@
                         <input type="time" class="form-control" id="endTime" required>
                         <div class="invalid-feedback">Please select end time.</div>
                     </div>
-                    <div class="col-md-6">
+                    @* <div class="col-md-6">
                         <label for="guestCount" class="form-label">Expected Guests <span class="required">*</span></label>
                         <input type="number" class="form-control" id="guestCount" min="1" max="500" required>
                         <div class="invalid-feedback">Please enter expected number of guests (1-500).</div>
-                    </div>
+                    </div> *@
                     <div class="col-md-6">
                         <label for="duration" class="form-label">Duration (Hours)</label>
                         <input type="number" class="form-control" id="duration" min="1" value="8" readonly>
@@ -187,7 +187,7 @@
             </div>
 
             <!-- Additional Services -->
-            <div class="form-section">
+            @* <div class="form-section">
                 <h4 class="section-title">
                     <i class="fas fa-plus-circle"></i> Additional Services
                 </h4>
@@ -225,7 +225,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> *@
 
             <!-- Price Summary -->
             <div class="form-section">
@@ -234,7 +234,7 @@
                 </h4>
                 <div class="price-summary">
                     <div class="price-item">
-                        <span>Hall Rental (1 day)</span>
+                        <span>Hall Rental</span>
                         <span>₹25,000</span>
                     </div>
                     <div class="price-item" id="additionalServices" style="display: none;">
@@ -256,11 +256,12 @@
             <div class="terms-section">
                 <h6><i class="fas fa-file-contract"></i> Terms & Conditions</h6>
                 <ul class="terms-list">
-                    <li>50% advance payment required to confirm booking</li>
-                    <li>Remaining amount to be paid 24 hours before event</li>
+                    <li>25% advance payment required to confirm booking</li>
+                    <li>Remaining 75% amount to be paid wintin 1 month before event</li>
                     <li>Security deposit is refundable after event completion</li>
-                    <li>Cancellation must be made 72 hours in advance</li>
+                    @* <li>Cancellation must be made 72 hours in advance</li> *@
                     <li>Any damage to property will be charged separately</li>
+                    <li>Check in 8AM check out next day 7AM</li>
                 </ul>
                 <div class="form-check mt-3">
                     <input class="form-check-input" type="checkbox" id="agreeTerms" required>

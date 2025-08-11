@@ -255,5 +255,274 @@
                 maxDate: allowedDates[allowedDates.length - 1]
             });
         }
+        
+        $('#phone, #alternatePhone').on('input', function () {
+            let value = $(this).val().replace(/\D/g, '');
+            if (value.length > 10) {
+                value = value.substring(0, 10);
+            }
+            $(this).val(value);
+        });
+
+        // Form validation and submission
+        $('#bookingForm').on('submit', function (e) {
+            e.preventDefault();
+
+            let isValid = true;
+            let errorMessages = [];
+            // Remove previous validation classes
+            $('.form-control, .form-select, .form-check-input').removeClass('is-invalid');
+
+            const hiddenCatId = $("#hiddenCatId").val();
+            const hiddenHallId = $("#hiddenHallId").val();
+            const hiddenHallAvailId = $("#HiddenHallAvailId").val();
+            if (hiddenCatId === '0' || hiddenHallId === '0' || hiddenHallAvailId === '0') {
+                return;
+            }            
+
+            const fullName = $("#fullName").val().trim();
+            if (fullName === '') {                
+                $('#fullName').addClass('is-invalid');
+                errorMessages.push('Please enter Full Name!');               
+                isValid = false;
+            }
+
+            // Email validation
+            const email = $('#email').val().trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === '' || !emailRegex.test(email)) {
+                $('#email').addClass('is-invalid');
+                errorMessages.push('Please enter a valid email address!');  
+                isValid = false;
+            }
+
+            // Phone number validation (10 digits)
+            const phone = $('#phone').val().trim().replace(/\D/g, '');
+            if (phone === '' || phone.length !== 10) {
+                $('#phone').addClass('is-invalid');
+                errorMessages.push('Phone number must be 10 digits!');  
+                isValid = false;
+            }
+
+            // Alternate phone number validation (10 digits)
+            const Alterphone = $('#alternatePhone').val().trim().replace(/\D/g, '');
+            if (Alterphone === '' || Alterphone.length !== 10) {
+                $('#alternatePhone').addClass('is-invalid');
+                errorMessages.push('Phone number must be 10 digits!');  
+                isValid = false;
+            }
+
+            //Event name
+            const eventName = $("#eventName").val().trim();
+            if (eventName === '') {
+                $('#eventName').addClass('is-invalid');
+                errorMessages.push('Please Enter Event Name!');
+                isValid = false;
+            }
+
+            //Event type
+            const eventType = $("#eventType option:selected").val()
+            if (eventType === '0' || eventType === '' || eventType === undefined) {
+                $('#eventType').addClass('is-invalid');
+                errorMessages.push('Please Select Event Type!');  
+                isValid = false;
+            }
+
+            //Event date
+            const eventDate = $("#eventDate").val()
+            if (eventDate === '') {
+                $('#eventDate').addClass('is-invalid');
+                errorMessages.push('Please Select Event Date!');  
+                isValid = false;
+            }
+
+            //Terms
+
+            const terms = $("#agreeTerms").is(":checked");
+            if (!terms) {
+                $('#agreeTerms').addClass('is-invalid');
+                errorMessages.push('Please Check Terms!');  
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Show loading state
+                const submitBtn = $('.btn-primary-custom');
+                const originalText = submitBtn.html();
+                submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Processing...').prop('disabled', true);
+
+                // Collect form data
+                const formData = {
+                    hallAvailId: HallAvailId,
+                    catId: hiddenCatId,
+                    hallId: HallId,
+                    fullName: fullName,
+                    email: email,
+                    phone: phone,
+                    alternatePhone: Alterphone,
+                    address: $('#address').val().trim(),
+                    eventName: eventName,
+                    eventType: eventType,
+                    eventDate: eventDate,                    
+                    eventDescription: $('#eventDescription').val(),                    
+                    totalAmount: $('#totalAmount').text()
+                };
+
+                let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    url: '/Admin/BookUserConfirmedHall',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    beforeSend: function (xhr) {
+                        $(".loader").css("display", "flex");
+                        xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
+                    },
+                    success: function (response) {
+                        $(".loader").css("display", "none");
+                        if (response.isSuccess) {
+                            notify(true, 'Booking Submitted Successfully! Redirecting to payment page...', true);
+                            
+                        } else {
+                            notify(false, response.errorMessages, false);
+                        }
+
+                    }
+                });
+               
+                setTimeout(function () {
+                    // Success notification
+                    showNotification('success', 'Booking Submitted Successfully!', 'Redirecting to payment page...');
+
+                    // In real application, you would submit to server:
+                    // $.post('/api/bookings', formData)
+                    //   .done(function(response) {
+                    //     window.location.href = '/payment/' + response.bookingId;
+                    //   })
+                    //   .fail(function(xhr) {
+                    //     showNotification('error', 'Booking Failed', xhr.responseJSON.message);
+                    //   });
+
+                    // For demo, redirect after 2 seconds
+                    setTimeout(function () {
+                        // window.location.href = 'payment.html';
+                        console.log('Form Data:', formData);
+                    }, 2000);
+
+                }, 1500);
+
+                //// Collect selected services
+                //$('input[type="checkbox"]:checked').each(function () {
+                //    if ($(this).attr('id') !== 'agreeTerms') {
+                //        formData.additionalServices.push({
+                //            service: $(this).next('label').text().trim(),
+                //            price: $(this).val()
+                //        });
+                //    }
+                //});
+
+                //// Simulate API call
+                //setTimeout(function () {
+                //    // Success notification
+                //    showNotification('success', 'Booking Submitted Successfully!', 'Redirecting to payment page...');
+
+                //    // In real application, you would submit to server:
+                //    // $.post('/api/bookings', formData)
+                //    //   .done(function(response) {
+                //    //     window.location.href = '/payment/' + response.bookingId;
+                //    //   })
+                //    //   .fail(function(xhr) {
+                //    //     showNotification('error', 'Booking Failed', xhr.responseJSON.message);
+                //    //   });
+
+                //    // For demo, redirect after 2 seconds
+                //    setTimeout(function () {
+                //        // window.location.href = 'payment.html';
+                //        console.log('Form Data:', formData);
+                //    }, 2000);
+
+                //}, 1500);
+
+            } else {                
+                notify(false, 'Please fix the following errors:' + errorMessages.join(', '), false);
+
+                // Scroll to first error
+                const firstError = $('.is-invalid').first();
+                if (firstError.length) {
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
+                }
+            }
+        });
+                
+
+        // Form change tracking
+        //let formChanged = false;
+        //let formSubmitted = false;
+
+        //// Track form changes
+        //$('#bookingForm input, #bookingForm select, #bookingForm textarea').on('input change', function () {
+        //    formChanged = true;
+        //});
+
+        //// Prevent page leave if form has changes
+        //$(window).on('beforeunload', function (e) {
+        //    if (formChanged && !formSubmitted) {
+        //        const message = 'Are you sure you want to leave? All entered data will be lost.';
+        //        e.returnValue = message; // For older browsers
+        //        return message; // For modern browsers
+        //    }
+        //});
+
+        //// Handle browser back/forward buttons
+        //window.addEventListener('popstate', function (e) {
+        //    if (formChanged && !formSubmitted) {
+        //        if (confirm('Are you sure you want to go back? All entered data will be lost.')) {
+        //            formChanged = false; // Allow navigation
+        //            history.back();
+        //        } else {
+        //            // Push the current state back to prevent navigation
+        //            history.pushState(null, null, window.location.pathname);
+        //        }
+        //    }
+        //});
+
+        //// Add initial history state
+        //history.pushState(null, null, window.location.pathname);
+
+        // Back button functionality
+        $('.btn-secondary-custom').on('click', function () {
+            if (!formChanged || confirm('Are you sure you want to go back? All entered data will be lost.')) {
+                //formChanged = false; // Allow navigation
+                window.history.back();
+            }
+        });
+
+        // Handle all navigation links on the page
+        //$(document).on('click', 'a[href]:not([href^="#"]):not([target="_blank"])', function (e) {
+        //    if (formChanged && !formSubmitted) {
+        //        if (!confirm('Are you sure you want to leave? All entered data will be lost.')) {
+        //            e.preventDefault();
+        //            return false;
+        //        } else {
+        //            formChanged = false; // Allow navigation
+        //        }
+        //    }
+        //});
+
+        // Handle form submission to mark as submitted
+        //$('#bookingForm').on('submit', function () {
+        //    formSubmitted = true; // Mark form as submitted to avoid confirmation
+        //});
+
+        // Auto-resize textarea
+        $('textarea').on('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
     }
 });

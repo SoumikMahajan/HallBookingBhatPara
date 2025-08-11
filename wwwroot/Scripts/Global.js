@@ -158,3 +158,10 @@ $('.form-control').on('blur', function () {
         $(this).parent().removeClass('focused');
     }
 });
+
+// Remove validation classes on input change
+$('.form-control, .form-select, .form-check-input').on('input change', function () {
+    if ($(this).hasClass('is-invalid')) {
+        $(this).removeClass('is-invalid');
+    }
+});

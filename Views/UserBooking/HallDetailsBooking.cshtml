@@ -51,7 +51,6 @@
                 <i class="fas fa-building"></i>
             </div>
             <div class="hall-details">
-                <input type="hidden" id="allowedDatesHidden" value='@allowedDatesJson' />
                 <h3>@Model.hallBookingDTO.category_name</h3>
                 <div class="hall-meta">
                     <div class="meta-item">
@@ -80,23 +79,29 @@
         <form id="bookingForm">
             <!-- Personal Information -->
             <div class="form-section">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="allowedDatesHidden" value='@allowedDatesJson' />
+                <input type="hidden" id="hiddenCatId" value='@Model.hallBookingDTO.category_id_pk' />
+                <input type="hidden" id="hiddenHallId" value='@Model.hallBookingDTO.hall_id_pk' />
+                <input type="hidden" id="HiddenHallAvailId" value='@Model.hallBookingDTO.hall_availability_id_pk' />
+
                 <h4 class="section-title">
                     <i class="fas fa-user"></i> Personal Information
                 </h4>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="fullName" required>
+                        <input type="text" class="form-control" id="fullName">
                         <div class="invalid-feedback">Please enter your full name.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="email" class="form-label">Email Address <span class="required">*</span></label>
-                        <input type="email" class="form-control" id="email" required>
+                        <input type="email" class="form-control" id="email">
                         <div class="invalid-feedback">Please enter a valid email address.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
-                        <input type="tel" class="form-control" id="phone" required>
+                        <input type="tel" class="form-control" id="phone">
                         <div class="invalid-feedback">Please enter your phone number.</div>
                     </div>
                     <div class="col-md-6">
@@ -105,7 +110,7 @@
                     </div>
                     <div class="col-12">
                         <label for="address" class="form-label">Full Address <span class="required">*</span></label>
-                        <textarea class="form-control" id="address" rows="3" required></textarea>
+                        <textarea class="form-control" id="address" rows="3"></textarea>
                         <div class="invalid-feedback">Please enter your full address.</div>
                     </div>
                 </div>
@@ -119,20 +124,17 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label for="eventName" class="form-label">Event Name <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="eventName" placeholder="e.g., Wedding Reception" required>
+                        <input type="text" class="form-control" id="eventName" placeholder="e.g., Wedding Reception">
                         <div class="invalid-feedback">Please enter the event name.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="eventType" class="form-label">Event Type <span class="required">*</span></label>
-                        <select class="form-select" id="eventType" required>
-                            <option value="">Select Event Type</option>
-                            <option value="wedding">Wedding</option>
-                            <option value="reception">Reception</option>
-                            <option value="birthday">Birthday Party</option>
-                            <option value="anniversary">Anniversary</option>
-                            <option value="conference">Conference</option>
-                            <option value="seminar">Seminar</option>
-                            <option value="other">Other</option>
+                        <select class="form-select" id="eventType">
+                            <!option value="0">Select Event Type</!option>
+                            @foreach (var item in Model.dropDownListDTOs)
+                            {
+                                <!option value="@item.Id">@item.Name</!option>
+                            }                            
                         </select>
                         <div class="invalid-feedback">Please select an event type.</div>
                     </div>
@@ -141,25 +143,25 @@
                         <input type="text" class="form-control" id="eventDate">
                         <div class="invalid-feedback">Please select event date.</div>
                     </div>
-                    <div class="col-md-4">
+                    @* <div class="col-md-4">
                         <label for="startTime" class="form-label">Start Time <span class="required">*</span></label>
-                        <input type="time" class="form-control" id="startTime" required>
+                        <input type="time" class="form-control" id="startTime">
                         <div class="invalid-feedback">Please select start time.</div>
                     </div>
                     <div class="col-md-4">
                         <label for="endTime" class="form-label">End Time <span class="required">*</span></label>
-                        <input type="time" class="form-control" id="endTime" required>
+                        <input type="time" class="form-control" id="endTime">
                         <div class="invalid-feedback">Please select end time.</div>
-                    </div>
+                    </div> *@
                     @* <div class="col-md-6">
                         <label for="guestCount" class="form-label">Expected Guests <span class="required">*</span></label>
                         <input type="number" class="form-control" id="guestCount" min="1" max="500" required>
                         <div class="invalid-feedback">Please enter expected number of guests (1-500).</div>
                     </div> *@
-                    <div class="col-md-6">
+                    @* <div class="col-md-6">
                         <label for="duration" class="form-label">Duration (Hours)</label>
                         <input type="number" class="form-control" id="duration" min="1" value="8" readonly>
-                    </div>
+                    </div> *@
                     <div class="col-12">
                         <label for="eventDescription" class="form-label">Event Description</label>
                         <textarea class="form-control" id="eventDescription" rows="3" placeholder="Brief description of your event..."></textarea>
@@ -245,19 +247,19 @@
                 <div class="price-summary">
                     <div class="price-item">
                         <span>Hall Rental</span>
-                        <span>₹25,000</span>
+                        <span>₹@Model.hallBookingDTO.payable_rate</span>
                     </div>
-                    <div class="price-item" id="additionalServices" style="display: none;">
+                    @* <div class="price-item" id="additionalServices" style="display: none;">
                         <span>Additional Services</span>
                         <span id="servicesTotal">₹0</span>
-                    </div>
+                    </div> *@
                     <div class="price-item">
                         <span>Security Deposit</span>
-                        <span>₹5,000</span>
+                        <span>₹@Model.hallBookingDTO.security_money</span>
                     </div>
                     <div class="total-price">
                         <span>Total Amount</span>
-                        <span id="totalAmount">₹30,000</span>
+                        <span id="totalAmount">₹ @(Model.hallBookingDTO.payable_rate + Model.hallBookingDTO.security_money)</span>
                     </div>
                 </div>
             </div>
@@ -274,7 +276,7 @@
                     <li>Check in 8AM check out next day 7AM</li>
                 </ul>
                 <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                    <input class="form-check-input" type="checkbox" id="agreeTerms">
                     <label class="form-check-label" for="agreeTerms">
                         I agree to all terms and conditions <span class="required">*</span>
                     </label>

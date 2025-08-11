@@ -1,4 +1,5 @@
-﻿using HallBookingBhatPara.Application.Interface.User;
+﻿using HallBookingBhatPara.Application.Interface.HallBooking;
+using HallBookingBhatPara.Application.Interface.User;
 
 namespace HallBookingBhatPara.Application.Interface
 {
@@ -14,6 +15,11 @@ namespace HallBookingBhatPara.Application.Interface
         IHallAvailMasterRepository HallAvailMasterRepository { get; }
         IHallFloorMasterRepository HallFloorMasterRepository { get; }
         #endregion
+
+        #region :: Hall Booking
+        IHallEventMasterRepository HallEventMasterRepository { get; }
+        #endregion
+
         Task SaveAsync();
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();

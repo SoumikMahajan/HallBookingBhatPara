@@ -1,4 +1,5 @@
 ﻿using HallBookingBhatPara.Application.Interface;
+using HallBookingBhatPara.Application.Interface.HallBooking;
 using HallBookingBhatPara.Application.Interface.User;
 using HallBookingBhatPara.Infrastructure.Data;
 using HallBookingBhatPara.Infrastructure.Service.User;
@@ -23,6 +24,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
         public ISubCategoryMasterRepository SubCategoryMasterRepository { get; private set; }
         public IHallAvailMasterRepository HallAvailMasterRepository { get; private set; }
         public IHallFloorMasterRepository HallFloorMasterRepository { get; private set; }
+        public IHallEventMasterRepository HallEventMasterRepository { get; private set; }
         #endregion
 
         public UnitOfWork(ApplicationDbContext db, IConfiguration configuration, LogService logService)
@@ -40,6 +42,10 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             SubCategoryMasterRepository = new SubCategoryMasterService(_db);
             HallAvailMasterRepository = new HallAvailMasterService(_db);
             HallFloorMasterRepository = new HallFloorService(_db);
+            #endregion
+
+            #region :: Hall Booking
+            HallEventMasterRepository = new HallEventMasterService(_db);
             #endregion
         }
 

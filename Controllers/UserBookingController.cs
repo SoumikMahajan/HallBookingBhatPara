@@ -32,12 +32,12 @@ namespace HallBookingBhatPara.Controllers
             return View(mm);
         }
 
-        public async Task<IActionResult> HallAvailableSearchResult(long hallType, string startDate, string endDate)
+        public async Task<IActionResult> HallAvailableSearchResult(long catType, string startDate, string endDate)
         {
             MultipleModel mm = new();
             List<HallSearchDTO> hallSearchList = new();
 
-            var response = await _unitOfWork.SPRepository.HallAvailableSearchResultAsync(hallType, startDate, endDate);
+            var response = await _unitOfWork.SPRepository.HallAvailableSearchResultAsync(catType, startDate, endDate);
 
             mm.hallSearchList = response ?? new List<HallSearchDTO>();
 
@@ -55,7 +55,10 @@ namespace HallBookingBhatPara.Controllers
                 .Select(h => new DropDownListDTO { Id = h.hall_event_type_id_pk, Name = h.event_type_name })
                 .ToList();
 
+            //var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(hallDetails.hall_id_pk);
+
             mm.dropDownListDTOs = drpDownHallEvent;
+            //mm.FloorList = FloorList;
 
             return View(mm);
         }

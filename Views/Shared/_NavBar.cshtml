@@ -3,6 +3,8 @@
 @{
     var userClaims = _tokenProvider.GetUserClaims();
     var userName = userClaims?.Name ?? "Unknown User";
+    var UserProfileImage = userClaims?.ProfileImagePath;
+    var userInitials = userName.Split(' ').Take(2).Select(n => n.FirstOrDefault()).Aggregate("", (acc, c) => acc + c).ToUpper();
 }
 
 <!-- Top Bar -->
@@ -33,17 +35,121 @@
                     <h1 class="h4 fw-bold text-primary mb-1" style="font-family: 'Poppins', sans-serif;">Bhatpara Municipality</h1>
                     <p class="text-muted small mb-0" style="font-family: 'Poppins', sans-serif;">Hall Booking System &nbsp;|&nbsp; Established 1899</p>
                 </div>
-            </div>
+            </div>            
 
-            <!-- User & Logout -->
+            <!-- User Profile & Logout -->
             <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0 text-end d-flex justify-content-md-end justify-content-between align-items-center">
-                <div class="me-3 text-end">
-                    <div class="small text-muted">Welcome back,</div>
-                    <div class="fw-semibold text-dark" style="font-family: 'Poppins', sans-serif;">@userName!</div>
+                <!-- Profile Section -->
+                <div class="profile-section d-flex align-items-center me-3">
+                    <!-- Profile Image/Avatar -->
+                    <div class="profile-avatar-container me-3 position-relative">
+                        <div class="profile-avatar" data-bs-toggle="dropdown" aria-expanded="false">
+                            @if (!string.IsNullOrEmpty(UserProfileImage))
+                            {
+                                 <img src="@Url.Content(UserProfileImage)" alt="Profile" class="profile-image">
+                            }
+                            else
+                            {
+                                <div class="profile-initials">@userInitials</div>
+                            }
+                        </div>
+                        <div class="profile-status-indicator"></div>
+                        <!-- Profile Dropdown Menu -->
+                        <ul class="dropdown-menu profile-dropdown shadow-lg">
+                            <li class="dropdown-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="profile-avatar-small me-2">
+                                        @if (!string.IsNullOrEmpty(UserProfileImage))
+                                        {
+                                             <img src="@Url.Content(UserProfileImage)" alt="Profile" class="profile-image">
+                                        }
+                                        else
+                                        {
+                                            <div class="profile-initials-small">@userInitials</div>
+                                        }
+                                        
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@userName</div>
+                                        <div class="small text-muted">Municipality User</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <li>
+                                <a class="dropdown-item profile-dropdown-item" asp-controller="User" asp-action="Profile">
+                                    <i class="fas fa-user-circle me-2 text-primary"></i>
+                                    Profile Settings
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a class="dropdown-item profile-dropdown-item" asp-controller="Booking" asp-action="MyBookings">
+                                    <i class="fas fa-calendar-check me-2 text-success"></i>
+                                    My Bookings
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a class="dropdown-item profile-dropdown-item" asp-controller="Booking" asp-action="BookingHistory">
+                                    <i class="fas fa-history me-2 text-info"></i>
+                                    Booking History
+                                </a>
+                            </li>
+                                                        
+                            
+                            <li>
+                                <a class="dropdown-item profile-dropdown-item" asp-controller="User" asp-action="Documents">
+                                    <i class="fas fa-file-alt me-2 text-secondary"></i>
+                                    My Documents
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a class="dropdown-item profile-dropdown-item" asp-controller="Payment" asp-action="PaymentHistory">
+                                    <i class="fas fa-credit-card me-2 text-primary"></i>
+                                    Payment History
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a class="dropdown-item profile-dropdown-item" asp-controller="Support" asp-action="HelpCenter">
+                                    <i class="fas fa-question-circle me-2 text-info"></i>
+                                    Help & Support
+                                </a>
+                            </li>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <li>
+                                <a class="dropdown-item profile-dropdown-item" asp-controller="User" asp-action="Settings">
+                                    <i class="fas fa-cog me-2 text-secondary"></i>
+                                    Account Settings
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a class="dropdown-item profile-dropdown-item text-danger" asp-action="Logout" asp-controller="User">
+                                    <i class="fas fa-sign-out-alt me-2"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- User Info -->
+                    @* <div class="user-info text-start">
+                        <div class="small text-muted mb-1">Welcome back,</div>
+                        <div class="fw-semibold text-dark user-name" style="font-family: 'Poppins', sans-serif;">@userName</div>
+                    </div> *@
                 </div>
-                <a class="btn btn-outline-danger rounded-pill px-3" asp-action="Logout" asp-controller="User">
+                
+                <!-- Logout Button -->
+                @* <a class="btn btn-outline-danger rounded-pill px-3 logout-btn" asp-action="Logout" asp-controller="User">
                     <i class="fas fa-sign-out-alt me-2"></i> Logout
-                </a>
+                </a> *@
+                
                 <!-- Flag Image: Hidden on screens <768px -->
                 <img src="@Url.Content("~/assets/staticimages/flag.gif")" alt="India Flag" class="d-none d-md-block ms-3" style="height: 70px; width: auto;">
             </div>

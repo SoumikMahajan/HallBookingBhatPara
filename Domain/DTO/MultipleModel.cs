@@ -16,6 +16,9 @@ namespace HallBookingBhatPara.Domain.DTO
         public GetHallAvailableDTO hallAvailable { get; set; }
         public List<DropDownListDTO> SubCategoryList { get; set; }
         public List<DropDownListDTO> FloorList { get; set; }
+        #endregion
+
+        #region :: Hall Booking
         public List<HallSearchDTO> hallSearchList { get; set; }
         public HallBookingDTO hallBookingDTO { get; set; }
         #endregion

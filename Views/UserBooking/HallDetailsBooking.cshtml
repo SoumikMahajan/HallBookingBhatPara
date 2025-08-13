@@ -69,6 +69,9 @@
                         <i class="fas fa-rupee-sign text-warning"></i>
                         <span>₹@Model.hallBookingDTO.rate/day</span>
                     </div>
+                    <div class="meta-item">
+                        <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -119,9 +122,9 @@
             <!-- Event Details -->
             <div class="form-section">
                 <h4 class="section-title">
-                    <i class="fas fa-calendar-alt"></i> Event Details
+                    <i class="fas fa-calendar-alt"></i> Event Details (@Model.hallBookingDTO.category_name - @Model.hallBookingDTO.hall_name) <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
                 </h4>
-                <div class="row g-3">
+                <div class="row g-3">                    
                     <div class="col-md-6">
                         <label for="eventName" class="form-label">Event Name <span class="required">*</span></label>
                         <input type="text" class="form-control" id="eventName" placeholder="e.g., Wedding Reception">
@@ -130,17 +133,39 @@
                     <div class="col-md-6">
                         <label for="eventType" class="form-label">Event Type <span class="required">*</span></label>
                         <select class="form-select" id="eventType">
-                            <!option value="0">Select Event Type</!option>
+                            <!option value="0">--Select Event Type--</!option>
                             @foreach (var item in Model.dropDownListDTOs)
                             {
                                 <!option value="@item.Id">@item.Name</!option>
-                            }                            
+                            }
                         </select>
                         <div class="invalid-feedback">Please select an event type.</div>
                     </div>
+                    @* @if (!string.IsNullOrEmpty(@Model.hallBookingDTO.floor_name))
+                    {
+                        <div class="col-md-4">
+                            <label for="floorType" class="form-label">Floor Type <span class="required">*</span></label>
+                            <select class="form-select" id="floorType">
+                                <!option value="0">--Select Floor Type--</!option>
+                                @foreach (var item in Model.FloorList)
+                                {
+                                    if (item.Id == @Model.hallBookingDTO.hall_floor_id_pk)
+                                    {
+                                        <!option value="@item.Id" selected>@item.Name</!option>
+                                    }
+                                    else
+                                    {
+                                        <!option value="@item.Id">@item.Name</!option>
+                                    }
+
+                                }
+                            </select>
+                            <div class="invalid-feedback">Please select floor type.</div>
+                        </div>
+                    } *@
                     <div class="col-md-4">
                         <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="eventDate">
+                        <input type="text" class="form-control" id="eventDate" placeholder="Select Event Date">
                         <div class="invalid-feedback">Please select event date.</div>
                     </div>
                     @* <div class="col-md-4">

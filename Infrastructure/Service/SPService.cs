@@ -278,12 +278,12 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             }
         }
 
-        public async Task<List<HallSearchDTO>> HallAvailableSearchResultAsync(long hallType, string startDate, string endDate)
+        public async Task<List<HallSearchDTO>> HallAvailableSearchResultAsync(long catType, string startDate, string endDate)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@HallId", hallType, DbType.Int64);
+                parameters.Add("@CatId", catType, DbType.Int64);
                 parameters.Add("@AvalFromDate", startDate, DbType.Date);
                 parameters.Add("@AvalToDate", endDate, DbType.Date);
                 parameters.Add("@OperationId", 4, DbType.Int32);

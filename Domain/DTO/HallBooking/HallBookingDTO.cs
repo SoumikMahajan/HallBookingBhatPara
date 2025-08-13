@@ -8,6 +8,7 @@ namespace HallBookingBhatPara.Domain.DTO.HallBooking
         public long hall_availability_id_pk { get; set; }
         public string? category_name { get; set; }
         public string? hall_name { get; set; }
+        public long hall_floor_id_pk { get; set; }
         public string? floor_name { get; set; }
         public double rate { get; set; }
         public double security_money { get; set; }

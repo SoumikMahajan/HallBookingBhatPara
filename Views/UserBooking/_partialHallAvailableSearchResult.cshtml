@@ -28,12 +28,22 @@
         <div id="resultsContainer" class="results-grid">
 
             @foreach (var item in Model.hallSearchList)
-            {                
+            {
+                DateTime fromDate = item.hall_availability_from_date;
+                DateTime toDate = item.hall_availability_to_date;
+
+                string GetOrdinal(DateTime d) =>
+                $"{d.Day}{(d.Day is 1 or 21 or 31 ? "st" : d.Day is 2 or 22 ? "nd" : d.Day is 3 or 23 ? "rd" : "th")} {d:MMMM}, {d:yyyy}";
+
                 <div class="hall-card">
                     <div class="hall-card-header">
                         <h4 class="hall-title">@item.category_name</h4>
                         <span class="hall-type">@item.hall_name</span>
-                        <span class="hall-floor">@item.floor_name</span>
+                        @if (!string.IsNullOrEmpty(item.floor_name))
+                        {
+                            <span class="hall-floor">@item.floor_name</span>
+                        }
+                        
                     </div>
                     <div class="hall-card-body">
                         <div class="hall-info">
@@ -56,6 +66,10 @@
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-users"></i></div>
                                 <span>Security Monry: @item.security_money</span>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon"><i class="fas fa-calendar"></i></div>
+                                <span>Available Date: @GetOrdinal(fromDate) to @GetOrdinal(toDate)</span>
                             </div>
                         </div>
 

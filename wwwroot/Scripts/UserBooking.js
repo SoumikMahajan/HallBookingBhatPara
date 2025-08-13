@@ -6,6 +6,8 @@
     if (_ActionName === "userhallbooking") {
         // Set minimum date to today
         const today = new Date().toISOString().split('T')[0];
+        $('#startDate').val(today);
+        $('#endDate').val(today);
         $('#startDate, #endDate').attr('min', today);
 
         // Update end date minimum when start date changes
@@ -35,11 +37,11 @@
             searchHalls();
         });
         function searchHalls() {
-            const hallType = $('#hallType option:selected').val();
+            const catType = $('#hallType option:selected').val();
             const startDate = $('#startDate').val();
             const endDate = $('#endDate').val();
 
-            if (hallType == '0' || hallType === undefined ) {
+            if (catType == '0' || catType === undefined ) {
                 notify(false, 'Please select hall type', false);
                 $("#hallType").addClass("is-invalid");
                 return;
@@ -72,7 +74,7 @@
             }
             
             $(".loader").css("display", "flex");                        
-            getHallAvailableSearchResult(hallType, startDate, endDate);
+            getHallAvailableSearchResult(catType, startDate, endDate);
            
             //setTimeout(() => {
             //    //const mockResults = generateMockResults(hallType);
@@ -81,10 +83,10 @@
             //}, 1500);
         }
 
-        function getHallAvailableSearchResult(hallType, startDate, endDate) {
+        function getHallAvailableSearchResult(catType, startDate, endDate) {
             $.ajax({
                 url: '/UserBooking/HallAvailableSearchResult',
-                data: { hallType: hallType, startDate: startDate, endDate: endDate },
+                data: { catType: catType, startDate: startDate, endDate: endDate },
                 type: 'GET',
                 dataType: 'HTML',
                 success: function (response) {

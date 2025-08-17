@@ -502,7 +502,7 @@
     // #region :: HallAvailability
     if (_ActionName === "addhallavailabilitydetails") {
 
-        const today = new Date().toISOString().split('T')[0];
+        const today = flatpickr.formatDate(new Date(), "Y-m-d");
         $('#availableFrom, #availableTo').attr('min', today);
 
         $(document).on('change', '#availableFrom', function () {

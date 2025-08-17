@@ -9,5 +9,6 @@ namespace HallBookingBhatPara.Application.Interface
         void ClearToken();
         bool IsTokenValid();
         UserClaims? GetUserClaims();
+        string? GetClientIpAddress(HttpContext httpContext);
     }
 }

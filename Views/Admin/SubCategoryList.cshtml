@@ -14,7 +14,7 @@
             <div class="mb-3">
                 <label for="categorylist" class="form-label">Category</label>
                 <select id="categorylist" class="form-select">
-                    <option value="0" selected>Select Category</option>
+                    <option value="0" selected>--Select Category--</option>
                     @foreach (var item in Model.dropDownListDTOs)
                     {
                         <option value="@item.Id">@item.Name</option>

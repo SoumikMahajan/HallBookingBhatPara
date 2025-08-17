@@ -11,6 +11,12 @@
         .ToList() ?? new List<string>();
 
     var allowedDatesJson = System.Text.Json.JsonSerializer.Serialize(allowedDates);
+
+    var rate = Model.hallBookingDTO.rate;
+
+    var securityMoney = Model.hallBookingDTO.security_money;
+
+    var InitialPayableRate = Model.hallBookingDTO.payable_rate + Model.hallBookingDTO.security_money;
 }
 
 <!-- Header Section -->
@@ -69,9 +75,12 @@
                         <i class="fas fa-rupee-sign text-warning"></i>
                         <span>₹@Model.hallBookingDTO.rate/day</span>
                     </div>
-                    <div class="meta-item">
-                        <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
-                    </div>
+                    @if (!string.IsNullOrEmpty(Model.hallBookingDTO.floor_name))
+                    {
+                        <div class="meta-item">
+                            <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -87,6 +96,9 @@
                 <input type="hidden" id="hiddenCatId" value='@Model.hallBookingDTO.category_id_pk' />
                 <input type="hidden" id="hiddenHallId" value='@Model.hallBookingDTO.hall_id_pk' />
                 <input type="hidden" id="HiddenHallAvailId" value='@Model.hallBookingDTO.hall_availability_id_pk' />
+                <input type="hidden" id="hiddenRate" value='@rate' />
+                <input type="hidden" id="hiddenSecurityMoney" value='@securityMoney' />
+                <input type="hidden" id="hiddenInitialPayableRate" value='@InitialPayableRate' />
 
                 <h4 class="section-title">
                     <i class="fas fa-user"></i> Personal Information
@@ -94,22 +106,23 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="fullName">
+                        <input type="text" class="form-control" id="fullName" value="@Model.public_User_Registration.user_name">
                         <div class="invalid-feedback">Please enter your full name.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="email" class="form-label">Email Address <span class="required">*</span></label>
-                        <input type="email" class="form-control" id="email">
+                        <input type="email" class="form-control" id="email" value="@Model.public_User_Registration.email">
                         <div class="invalid-feedback">Please enter a valid email address.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
-                        <input type="tel" class="form-control" id="phone">
+                        <input type="tel" class="form-control" id="phone" value="@Model.public_User_Registration.mobile">
                         <div class="invalid-feedback">Please enter your phone number.</div>
                     </div>
                     <div class="col-md-6">
-                        <label for="alternatePhone" class="form-label">Alternate Phone</label>
+                        <label for="alternatePhone" class="form-label">Alternate Phone<span class="required">*</span></label>
                         <input type="tel" class="form-control" id="alternatePhone">
+                        <div class="invalid-feedback">Please enter your alter phone number.</div>
                     </div>
                     <div class="col-12">
                         <label for="address" class="form-label">Full Address <span class="required">*</span></label>
@@ -122,14 +135,13 @@
             <!-- Event Details -->
             <div class="form-section">
                 <h4 class="section-title">
-                    <i class="fas fa-calendar-alt"></i> Event Details (@Model.hallBookingDTO.category_name - @Model.hallBookingDTO.hall_name) <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
+                    <i class="fas fa-calendar-alt"></i> Event Details (@Model.hallBookingDTO.category_name - @Model.hallBookingDTO.hall_name)
+                    @if (!string.IsNullOrEmpty(Model.hallBookingDTO.floor_name))
+                    {
+                        <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
+                    }                   
                 </h4>
                 <div class="row g-3">                    
-                    <div class="col-md-6">
-                        <label for="eventName" class="form-label">Event Name <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="eventName" placeholder="e.g., Wedding Reception">
-                        <div class="invalid-feedback">Please enter the event name.</div>
-                    </div>
                     <div class="col-md-6">
                         <label for="eventType" class="form-label">Event Type <span class="required">*</span></label>
                         <select class="form-select" id="eventType">
@@ -141,6 +153,56 @@
                         </select>
                         <div class="invalid-feedback">Please select an event type.</div>
                     </div>
+                   
+                    @* <div class="col-md-4">
+                        <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="eventDate" placeholder="--Select Event Date--">
+                        <div class="invalid-feedback">Please select event date.</div>
+                    </div> *@
+                    <!-- New Event Duration Type Field -->
+                    <!-- New Event Duration Type Field -->
+                    <!-- New Event Duration Type Field -->
+                    <div class="col-md-6">
+                        <label for="eventDurationType" class="form-label">Event Duration Type <span class="required">*</span></label>
+                        <select class="form-select" id="eventDurationType">
+                            <option value="">--Select Duration Type--</option>
+                            <option value="single">Single Day Event</option>
+                            <option value="multiple">Multiple Days Event</option>
+                        </select>
+                        <div class="invalid-feedback">Please select event duration type.</div>
+                    </div>
+
+                    <!-- Single Day Event Date -->
+                    <div class="col-md-6" id="singleDateContainer" style="display: none;">
+                        <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="eventDate" placeholder="--Select Event Date--" readonly>
+                        <div class="invalid-feedback">Please select event date.</div>
+                    </div>
+
+                    <!-- Multiple Days Event Dates -->
+                    <div class="col-md-6" id="multipleDatesContainer" style="display: none;">
+                        <label for="eventDatesRange" class="form-label">Event Dates Range <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="eventDatesRange" placeholder="--Select Date Range--" readonly>
+                        <div class="invalid-feedback">Please select event dates range.</div>
+                        <small class="text-muted">Select start and end dates for your event</small>
+                    </div>
+
+                    <!-- Selected Dates Display for Multiple Days -->
+                    <div class="col-12" id="selectedDatesDisplay" style="display: none;">
+                        <label class="form-label">Selected Event Dates:</label>
+                        <div class="selected-dates-container">
+                            <div id="selectedDatesList" class="d-flex flex-wrap gap-2">
+                                <!-- Selected dates will be displayed here as badges -->
+                            </div>
+                            <small class="text-muted">Total selected days: <span id="totalSelectedDays">0</span></small>
+                        </div>
+                    </div>
+
+                    @* <div class="col-md-6">
+                        <label for="eventName" class="form-label">Event Name <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="eventName" placeholder="e.g., Wedding Reception">
+                        <div class="invalid-feedback">Please enter the event name.</div>
+                    </div> *@
                     @* @if (!string.IsNullOrEmpty(@Model.hallBookingDTO.floor_name))
                     {
                         <div class="col-md-4">
@@ -163,11 +225,6 @@
                             <div class="invalid-feedback">Please select floor type.</div>
                         </div>
                     } *@
-                    <div class="col-md-4">
-                        <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="eventDate" placeholder="Select Event Date">
-                        <div class="invalid-feedback">Please select event date.</div>
-                    </div>
                     @* <div class="col-md-4">
                         <label for="startTime" class="form-label">Start Time <span class="required">*</span></label>
                         <input type="time" class="form-control" id="startTime">
@@ -187,10 +244,10 @@
                         <label for="duration" class="form-label">Duration (Hours)</label>
                         <input type="number" class="form-control" id="duration" min="1" value="8" readonly>
                     </div> *@
-                    <div class="col-12">
+                    @* <div class="col-12">
                         <label for="eventDescription" class="form-label">Event Description</label>
                         <textarea class="form-control" id="eventDescription" rows="3" placeholder="Brief description of your event..."></textarea>
-                    </div>
+                    </div> *@
                 </div>
 
                 <!-- Event Timeline -->
@@ -270,8 +327,12 @@
                     <i class="fas fa-calculator"></i> Price Summary
                 </h4>
                 <div class="price-summary">
+                    <div class="price-item" style="background: chocolate;">
+                        <span>Total Rent</span>
+                        <span>₹@rate</span>
+                    </div>
                     <div class="price-item">
-                        <span>Hall Rental</span>
+                        <span>Initial Payable Amount(75%)</span>
                         <span>₹@Model.hallBookingDTO.payable_rate</span>
                     </div>
                     @* <div class="price-item" id="additionalServices" style="display: none;">
@@ -280,11 +341,11 @@
                     </div> *@
                     <div class="price-item">
                         <span>Security Deposit</span>
-                        <span>₹@Model.hallBookingDTO.security_money</span>
+                        <span>₹@securityMoney</span>
                     </div>
                     <div class="total-price">
                         <span>Total Amount</span>
-                        <span id="totalAmount">₹ @(Model.hallBookingDTO.payable_rate + Model.hallBookingDTO.security_money)</span>
+                        <span id="totalAmount">₹ @InitialPayableRate</span>
                     </div>
                 </div>
             </div>

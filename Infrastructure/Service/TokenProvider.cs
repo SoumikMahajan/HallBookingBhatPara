@@ -104,5 +104,17 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 return null;
             }
         }
+
+        public string? GetClientIpAddress(HttpContext httpContext)
+        {
+            if (httpContext == null) return null;
+            var forwardedFor = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(forwardedFor))
+            {
+                return forwardedFor.Split(',').First().Trim();
+            }
+
+            return httpContext.Connection.RemoteIpAddress?.ToString();
+        }
     }
 }

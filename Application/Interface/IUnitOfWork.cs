@@ -18,6 +18,7 @@ namespace HallBookingBhatPara.Application.Interface
 
         #region :: Hall Booking
         IHallEventMasterRepository HallEventMasterRepository { get; }
+        IUserRegistrationRepository UserRegistrationRepository { get; }
         #endregion
 
         Task SaveAsync();

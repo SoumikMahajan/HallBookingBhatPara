@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.HallBooking;
 using HallBookingBhatPara.Domain.DTO.User;
 
 namespace HallBookingBhatPara.Model.Validator
@@ -10,6 +11,11 @@ namespace HallBookingBhatPara.Model.Validator
         {
             return value == value?.Trim();
         }
+
+        protected bool BeAValidDate(string date)
+        {
+            return DateTime.TryParse(date, out _);
+        }
     }
 
     public class GenericListValidator<T> : AbstractValidator<List<T>>
@@ -19,6 +25,8 @@ namespace HallBookingBhatPara.Model.Validator
             RuleForEach(x => x).SetValidator(itemValidator);
         }
     }
+
+
 
     #region :: User
 
@@ -64,6 +72,10 @@ namespace HallBookingBhatPara.Model.Validator
                 .Must(BeTrimmed).WithMessage("Password must not have leading or trailing whitespace.");
         }
     }
+
+    #endregion
+
+    #region :: Admin
     public class HallAvailableValidator : GenericValidator<InsertHallAvailableDTO>
     {
         public HallAvailableValidator()
@@ -119,6 +131,57 @@ namespace HallBookingBhatPara.Model.Validator
 
         }
     }
+    #endregion
 
+    #region :: User Booking
+    public class InsertConfirmBookHallValidator : GenericValidator<InsertUserConfirmhallDTO>
+    {
+        public InsertConfirmBookHallValidator()
+        {
+            RuleFor(x => x.catId)
+             .GreaterThan(0).WithMessage("Category is required.");
+
+            RuleFor(x => x.hallId)
+                .GreaterThan(0).WithMessage("Hall is required.");
+
+            RuleFor(x => x.hallAvailId)
+                .GreaterThan(0).WithMessage("Hall availability is required.");
+
+            RuleFor(x => x.rate)
+                .GreaterThan(0).WithMessage("Rate must be greater than 0.");
+
+            RuleFor(x => x.securityMoney)
+                .GreaterThanOrEqualTo(0).WithMessage("Security money cannot be negative.");
+
+            RuleFor(x => x.fullName)
+                .NotEmpty().WithMessage("Full name is required.")
+                .MaximumLength(100).WithMessage("Full name cannot exceed 100 characters.");
+
+            RuleFor(x => x.phone)
+                .NotEmpty().WithMessage("Phone number is required.")
+                .Matches(@"^[0-9]{10}$").WithMessage("Phone number must be a valid 10-digit number.");
+
+            RuleFor(x => x.alternatePhone)
+                .Matches(@"^[0-9]{10}$").When(x => !string.IsNullOrEmpty(x.alternatePhone))
+                .WithMessage("Alternate phone number must be a valid 10-digit number.");
+
+            RuleFor(x => x.email)
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Invalid email format.")
+                .MaximumLength(150).WithMessage("Email cannot exceed 150 characters.");
+
+            RuleFor(x => x.address)
+                .NotEmpty().WithMessage("Address is required.")
+                .MaximumLength(250).WithMessage("Address cannot exceed 250 characters.");
+
+            RuleFor(x => x.eventType)
+                .GreaterThan(0).WithMessage("Event type is required.");
+
+            RuleFor(x => x.eventDate)
+                .NotEmpty().WithMessage("Event date is required.")
+                .Must(BeAValidDate).WithMessage("Event date must be a valid date (yyyy-MM-dd).");
+
+        }
+    }
     #endregion
 }

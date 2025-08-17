@@ -42,40 +42,42 @@
                         @if (!string.IsNullOrEmpty(item.floor_name))
                         {
                             <span class="hall-floor">@item.floor_name</span>
-                        }
-                        
+                        }                       
                     </div>
                     <div class="hall-card-body">
                         <div class="hall-info">
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
-                                <span>City: Bhatpara</span>
+                                <span><strong>City:</strong> Bhatpara</span>
                             </div>
                             @* <div class="info-item">
                             <div class="info-icon"><i class="fas fa-users"></i></div>
                             <span>Capacity: 500 Guest</span>
-                        </div> *@
-                            @* <div class="info-item">
-                            <div class="info-icon"><i class="fas fa-star"></i></div>
-                            <span>Amenities: Air Condition,Parking</span>
-                        </div> *@
+                            </div> *@
+                                @* <div class="info-item">
+                                <div class="info-icon"><i class="fas fa-star"></i></div>
+                                <span>Amenities: Air Condition,Parking</span>
+                            </div> *@
+                            @if (!string.IsNullOrEmpty(item.floor_name))
+                            {
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-users"></i></div>
+                                    <span><strong>Floor Type:</strong> @item.floor_name</span>
+                                </div>
+                            }                          
                             <div class="info-item">
-                                <div class="info-icon"><i class="fas fa-users"></i></div>
-                                <span>Floor Type: @item.floor_name</span>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-icon"><i class="fas fa-users"></i></div>
-                                <span>Security Monry: @item.security_money</span>
+                                <div class="info-icon"><i class="fas fa-shield-alt"></i></div>
+                                <span><strong>Security Money:</strong> @item.security_money</span>
                             </div>
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-calendar"></i></div>
-                                <span>Available Date: @GetOrdinal(fromDate) to @GetOrdinal(toDate)</span>
+                                <span><strong>Available Date:</strong> @GetOrdinal(fromDate) to @GetOrdinal(toDate)</span>
                             </div>
                         </div>
 
                         <div class="price-section">
                             <div>
-                                <div class="price">₹@item.rate</div>
+                                <div class="price">@item.rate</div>
                                 <div class="price-label">per day</div>
                             </div>
                             <a asp-action="HallDetailsBooking" asp-controller="UserBooking" asp-route-hallAvlId="@item.hall_availability_id_pk" class="btn btn-primary book-btn">

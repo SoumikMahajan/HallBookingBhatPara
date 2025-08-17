@@ -336,6 +336,38 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             }
         }
 
+        public async Task<long> BookUserConfirmedHallAsync(InsertUserConfirmhallDTO model)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CatId", model.catId, DbType.Int64);
+                parameters.Add("@HallId", model.hallId, DbType.Int64);
+                parameters.Add("@HallAvlId", model.hallAvailId, DbType.Int64);
+                parameters.Add("@Rate", model.rate, DbType.Decimal);
+                parameters.Add("@SecurityMoney", model.securityMoney, DbType.Decimal);
+                parameters.Add("@InitialPaybleAmount", model.initial_payable_amount, DbType.Decimal);
+                parameters.Add("@BookedUserName", model.fullName, DbType.String);
+                parameters.Add("@BookedUserMobile", model.phone, DbType.String);
+                parameters.Add("@BookedUserAlterMobile", model.alternatePhone, DbType.String);
+                parameters.Add("@BookedUserEmail", model.email, DbType.String);
+                parameters.Add("@BookedUserAddress", model.address, DbType.String);
+                parameters.Add("@EventTypeId", model.eventType, DbType.Int64);
+                parameters.Add("@BookingDate", model.eventDate, DbType.String);
+                parameters.Add("@EntryIp", model.EntryIP, DbType.String);
+                parameters.Add("@StakeId", model.userClaims.RolesId, DbType.Int64);
+                parameters.Add("@StakeDetailsId", model.userClaims.StackHolderId, DbType.Int64);
+
+                parameters.Add("@OperationId", 6, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<long>(
+                    "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+
         #endregion
     }
 }

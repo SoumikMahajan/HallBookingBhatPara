@@ -2,32 +2,35 @@
     let _QueryParameter = window.location.pathname.split("/");
     let _ActionName = _QueryParameter[2].toLocaleLowerCase();
 
-    // #region :: Dashboard
+    // #region :: User Hall Search
     if (_ActionName === "userhallbooking") {
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        $('#startDate').val(today);
-        $('#endDate').val(today);
-        $('#startDate, #endDate').attr('min', today);
+        const today = flatpickr.formatDate(new Date(), "Y-m-d");
 
-        // Update end date minimum when start date changes
-        $('#startDate').on('change', function () {
-            const startDate = this.value;
-            $('#endDate').attr('min', startDate);
-
-            // Optional: If endDate is already selected and now invalid, clear it
-            if ($('#endDate').val() && $('#endDate').val() < startDate) {
-                $('#endDate').val('');
+        let startPicker = flatpickr("#startDate", {
+            dateFormat: "Y-m-d",
+            minDate: today,
+            defaultDate: today,
+            onChange: function (selectedDates, dateStr) {
+                if (selectedDates.length > 0) {
+                    endPicker.set('minDate', dateStr); // update end date min
+                    if (endPicker.input.value && endPicker.input.value < dateStr) {
+                        endPicker.clear(); // clear invalid end date
+                    }
+                }
             }
         });
-        // When end date changes, update the max for start date
-        $('#endDate').on('change', function () {
-            const endDate = this.value;
-            $('#startDate').attr('max', endDate);
 
-            // Optional: If startDate is already selected and now invalid, clear it
-            if ($('#startDate').val() && $('#startDate').val() > endDate) {
-                $('#startDate').val('');
+        let endPicker = flatpickr("#endDate", {
+            dateFormat: "Y-m-d",
+            minDate: today,
+            defaultDate: today,
+            onChange: function (selectedDates, dateStr) {
+                if (selectedDates.length > 0) {
+                    startPicker.set('maxDate', dateStr); // update start date max
+                    if (startPicker.input.value && startPicker.input.value > dateStr) {
+                        startPicker.clear(); // clear invalid start date
+                    }
+                }
             }
         });
 
@@ -41,7 +44,7 @@
             const startDate = $('#startDate').val();
             const endDate = $('#endDate').val();
 
-            if (catType == '0' || catType === undefined ) {
+            if (catType == '0' || catType === undefined) {
                 notify(false, 'Please select hall type', false);
                 $("#hallType").addClass("is-invalid");
                 return;
@@ -72,14 +75,14 @@
                 notify(false, 'End date must be after start date', false);
                 return;
             }
-            
-            $(".loader").css("display", "flex");                        
+
+            $(".loader").css("display", "flex");
             getHallAvailableSearchResult(catType, startDate, endDate);
-           
+
             //setTimeout(() => {
             //    //const mockResults = generateMockResults(hallType);
             //    //displayResults(mockResults);            
-                
+
             //}, 1500);
         }
 
@@ -234,30 +237,223 @@
         }
 
 
-        
+
     }
     // #endregion :: Dashboard
 
-    if (_ActionName === "halldetailsbooking") {
-        
+    //#region :: User Booking Form
+    if (_ActionName === "halldetailsbooking") {       
         var allowedDatesStr = $("#allowedDatesHidden").val();
-
         var allowedDates = [];
+        var selectedEventDates = [];
+        var singleDatePicker = null;
+        var multipleDatePicker = null;
+
         try {
             allowedDates = JSON.parse(allowedDatesStr);
         } catch (e) {
             console.error("Error parsing allowed dates:", e);
         }
 
-        if (allowedDates.length > 0) {
-            flatpickr("#eventDate", {
-                dateFormat: "Y-m-d",
-                enable: allowedDates,
-                minDate: allowedDates[0],
-                maxDate: allowedDates[allowedDates.length - 1]
-            });
+        // Event Duration Type Selection Handler
+        $('#eventDurationType').on('change', function () {
+            const durationType = $(this).val();
+
+            // Reset all date selections
+            resetDateSelections();
+
+            if (durationType === 'single') {
+                showSingleDateSelection();
+            } else if (durationType === 'multiple') {
+                showMultipleDateSelection();
+            } else {
+                hideDateSelections();
+            }
+        });
+
+        // Show single date selection
+        function showSingleDateSelection() {
+            $('#singleDateContainer').slideDown(300);
+            $('#multipleDatesContainer').slideUp(300);
+            $('#selectedDatesDisplay').slideDown(300);
+
+            // Initialize single date picker if not already done
+            if (!singleDatePicker && allowedDates.length > 0) {
+                singleDatePicker = flatpickr("#eventDate", {
+                    dateFormat: "Y-m-d",
+                    enable: allowedDates,
+                    minDate: allowedDates[0],
+                    maxDate: allowedDates[allowedDates.length - 1],
+                    onChange: function (selectedDates, dateStr, instance) {
+                        if (dateStr) {
+                            selectedEventDates = [dateStr];
+                        } else {
+                            selectedEventDates = [];
+                        }
+                        updateSelectedDatesDisplay();
+                    }
+                });
+            }
         }
-        
+
+        // Show multiple date selection
+        function showMultipleDateSelection() {
+            $('#singleDateContainer').slideUp(300);
+            $('#multipleDatesContainer').slideDown(300);
+            $('#selectedDatesDisplay').slideDown(300);
+
+            // Initialize multiple date picker if not already done
+            if (!multipleDatePicker && allowedDates.length > 0) {
+                multipleDatePicker = flatpickr("#eventDatesRange", {
+                    mode: "range",
+                    dateFormat: "Y-m-d",
+                    enable: allowedDates,
+                    minDate: allowedDates[0],
+                    maxDate: allowedDates[allowedDates.length - 1],
+                    onChange: function (selectedDates, dateStr, instance) {
+                        if (selectedDates.length === 2) {
+                            generateDateRange(selectedDates[0], selectedDates[1]);
+                        } else {
+                            selectedEventDates = [];
+                            updateSelectedDatesDisplay();
+                        }
+                    }
+                });
+            }
+        }
+
+        // Hide all date selections
+        function hideDateSelections() {
+            $('#singleDateContainer').slideUp(300);
+            $('#multipleDatesContainer').slideUp(300);
+            $('#selectedDatesDisplay').slideUp(300);
+        }
+
+        // Generate date range between start and end dates
+        function generateDateRange(startDate, endDate) {
+            selectedEventDates = [];
+            let currentDate = new Date(startDate);
+            const endDateTime = new Date(endDate);
+
+            while (currentDate <= endDateTime) {
+                const dateStr = flatpickr.formatDate(currentDate, "Y-m-d");
+                if (allowedDates.includes(dateStr)) {
+                    selectedEventDates.push(dateStr);
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            updateSelectedDatesDisplay();
+        }
+
+        // Update selected dates display for multiple days
+        function updateSelectedDatesDisplay() {
+            const selectedDatesList = $('#selectedDatesList');
+            const totalSelectedDays = $('#totalSelectedDays');
+            const durationType = $('#eventDurationType').val();
+
+            selectedDatesList.empty();
+
+            if (selectedEventDates.length > 0) {
+                if (durationType === 'single') {
+                    // For single date, show the date with clear all option
+                    const date = selectedEventDates[0];
+                    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+
+                    const badge = $(`
+                        <span class="date-badge single-date-badge">
+                            <i class="fas fa-calendar-day"></i> ${formattedDate}
+                            <button type="button" class="clear-all-dates" title="Clear date">×</button>
+                        </span>
+                    `);
+
+                    selectedDatesList.append(badge);
+                }
+                else {
+                    const startDate = new Date(selectedEventDates[0]);
+                    const endDate = new Date(selectedEventDates[selectedEventDates.length - 1]);
+
+                    const startFormatted = startDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    const endFormatted = endDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+
+                    const badge = $(`
+                        <span class="date-badge range-date-badge">
+                            <i class="fas fa-calendar-week"></i> ${startFormatted} - ${endFormatted}
+                            <button type="button" class="clear-all-dates" title="Clear date range">×</button>
+                        </span>
+                    `);
+
+                    selectedDatesList.append(badge);
+                }
+                
+            } else {
+                selectedDatesList.append('<span class="text-muted">No dates selected</span>');
+            }
+
+            totalSelectedDays.text(selectedEventDates.length);
+            
+        }
+
+        // Clear all selected dates
+        $(document).on('click', '.clear-all-dates', function () {
+            const durationType = $('#eventDurationType').val();
+
+            if (confirm(`Are you sure you want to clear ${durationType === 'single' ? 'the selected date' : 'the selected date range'}?`)) {
+                selectedEventDates = [];
+                updateSelectedDatesDisplay();
+
+                // Clear the appropriate picker
+                if (durationType === 'single' && singleDatePicker) {
+                    singleDatePicker.clear();
+                } else if (durationType === 'multiple' && multipleDatePicker) {
+                    multipleDatePicker.clear();
+                }
+            }
+        });
+
+        // Get selected dates for form submission
+        function getSelectedEventDates() {
+            return {
+                durationType: $('#eventDurationType').val(),
+                selectedDates: selectedEventDates,
+                totalDays: selectedEventDates.length
+            };
+        }
+
+        // Reset all date selections
+        function resetDateSelections() {
+            selectedEventDates = [];
+
+            // Clear single date picker
+            if (singleDatePicker) {
+                singleDatePicker.clear();
+            }
+
+            // Clear multiple date picker
+            if (multipleDatePicker) {
+                multipleDatePicker.clear();
+            }
+
+            // Clear display
+            updateSelectedDatesDisplay();
+            $('#eventDate').val('');
+            $('#eventDatesRange').val('');
+        }       
+
         $('#phone, #alternatePhone').on('input', function () {
             let value = $(this).val().replace(/\D/g, '');
             if (value.length > 10) {
@@ -266,192 +462,42 @@
             $(this).val(value);
         });
 
-        // Form validation and submission
+        // 🔹 Main Form Handler
         $('#bookingForm').on('submit', function (e) {
             e.preventDefault();
 
-            let isValid = true;
-            let errorMessages = [];
-            // Remove previous validation classes
-            $('.form-control, .form-select, .form-check-input').removeClass('is-invalid');
+            const validation = validateBookingForm();
 
-            const hiddenCatId = $("#hiddenCatId").val();
-            const hiddenHallId = $("#hiddenHallId").val();
-            const hiddenHallAvailId = $("#HiddenHallAvailId").val();
-            if (hiddenCatId === '0' || hiddenHallId === '0' || hiddenHallAvailId === '0') {
-                return;
-            }            
-
-            const fullName = $("#fullName").val().trim();
-            if (fullName === '') {                
-                $('#fullName').addClass('is-invalid');
-                errorMessages.push('Please enter Full Name!');               
-                isValid = false;
-            }
-
-            // Email validation
-            const email = $('#email').val().trim();
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (email === '' || !emailRegex.test(email)) {
-                $('#email').addClass('is-invalid');
-                errorMessages.push('Please enter a valid email address!');  
-                isValid = false;
-            }
-
-            // Phone number validation (10 digits)
-            const phone = $('#phone').val().trim().replace(/\D/g, '');
-            if (phone === '' || phone.length !== 10) {
-                $('#phone').addClass('is-invalid');
-                errorMessages.push('Phone number must be 10 digits!');  
-                isValid = false;
-            }
-
-            // Alternate phone number validation (10 digits)
-            const Alterphone = $('#alternatePhone').val().trim().replace(/\D/g, '');
-            if (Alterphone === '' || Alterphone.length !== 10) {
-                $('#alternatePhone').addClass('is-invalid');
-                errorMessages.push('Phone number must be 10 digits!');  
-                isValid = false;
-            }
-
-            //Event name
-            const eventName = $("#eventName").val().trim();
-            if (eventName === '') {
-                $('#eventName').addClass('is-invalid');
-                errorMessages.push('Please Enter Event Name!');
-                isValid = false;
-            }
-
-            //Event type
-            const eventType = $("#eventType option:selected").val()
-            if (eventType === '0' || eventType === '' || eventType === undefined) {
-                $('#eventType').addClass('is-invalid');
-                errorMessages.push('Please Select Event Type!');  
-                isValid = false;
-            }
-
-            //Event date
-            const eventDate = $("#eventDate").val()
-            if (eventDate === '') {
-                $('#eventDate').addClass('is-invalid');
-                errorMessages.push('Please Select Event Date!');  
-                isValid = false;
-            }
-
-            //Terms
-
-            const terms = $("#agreeTerms").is(":checked");
-            if (!terms) {
-                $('#agreeTerms').addClass('is-invalid');
-                errorMessages.push('Please Check Terms!');  
-                isValid = false;
-            }
-
-            if (isValid) {
-                // Show loading state
+            if (validation.isValid) {
                 const submitBtn = $('.btn-primary-custom');
                 const originalText = submitBtn.html();
-                submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Processing...').prop('disabled', true);
+                submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Processing...')
+                    .prop('disabled', true);
 
-                // Collect form data
                 const formData = {
-                    hallAvailId: HallAvailId,
-                    catId: hiddenCatId,
-                    hallId: HallId,
-                    fullName: fullName,
-                    email: email,
-                    phone: phone,
-                    alternatePhone: Alterphone,
+                    catId: $("#hiddenCatId").val(),
+                    hallId: $("#hiddenHallId").val(),
+                    hallAvailId: $("#HiddenHallAvailId").val(),
+                    rate: $("#hiddenRate").val(),
+                    securityMoney: $("#hiddenSecurityMoney").val(),
+                    initial_payable_amount: $("#hiddenInitialPayableRate").val(),
+                    fullName: $("#fullName").val().trim(),
+                    phone: $("#phone").val().trim(),
+                    alternatePhone: $("#alternatePhone").val().trim(),
+                    email: $("#email").val().trim(),
                     address: $('#address').val().trim(),
-                    eventName: eventName,
-                    eventType: eventType,
-                    eventDate: eventDate,                    
-                    eventDescription: $('#eventDescription').val(),                    
-                    totalAmount: $('#totalAmount').text()
+                    eventType: $("#eventType").val(),
+                    eventDate: selectedEventDates.join('^'),
                 };
+
+                //console.log(selectedEventDates);
+                //return;
 
                 let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
 
-                $.ajax({
-                    url: '/Admin/BookUserConfirmedHall',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    beforeSend: function (xhr) {
-                        $(".loader").css("display", "flex");
-                        xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
-                    },
-                    success: function (response) {
-                        $(".loader").css("display", "none");
-                        if (response.isSuccess) {
-                            notify(true, 'Booking Submitted Successfully! Redirecting to payment page...', true);
-                            
-                        } else {
-                            notify(false, response.errorMessages, false);
-                        }
+                submitBookingForm(formData, antiForgeryToken);
 
-                    }
-                });
-               
-                setTimeout(function () {
-                    // Success notification
-                    showNotification('success', 'Booking Submitted Successfully!', 'Redirecting to payment page...');
-
-                    // In real application, you would submit to server:
-                    // $.post('/api/bookings', formData)
-                    //   .done(function(response) {
-                    //     window.location.href = '/payment/' + response.bookingId;
-                    //   })
-                    //   .fail(function(xhr) {
-                    //     showNotification('error', 'Booking Failed', xhr.responseJSON.message);
-                    //   });
-
-                    // For demo, redirect after 2 seconds
-                    setTimeout(function () {
-                        // window.location.href = 'payment.html';
-                        console.log('Form Data:', formData);
-                    }, 2000);
-
-                }, 1500);
-
-                //// Collect selected services
-                //$('input[type="checkbox"]:checked').each(function () {
-                //    if ($(this).attr('id') !== 'agreeTerms') {
-                //        formData.additionalServices.push({
-                //            service: $(this).next('label').text().trim(),
-                //            price: $(this).val()
-                //        });
-                //    }
-                //});
-
-                //// Simulate API call
-                //setTimeout(function () {
-                //    // Success notification
-                //    showNotification('success', 'Booking Submitted Successfully!', 'Redirecting to payment page...');
-
-                //    // In real application, you would submit to server:
-                //    // $.post('/api/bookings', formData)
-                //    //   .done(function(response) {
-                //    //     window.location.href = '/payment/' + response.bookingId;
-                //    //   })
-                //    //   .fail(function(xhr) {
-                //    //     showNotification('error', 'Booking Failed', xhr.responseJSON.message);
-                //    //   });
-
-                //    // For demo, redirect after 2 seconds
-                //    setTimeout(function () {
-                //        // window.location.href = 'payment.html';
-                //        console.log('Form Data:', formData);
-                //    }, 2000);
-
-                //}, 1500);
-
-            } else {                
-                notify(false, 'Please fix the following errors:' + errorMessages.join(', '), false);
-
-                // Scroll to first error
+            } else {
                 const firstError = $('.is-invalid').first();
                 if (firstError.length) {
                     $('html, body').animate({
@@ -460,7 +506,111 @@
                 }
             }
         });
-                
+
+        // 🔹 Separate Validation Function
+        function validateBookingForm() {
+            let isValid = true;
+            let errorMessages = [];
+
+            // Reset errors
+            $('.form-control, .form-select, .form-check-input').removeClass('is-invalid');
+
+            const hiddenCatId = $("#hiddenCatId").val();
+            const hiddenHallId = $("#hiddenHallId").val();
+            const hiddenHallAvailId = $("#HiddenHallAvailId").val();
+            if (hiddenCatId === '0' || hiddenHallId === '0' || hiddenHallAvailId === '0') {
+                return { isValid: false, errorMessages };
+            }
+
+            const fullName = $("#fullName").val().trim();
+            if (fullName === '') {
+                $('#fullName').addClass('is-invalid');
+                errorMessages.push('Please enter Full Name!');
+                isValid = false;
+            }
+
+            const email = $('#email').val().trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === '' || !emailRegex.test(email)) {
+                $('#email').addClass('is-invalid');
+                errorMessages.push('Please enter a valid email address!');
+                isValid = false;
+            }
+
+            const phone = $('#phone').val().trim().replace(/\D/g, '');
+            if (phone === '' || phone.length !== 10) {
+                $('#phone').addClass('is-invalid');
+                errorMessages.push('Phone number must be 10 digits!');
+                isValid = false;
+            }
+
+            const Alterphone = $('#alternatePhone').val().trim().replace(/\D/g, '');
+            if (Alterphone === '' || Alterphone.length !== 10) {
+                $('#alternatePhone').addClass('is-invalid');
+                errorMessages.push('Alternate phone number must be 10 digits!');
+                isValid = false;
+            }
+
+            const eventType = $("#eventType option:selected").val();
+            if (eventType === '0' || eventType === '' || eventType === undefined) {
+                $('#eventType').addClass('is-invalid');
+                errorMessages.push('Please Select Event Type!');
+                isValid = false;
+            }
+
+            const eventDurationType = $("#eventDurationType option:selected").val();
+            if (eventDurationType === '0' || eventDurationType === '' || eventDurationType === undefined) {
+                $('#eventDurationType').addClass('is-invalid');
+                errorMessages.push('Please Select Event Duration!');
+                isValid = false;
+            }
+
+            if (eventDurationType === 'single' && selectedEventDates.length === 0) {
+                $('#eventDate').addClass('is-invalid');
+                errorMessages.push('Please Select Date!');
+                isValid = false;
+            }
+            if (eventDurationType === 'multiple' && selectedEventDates.length === 0) {
+                $('#eventDatesRange').addClass('is-invalid');
+                errorMessages.push('Please Select Multiple Date!');
+                isValid = false;
+            }
+
+            const terms = $("#agreeTerms").is(":checked");
+            if (!terms) {
+                $('#agreeTerms').addClass('is-invalid');
+                errorMessages.push('Please Check Terms!');
+                isValid = false;
+            }
+
+            return { isValid, errorMessages };
+        }
+
+        // 🔹 Separate AJAX Function
+        function submitBookingForm(formData, antiForgeryToken) {
+            $.ajax({
+                url: '/UserBooking/BookUserConfirmedHall',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                    xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    if (response.isSuccess) {
+                        notify(true, 'Booking Submitted Successfully! Redirecting to payment page...', true);
+                        setTimeout(() => {
+                            window.location.href = "/UserBooking/UserHallBooking";
+                        }, 2000);
+                    } else {
+                        notify(false, response.errorMessages, false);
+                    }
+                }
+            });
+        }
+
 
         // Form change tracking
         //let formChanged = false;
@@ -527,4 +677,6 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
     }
+
+    //#endregion :: User Booking Form
 });

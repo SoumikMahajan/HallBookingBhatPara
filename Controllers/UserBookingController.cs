@@ -1,9 +1,8 @@
 ﻿using HallBookingBhatPara.Application.Interface;
 using HallBookingBhatPara.Domain.DTO;
-using HallBookingBhatPara.Domain.DTO.Admin;
 using HallBookingBhatPara.Domain.DTO.HallBooking;
-using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Infrastructure.Service;
+using HallBookingBhatPara.Model.Validator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +46,12 @@ namespace HallBookingBhatPara.Controllers
         public async Task<IActionResult> HallDetailsBooking(long hallAvlId)
         {
             MultipleModel mm = new();
+
+            var LoginUserMail = _tokenProvider.GetUserClaims().Email;
+
+            var UserRegDeatils = await _unitOfWork.UserRegistrationRepository.GetAsync(filter: u => u.email == LoginUserMail && u.active_status == 1);
+            mm.public_User_Registration = UserRegDeatils;
+
             var hallDetails = await _unitOfWork.SPRepository.GetHallDetailsAfterSearchAsync(hallAvlId);
 
             mm.hallBookingDTO = hallDetails;
@@ -65,30 +70,32 @@ namespace HallBookingBhatPara.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BookUserConfirmedHall([FromForm] InsertSubCategoryDTO model)
+        public async Task<IActionResult> BookUserConfirmedHall([FromForm] InsertUserConfirmhallDTO model)
         {
-            if (model.CategoryId == 0)
-                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+            var validator = new InsertConfirmBookHallValidator();
+            var validationResult = validator.Validate(model);
 
-            if (string.IsNullOrEmpty(model.SubCategoryName))
-                return Json(ResponseService.BadRequestResponse<string>("SubCategory Name can not null or empty"));
-            if (model.fileUpload == null || model.fileUpload.Length == 0)
-                return Json(ResponseService.BadRequestResponse<string>("Profile Picture can not null or empty"));
-
-            model.CreatedBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
-            if (model.fileUpload != null && model.fileUpload.Length > 0)
+            if (!validationResult.IsValid)
             {
-                model.ImageData = await FileHelper.ConvertToByteArrayAsync(model.fileUpload);
+                return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
             }
 
-            var response = await _unitOfWork.SPRepository.AddHallSubCategoryAsync(model);
+            //Add validation for checking the event date already booked or not
+
+            model.userClaims = _tokenProvider.GetUserClaims();
+
+            model.EntryIP = _tokenProvider.GetClientIpAddress(HttpContext);
+
+
+
+            var response = await _unitOfWork.SPRepository.BookUserConfirmedHallAsync(model);
 
             if (response == 0)
             {
-                return Json(ResponseService.InternalServerResponse<string>("SubCategory Insert Failed."));
+                return Json(ResponseService.InternalServerResponse<string>("Failed."));
             }
 
-            return Json(ResponseService.SuccessResponse<string>("SubCategory Insert Successfully"));
+            return Json(ResponseService.SuccessResponse<string>("Successfully"));
 
         }
     }

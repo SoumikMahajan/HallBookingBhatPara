@@ -59,7 +59,7 @@ namespace HallBookingBhatPara.Controllers
                 Roles = response.stake_details,
                 RolesId = response.stake_details_id_fk.ToString(),
                 StackHolderId = response.stake_details_id_fk.ToString(),
-                ProfileImagePath = response.profile_display
+                ProfileImagePath = response.profile_display ?? ""
             };
 
             var token = _jwtService.GenerateToken(userClaims);

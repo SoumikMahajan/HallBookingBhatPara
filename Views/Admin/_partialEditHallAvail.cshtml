@@ -82,9 +82,9 @@
     </div>
 
     <div class="row mb-3">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label for="UpProposedRate" class="form-label">
-                <i class="fas fa-rupee-sign me-1"></i>Proposed Rate (per night)
+                <i class="fas fa-rupee-sign me-1"></i>Rate
             </label>
             <div class="input-group">
                 <span class="input-group-text">₹</span>
@@ -93,14 +93,25 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <label for="UpPaymentType" class="form-label">Payment Type</label>
+            <select id="UpPaymentType" class="form-select">
+                <!option value="0" @(Model.hallAvailable.payment_type_id_fk == 0 ? "selected" : "")>--Select Payment Type--</!option>
+                <!option value="1" @(Model.hallAvailable.payment_type_id_fk == 1 ? "selected" : "")>Full Payment</!option>
+                <!option value="2" @(Model.hallAvailable.payment_type_id_fk == 2 ? "selected" : "")>Half Payment</!option>
+            </select>
+        </div>
+
+        <div class="col-md-4 @(Model.hallAvailable.payment_type_id_fk == 0 ? "d-none" : "")" id="UpIsHasSecurityMoney">
             <label for="UpSecurityMoney" class="form-label">
                 <i class="fas fa-shield-alt me-1"></i>Security Money
             </label>
             <div class="input-group">
                 <span class="input-group-text">₹</span>
-                <input type="number" id="UpSecurityMoney" class="form-control" placeholder="Enter security amount" min="0"
-                       value="@Model.hallAvailable.security_money">
+                <input type="number" id="UpSecurityMoney" class="form-control"
+                       placeholder="Enter security amount" min="0"
+                       value="@(Model.hallAvailable.security_money == 0 ? "" : Model.hallAvailable.security_money.ToString())">
+
             </div>
         </div>
     </div>

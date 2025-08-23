@@ -22,6 +22,7 @@ namespace HallBookingBhatPara.Domain.DTO
         #region :: Hall Booking
         public List<HallSearchDTO> hallSearchList { get; set; }
         public HallBookingDTO hallBookingDTO { get; set; }
+        public PaymentSummeryDTO paymentSummeryDTO { get; set; }
         #endregion
     }
 }

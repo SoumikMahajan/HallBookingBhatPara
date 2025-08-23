@@ -1,0 +1,39 @@
+﻿@model HallBookingBhatPara.Domain.DTO.MultipleModel
+@{
+    var NewPaymentId = ViewBag.NewPaymentId as long? ?? 0;
+}
+
+<div class="price-item" style="background: chocolate;">
+    <span>Total Rent</span>
+    <span>₹@Model.paymentSummeryDTO.rate</span>
+</div>
+@if (Model.paymentSummeryDTO.payment_type_id_fk == 2)
+{
+    if (NewPaymentId == 10)
+    {
+        <div class="price-item total-rent">
+            <span>Initial Payable Amount(100%)</span>
+            <span>₹@Model.paymentSummeryDTO.payable_rate</span>
+        </div>
+        <div class="price-item">
+            <span>Security Deposit</span>
+            <span>₹@Model.paymentSummeryDTO.security_money</span>
+        </div>
+    }
+    else
+    {
+        <div class="price-item total-rent">
+            <span>Initial Payable Amount(75%)</span>
+            <span>₹@Model.paymentSummeryDTO.payable_rate</span>
+        </div>
+        <div class="price-item">
+            <span>Security Deposit</span>
+            <span>₹@Model.paymentSummeryDTO.security_money</span>
+        </div>
+    }
+
+}
+<div class="total-price">
+    <span>Total Amount</span>
+    <span id="totalAmount">₹@Model.paymentSummeryDTO.payable_amount</span>
+</div>

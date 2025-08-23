@@ -15,5 +15,6 @@ namespace HallBookingBhatPara.Domain.DTO.Admin
         public short? active_status { get; set; }
         public long? floor_id_fk { get; set; }
         public string? floor_name { get; set; }
+        public long payment_type_id_fk { get; set; }
     }
 }

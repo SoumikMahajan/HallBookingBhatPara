@@ -87,6 +87,9 @@ namespace HallBookingBhatPara.Model.Validator
             RuleFor(x => x.SubcategoryId)
                 .NotNull().WithMessage("SubcategoryId is required.")
                 .GreaterThan(0).WithMessage("SubcategoryId must be greater than 0.");
+            RuleFor(x => x.PaymentTypeId)
+                .NotNull().WithMessage("PaymentType is required.")
+                .GreaterThan(0).WithMessage("PaymentType must be greater than 0.");
 
             RuleFor(x => x.AvailableFrom)
                 .NotNull().WithMessage("AvailableFrom is required.")
@@ -119,6 +122,10 @@ namespace HallBookingBhatPara.Model.Validator
             RuleFor(x => x.SubcategoryId)
                 .NotNull().WithMessage("SubcategoryId is required.")
                 .GreaterThan(0).WithMessage("SubcategoryId must be greater than 0.");
+
+            RuleFor(x => x.PaymentTypeId)
+                .NotNull().WithMessage("PaymentType is required.")
+                .GreaterThan(0).WithMessage("PaymentType must be greater than 0.");
 
             RuleFor(x => x.AvailableFrom)
                 .NotNull().WithMessage("AvailableFrom is required.");

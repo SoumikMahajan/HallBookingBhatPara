@@ -15,8 +15,6 @@
     var rate = Model.hallBookingDTO.rate;
 
     var securityMoney = Model.hallBookingDTO.security_money;
-
-    var InitialPayableRate = Model.hallBookingDTO.payable_rate + Model.hallBookingDTO.security_money;
 }
 
 <!-- Header Section -->
@@ -97,8 +95,8 @@
                 <input type="hidden" id="hiddenHallId" value='@Model.hallBookingDTO.hall_id_pk' />
                 <input type="hidden" id="HiddenHallAvailId" value='@Model.hallBookingDTO.hall_availability_id_pk' />
                 <input type="hidden" id="hiddenRate" value='@rate' />
-                <input type="hidden" id="hiddenSecurityMoney" value='@securityMoney' />
-                <input type="hidden" id="hiddenInitialPayableRate" value='@InitialPayableRate' />
+                <input type="hidden" id="hiddenSecurityMoney" value='@securityMoney' />                
+                <input type="hidden" id="paymentTypeId" value='@Model.hallBookingDTO.payment_type_id_fk' />
 
                 <h4 class="section-title">
                     <i class="fas fa-user"></i> Personal Information
@@ -139,9 +137,9 @@
                     @if (!string.IsNullOrEmpty(Model.hallBookingDTO.floor_name))
                     {
                         <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
-                    }                   
+                    }
                 </h4>
-                <div class="row g-3">                    
+                <div class="row g-3">
                     <div class="col-md-6">
                         <label for="eventType" class="form-label">Event Type <span class="required">*</span></label>
                         <select class="form-select" id="eventType">
@@ -153,7 +151,7 @@
                         </select>
                         <div class="invalid-feedback">Please select an event type.</div>
                     </div>
-                   
+
                     @* <div class="col-md-4">
                         <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
                         <input type="text" class="form-control" id="eventDate" placeholder="--Select Event Date--">
@@ -326,27 +324,41 @@
                 <h4 class="section-title">
                     <i class="fas fa-calculator"></i> Price Summary
                 </h4>
-                <div class="price-summary">
-                    <div class="price-item" style="background: chocolate;">
-                        <span>Total Rent</span>
-                        <span>₹@rate</span>
+
+                @if (Model.hallBookingDTO.payment_type_id_fk == 2)
+                {
+                    <!-- Payment Option Selection -->
+                    <div class="payment-options-section">
+                        <p class="payment-label">Please select your payment type</p>
+                        <div class="payment-options">
+                            <label class="payment-card">
+                                <input type="radio" name="paymentType" value="10" />
+                                <span>💰 Full Payment</span>
+                            </label>
+                            <label class="payment-card">
+                                <input type="radio" name="paymentType" value="20" checked />
+                                <span>💰 Half Payment</span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="price-item">
-                        <span>Initial Payable Amount(75%)</span>
-                        <span>₹@Model.hallBookingDTO.payable_rate</span>
+                }
+                @if (Model.hallBookingDTO.payment_type_id_fk == 1)
+                {
+                    <!-- Payment Option Selection -->
+                    <div class="payment-options-section">
+                        <p class="payment-label">Please select your payment type</p>
+                        <div class="payment-options">
+                            <label class="payment-card">
+                                <input type="radio" name="paymentType" value="1" checked />
+                                <span>💰 Full Payment</span>
+                            </label>                           
+                        </div>
                     </div>
-                    @* <div class="price-item" id="additionalServices" style="display: none;">
-                        <span>Additional Services</span>
-                        <span id="servicesTotal">₹0</span>
-                    </div> *@
-                    <div class="price-item">
-                        <span>Security Deposit</span>
-                        <span>₹@securityMoney</span>
-                    </div>
-                    <div class="total-price">
-                        <span>Total Amount</span>
-                        <span id="totalAmount">₹ @InitialPayableRate</span>
-                    </div>
+                }
+                
+
+                <div class="price-summary" id="partialPaymentSummery">
+                    @await Html.PartialAsync("_partialPriceSummary", Model)                    
                 </div>
             </div>
 

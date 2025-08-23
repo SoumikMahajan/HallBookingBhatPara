@@ -1,0 +1,351 @@
+﻿@{
+    ViewData["Title"] = "Booking List";
+}
+@model HallBookingBhatPara.Domain.DTO.MultipleModel
+
+<!-- Header Section -->
+<section class="booking-header">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="booking-title">
+                    <i class="fas fa-list-alt"></i> My Bookings
+                </h1>
+                <p class="booking-subtitle">Manage and track all your hall bookings</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content Container -->
+<div class="container">
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h3 class="filter-title">
+            <i class="fas fa-filter"></i> Filter Bookings
+        </h3>
+
+        <!-- Status Filters -->
+        <div class="status-filters">
+            <div class="status-filter active" data-status="all">
+                <i class="fas fa-list"></i>
+                All Bookings
+            </div>
+            <div class="status-filter" data-status="confirmed">
+                <i class="fas fa-check-circle"></i>
+                Confirmed
+            </div>
+            <div class="status-filter" data-status="pending">
+                <i class="fas fa-clock"></i>
+                Pending
+            </div>
+            <div class="status-filter" data-status="completed">
+                <i class="fas fa-check-double"></i>
+                Completed
+            </div>
+            <div class="status-filter" data-status="cancelled">
+                <i class="fas fa-times-circle"></i>
+                Cancelled
+            </div>
+        </div>
+
+        <!-- Date Range and Search Filter -->
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="date" id="fromDate" class="form-control">
+                    <label for="fromDate"><i class="fas fa-calendar-alt"></i> From Date</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="date" id="toDate" class="form-control">
+                    <label for="toDate"><i class="fas fa-calendar-check"></i> To Date</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" id="searchHall" class="form-control" placeholder="Search by hall name...">
+                    <label for="searchHall"><i class="fas fa-search"></i> Search Hall</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-number" id="totalBookings">12</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-number" id="confirmedBookings">8</div>
+                <div class="stat-label">Confirmed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number" id="pendingBookings">2</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div class="stat-number" id="completedBookings">2</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookings Grid Section -->
+    <section class="bookings-section">
+        <div class="bookings-grid" id="bookingsGrid">
+
+            <!-- Sample Booking Card 1 - Confirmed -->
+            <div class="booking-card" data-status="confirmed">
+                <div class="booking-list-header">
+                    <div class="booking-id">Booking ID: #BK001234</div>
+                    <h4 class="hall-name">Marriage Hall - Main Auditorium</h4>
+                    <span class="booking-status status-confirmed">Confirmed</span>
+                </div>
+                <div class="booking-body">
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                            <span><strong>Event Date:</strong> 25th December, 2024</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                            <span><strong>Time:</strong> 10:00 AM - 10:00 PM</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-heart"></i></div>
+                            <span><strong>Event Type:</strong> Wedding Reception</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                            <span><strong>Amount:</strong> ₹25,000</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                            <span><strong>Booked On:</strong> 15th Nov, 2024</span>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="action-btn-bookinglist btn-view" data-booking-id="BK001234">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <button class="action-btn-bookinglist btn-download" data-booking-id="BK001234">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn-bookinglist btn-cancel" data-booking-id="BK001234">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Booking Card 2 - Pending -->
+            <div class="booking-card" data-status="pending">
+                <div class="booking-list-header">
+                    <div class="booking-id">Booking ID: #BK001235</div>
+                    <h4 class="hall-name">Community Center - Hall B</h4>
+                    <span class="booking-status status-pending">Pending</span>
+                </div>
+                <div class="booking-body">
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                            <span><strong>Event Date:</strong> 15th January, 2025</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                            <span><strong>Time:</strong> 6:00 PM - 11:00 PM</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-users"></i></div>
+                            <span><strong>Event Type:</strong> Birthday Party</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                            <span><strong>Amount:</strong> ₹15,000</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                            <span><strong>Booked On:</strong> 20th Nov, 2024</span>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="action-btn-bookinglist btn-view" data-booking-id="BK001235">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <button class="action-btn-bookinglist btn-reschedule" data-booking-id="BK001235">
+                            <i class="fas fa-edit"></i> Reschedule
+                        </button>
+                        <button class="action-btn-bookinglist btn-cancel" data-booking-id="BK001235">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Booking Card 3 - Completed -->
+            <div class="booking-card" data-status="completed">
+                <div class="booking-list-header">
+                    <div class="booking-id">Booking ID: #BK001230</div>
+                    <h4 class="hall-name">Seminar Hall - Conference Room</h4>
+                    <span class="booking-status status-completed">Completed</span>
+                </div>
+                <div class="booking-body">
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                            <span><strong>Event Date:</strong> 10th November, 2024</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                            <span><strong>Time:</strong> 9:00 AM - 5:00 PM</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-briefcase"></i></div>
+                            <span><strong>Event Type:</strong> Corporate Meeting</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                            <span><strong>Amount:</strong> ₹18,000</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                            <span><strong>Booked On:</strong> 25th Oct, 2024</span>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="action-btn-bookinglist btn-view" data-booking-id="BK001230">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <button class="action-btn-bookinglist btn-download" data-booking-id="BK001230">
+                            <i class="fas fa-download"></i> Receipt
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Booking Card 4 - Cancelled -->
+            <div class="booking-card" data-status="cancelled">
+                <div class="booking-list-header">
+                    <div class="booking-id">Booking ID: #BK001228</div>
+                    <h4 class="hall-name">Marriage Hall - Garden Area</h4>
+                    <span class="booking-status status-cancelled">Cancelled</span>
+                </div>
+                <div class="booking-body">
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                            <span><strong>Event Date:</strong> 5th December, 2024</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                            <span><strong>Time:</strong> 4:00 PM - 11:00 PM</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-heart"></i></div>
+                            <span><strong>Event Type:</strong> Engagement</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                            <span><strong>Amount:</strong> ₹20,000 (Refunded)</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-ban"></i></div>
+                            <span><strong>Cancelled On:</strong> 1st Dec, 2024</span>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="action-btn-bookinglist btn-view" data-booking-id="BK001228">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <button class="action-btn-bookinglist btn-download" data-booking-id="BK001228">
+                            <i class="fas fa-download"></i> Refund Receipt
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Empty State (Hidden by default, show when no bookings) -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <i class="fas fa-calendar-times"></i>
+        <h3>No Bookings Found</h3>
+        <p>You haven't made any bookings yet. Start by searching for available halls.</p>
+        <button class="search-new-btn">
+            <i class="fas fa-search"></i> Search Halls
+        </button>
+    </div>
+
+</div>
+
+<!-- Booking Details Modal (Optional) -->
+<div class="modal fade" id="bookingDetailsModal" tabindex="-1" aria-labelledby="bookingDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingDetailsModalLabel">
+                    <i class="fas fa-info-circle"></i> Booking Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalBookingDetails">
+                <!-- Booking details will be loaded here via AJAX -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="modalDownloadBtn">
+                    <i class="fas fa-download"></i> Download Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking Confirmation Modal -->
+<div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelBookingModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning"></i> Cancel Booking
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this booking?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Note:</strong> Cancellation charges may apply as per terms and conditions.
+                </div>
+                <div class="mb-3">
+                    <label for="cancelReason" class="form-label">Reason for Cancellation</label>
+                    <textarea class="form-control" id="cancelReason" rows="3" placeholder="Please provide reason for cancellation..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Booking</button>
+                <button type="button" class="btn btn-danger" id="confirmCancelBtn">
+                    <i class="fas fa-times"></i> Cancel Booking
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

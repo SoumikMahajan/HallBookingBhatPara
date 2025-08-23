@@ -28,6 +28,7 @@ namespace HallBookingBhatPara.Application.Interface
         Task<List<HallSearchDTO>> HallAvailableSearchResultAsync(long catType, string startDate, string endDate);
         Task<HallBookingDTO> GetHallDetailsAfterSearchAsync(long hallAvlId);
         Task<long> BookUserConfirmedHallAsync(InsertUserConfirmhallDTO model);
+        Task<PaymentSummeryDTO> GetPaymentSummeryDetailsAsync(long hallAvailId, long PaymentId, long PercentageOfIntialPaymentAmount);
 
         #endregion
     }

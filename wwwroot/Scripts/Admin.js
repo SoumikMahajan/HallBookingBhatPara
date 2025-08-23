@@ -662,6 +662,16 @@
                 }
             }
 
+            const paymentTypeId = $('#paymentType option:selected').val();
+            if (paymentTypeId === '0' || paymentTypeId === undefined) {
+                notify(false, "Please Select Payment Type.", false);
+                $("#paymentType").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#paymentType").removeClass("is-invalid");
+            } 
+
             const AvailableFrom = $('#availableFrom').val();
             if (AvailableFrom === '' || AvailableFrom === undefined) {
                 notify(false, "Please Select Date.", false);
@@ -691,13 +701,28 @@
             else {
                 $("#proposedRate").removeClass("is-invalid");
             }
+            var IsHasSecurityMoney = $("#IsHasSecurityMoney").hasClass('d-none');
+            var SecurityMoney = '';
+            if (!IsHasSecurityMoney) {
+                SecurityMoney = $('#securityMoney').val().trim();
+                if (SecurityMoney == '')
+                {
+                    notify(false, "Please Enter Security money.", false);
+                    $("#securityMoney").addClass("is-invalid");
+                    return;
+                }
+                else {
+                    $("#securityMoney").removeClass("is-invalid");
+                }
+            }
+            
 
-            const SecurityMoney = $('#securityMoney').val().trim();
             let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
 
             const formData = new FormData();
             formData.append("CategoryId", categoryid);
             formData.append("SubcategoryId", SubcategoryId);
+            formData.append("PaymentTypeId", paymentTypeId);
             formData.append("AvailableFrom", AvailableFrom);
             formData.append("AvailableTo", AvailableTo);
             formData.append("ProposedRate", ProposedRate);
@@ -749,13 +774,15 @@
                         let html = '';
                         hallavail.forEach((item, index) => {
 
+                            const paymnetType = (item.payment_type_id_fk === 1) ? '(F)' : (item.payment_type_id_fk === 2) ? '(H)' : '';
                             const floorDisplay = (item.floor_id_fk !== 0) ? `(${item.floor_name})` : '';
+                            
 
                             html += `
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${item.category_name}</td>
-                                    <td>${item.hall_name}${floorDisplay}</td>
+                                    <td>${item.hall_name}${floorDisplay} <span style="color: red;">${paymnetType}</span></td>
                                     <td>${item.hall_availability_from_date.split('T')[0]}</td>
                                     <td>${item.hall_availability_to_date.split('T')[0]}</td>
                                     <td>${item.rate}</td>
@@ -908,7 +935,30 @@
                 $("#UpProposedRate").removeClass("is-invalid");
             }
 
-            const SecurityMoney = $('#UpSecurityMoney').val().trim();
+            const UppaymentTypeId = $('#UpPaymentType option:selected').val();
+            if (UppaymentTypeId === '0' || UppaymentTypeId === undefined) {
+                notify(false, "Please Select Payment Type.", false);
+                $("#UpPaymentType").addClass("is-invalid");
+                return;
+            }
+            else {
+                $("#UpPaymentType").removeClass("is-invalid");
+            } 
+
+
+            var IsHasSecurityMoney = $("#UpIsHasSecurityMoney").hasClass('d-none');
+            var SecurityMoney = '';
+            if (!IsHasSecurityMoney) {
+                SecurityMoney = $('#UpSecurityMoney').val().trim();
+                if (SecurityMoney == '') {
+                    notify(false, "Please Enter Security money.", false);
+                    $("#UpSecurityMoney").addClass("is-invalid");
+                    return;
+                }
+                else {
+                    $("#UpSecurityMoney").removeClass("is-invalid");
+                }
+            }           
 
             var IsHasFloor = $("#IsHasFloorForUpdate").hasClass('d-none');
             var FloorId = 0;
@@ -931,6 +981,7 @@
             formData.append("HallAvailId", HallId);
             formData.append("CategoryId", categoryid);
             formData.append("SubcategoryId", SubcategoryId);
+            formData.append("PaymentTypeId", UppaymentTypeId);
             formData.append("AvailableFrom", AvailableFrom);
             formData.append("AvailableTo", AvailableTo);
             formData.append("ProposedRate", ProposedRate);
@@ -961,6 +1012,26 @@
 
                 }
             });
+        });
+
+        $(document).on('change', '#paymentType', function (e) {
+            let paymentType = $(this).val();
+            if (paymentType === "2") { // Half Payment
+                $("#IsHasSecurityMoney").removeClass("d-none");
+            } else { // Full Payment or default
+                $("#IsHasSecurityMoney").addClass("d-none");
+                $("#securityMoney").val("");
+            }
+        });
+
+        $(document).on('change', '#UpPaymentType', function (e) {
+            let UppaymentType = $(this).val();
+            if (UppaymentType === "2") { // Half Payment
+                $("#UpIsHasSecurityMoney").removeClass("d-none");
+            } else { // Full Payment or default
+                $("#UpIsHasSecurityMoney").addClass("d-none");
+                $("#UpSecurityMoney").val("");
+            }
         });
        
     }

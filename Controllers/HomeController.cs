@@ -37,16 +37,6 @@ namespace HallBookingBhatPara.Controllers
             return RedirectToAction("Login", "User");
         }
 
-        public IActionResult BookingList()
-        {
-            return View();
-        }
-
-        //public IActionResult AddHallMaster()
-        //{
-        //    return View();
-        //}
-
         [HttpGet]
         public IActionResult Error(string? message = null)
         {

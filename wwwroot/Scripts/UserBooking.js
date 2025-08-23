@@ -239,7 +239,7 @@
 
 
     }
-    // #endregion :: Dashboard
+    // #endregion :: User Hall Search
 
     //#region :: User Booking Form
     if (_ActionName === "halldetailsbooking") {       
@@ -612,6 +612,34 @@
         }
 
 
+        $("input[name='paymentType']").on("change", function () {
+            var selectedPaymentType = $(this).val();
+
+            //var sendValue = selectedPaymentType;
+            //if (selectedPaymentType === "1") {
+            //    sendValue = "2";
+            //}
+
+            const AvailId = $("#HiddenHallAvailId").val();
+
+            $.ajax({
+                url: '/UserBooking/GetPaymentSummeryDetails',
+                data: { selectedPaymentType: selectedPaymentType, AvailId: AvailId },
+                type: 'GET',
+                dataType: 'HTML',
+                success: function (response) {
+                    if (response != '') {
+                        $("#partialPaymentSummery").empty();
+                        $("#partialPaymentSummery").html(response);                        
+                    }
+
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                },
+            });
+        });
+
         // Form change tracking
         //let formChanged = false;
         //let formSubmitted = false;
@@ -679,4 +707,10 @@
     }
 
     //#endregion :: User Booking Form
+
+    // #region :: Booking list
+    if (_ActionName === "bookinglist") {
+        
+    }
+    // #endregion :: Booking list
 });

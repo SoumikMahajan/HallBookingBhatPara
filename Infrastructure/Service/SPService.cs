@@ -138,6 +138,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 parameters.Add("@Rate", model.ProposedRate, DbType.Decimal);
                 parameters.Add("@SecurityMoney", model.SecurityMoney, DbType.Decimal);
                 parameters.Add("@FloorId", model.FloorId, DbType.Int64);
+                parameters.Add("@PaymentTypeId", model.PaymentTypeId, DbType.Int64);
                 parameters.Add("@GlobalUserId", model.userClaims.StackHolderId, DbType.Int64);
                 parameters.Add("@RoleId", model.userClaims.RolesId, DbType.Int64);
                 parameters.Add("@OperationId", 1, DbType.Int32);
@@ -229,7 +230,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 parameters.Add("@GlobalUserId", model.userClaims.StackHolderId, DbType.Int64);
                 parameters.Add("@RoleId", model.userClaims.RolesId, DbType.Int64);
                 parameters.Add("@FloorId", model.FloorId, DbType.Int64);
-
+                parameters.Add("@PaymentTypeId", model.PaymentTypeId, DbType.Int64);
                 parameters.Add("@OperationId", 6, DbType.Int32);
                 var result = await connection.QueryFirstOrDefaultAsync<long>(
                     "adminHallAvailabilitySp",
@@ -360,6 +361,24 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 
                 parameters.Add("@OperationId", 6, DbType.Int32);
                 var result = await connection.QueryFirstOrDefaultAsync<long>(
+                    "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+
+        public async Task<PaymentSummeryDTO> GetPaymentSummeryDetailsAsync(long hallAvailId, long PaymentId, long PercentageOfIntialPaymentAmount)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@HallAvlId", hallAvailId, DbType.Int64);
+                parameters.Add("@PaymentTypeId", PaymentId, DbType.Int64);
+                parameters.Add("@PaymentPercentage", PercentageOfIntialPaymentAmount, DbType.Int64);
+                parameters.Add("@OperationId", 7, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<PaymentSummeryDTO>(
                     "Bhatpara_HallBooking_Users",
                     parameters,
                     commandType: CommandType.StoredProcedure

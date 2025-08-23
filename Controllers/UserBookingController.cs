@@ -20,6 +20,7 @@ namespace HallBookingBhatPara.Controllers
             _tokenProvider = tokenProvider;
         }
 
+        #region :: Hall Search
         public async Task<IActionResult> UserHallBooking()
         {
             MultipleModel mm = new();
@@ -42,7 +43,9 @@ namespace HallBookingBhatPara.Controllers
 
             return PartialView("_partialHallAvailableSearchResult", mm);
         }
+        #endregion
 
+        #region :: User Hall Book
         public async Task<IActionResult> HallDetailsBooking(long hallAvlId)
         {
             MultipleModel mm = new();
@@ -64,6 +67,19 @@ namespace HallBookingBhatPara.Controllers
 
             mm.dropDownListDTOs = drpDownHallEvent;
             //mm.FloorList = FloorList;
+
+            var PercentageOfIntialPaymentAmount = 0;
+            if (hallDetails.payment_type_id_fk == 1) // Full Payment
+            {
+                PercentageOfIntialPaymentAmount = 100;
+            }
+            else if (hallDetails.payment_type_id_fk == 2) // Half Payment
+            {
+                PercentageOfIntialPaymentAmount = 75;
+            }
+
+            var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsAsync(hallDetails.hall_availability_id_pk, hallDetails.payment_type_id_fk, PercentageOfIntialPaymentAmount);
+            mm.paymentSummeryDTO = paymentSummery;
 
             return View(mm);
         }
@@ -98,5 +114,42 @@ namespace HallBookingBhatPara.Controllers
             return Json(ResponseService.SuccessResponse<string>("Successfully"));
 
         }
+
+        public async Task<IActionResult> GetPaymentSummeryDetails(long selectedPaymentType, long AvailId)
+        {
+            if (selectedPaymentType == 0 || AvailId == 0)
+            {
+                return Json(ResponseService.BadRequestResponse<string>("Invalid Data."));
+            }
+
+            MultipleModel mm = new();
+            var PercentageOfIntialPaymentAmount = 0;
+            if (selectedPaymentType == 10) // Full Payment
+            {
+                PercentageOfIntialPaymentAmount = 100;
+            }
+            else if (selectedPaymentType == 20) // Half Payment
+            {
+                PercentageOfIntialPaymentAmount = 75;
+            }
+
+
+            var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsAsync(AvailId, 2, PercentageOfIntialPaymentAmount);
+            mm.paymentSummeryDTO = paymentSummery;
+            ViewBag.NewPaymentId = selectedPaymentType;
+
+            return PartialView("_partialPriceSummary", mm);
+        }
+        #endregion
+
+
+        #region :: Booking Details
+        public IActionResult BookingList()
+        {
+            return View();
+        }
+        #endregion
+
+
     }
 }

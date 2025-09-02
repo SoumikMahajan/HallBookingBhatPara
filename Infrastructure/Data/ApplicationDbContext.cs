@@ -23,6 +23,7 @@ namespace HallBookingBhatPara.Infrastructure.Data
         public DbSet<hall_floor_map_details> hall_floor_map_details { get; set; }
         public DbSet<hall_event_type_master> hall_event_type_master { get; set; }
         public DbSet<public_user_registration> public_user_registration { get; set; }
+        public DbSet<hall_booking_details> hall_booking_details { get; set; }
         //public DbSet<LoginResponseDTO> 
 
     }

@@ -154,12 +154,6 @@ namespace HallBookingBhatPara.Model.Validator
             RuleFor(x => x.hallAvailId)
                 .GreaterThan(0).WithMessage("Hall availability is required.");
 
-            RuleFor(x => x.rate)
-                .GreaterThan(0).WithMessage("Rate must be greater than 0.");
-
-            RuleFor(x => x.securityMoney)
-                .GreaterThanOrEqualTo(0).WithMessage("Security money cannot be negative.");
-
             RuleFor(x => x.fullName)
                 .NotEmpty().WithMessage("Full name is required.")
                 .MaximumLength(100).WithMessage("Full name cannot exceed 100 characters.");
@@ -185,8 +179,10 @@ namespace HallBookingBhatPara.Model.Validator
                 .GreaterThan(0).WithMessage("Event type is required.");
 
             RuleFor(x => x.eventDate)
-                .NotEmpty().WithMessage("Event date is required.")
-                .Must(BeAValidDate).WithMessage("Event date must be a valid date (yyyy-MM-dd).");
+                .NotEmpty().WithMessage("Event date is required.");
+
+            RuleFor(x => x.OnloadPaymentTypeId)
+               .GreaterThan(0).WithMessage("payment TypeId is required.");
 
         }
     }

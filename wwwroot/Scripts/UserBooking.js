@@ -92,6 +92,9 @@
                 data: { catType: catType, startDate: startDate, endDate: endDate },
                 type: 'GET',
                 dataType: 'HTML',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");                   
+                },
                 success: function (response) {
                     if (response != '') {
                         $("#partailSearchResult").empty();
@@ -464,7 +467,7 @@
 
         // 🔹 Main Form Handler
         $('#bookingForm').on('submit', function (e) {
-            e.preventDefault();
+            e.preventDefault();            
 
             const validation = validateBookingForm();
 
@@ -477,10 +480,7 @@
                 const formData = {
                     catId: $("#hiddenCatId").val(),
                     hallId: $("#hiddenHallId").val(),
-                    hallAvailId: $("#HiddenHallAvailId").val(),
-                    rate: $("#hiddenRate").val(),
-                    securityMoney: $("#hiddenSecurityMoney").val(),
-                    initial_payable_amount: $("#hiddenInitialPayableRate").val(),
+                    hallAvailId: $("#HiddenHallAvailId").val(),                                                          
                     fullName: $("#fullName").val().trim(),
                     phone: $("#phone").val().trim(),
                     alternatePhone: $("#alternatePhone").val().trim(),
@@ -488,6 +488,8 @@
                     address: $('#address').val().trim(),
                     eventType: $("#eventType").val(),
                     eventDate: selectedEventDates.join('^'),
+                    OnloadPaymentTypeId: $("#paymentTypeId").val(),
+                    SelectedPaymentTypeId: $("input[name='paymentType']:checked").val(),
                 };
 
                 //console.log(selectedEventDates);
@@ -576,6 +578,12 @@
                 isValid = false;
             }
 
+            if ($("input[name='paymentType']:checked").length == 0) {
+                $("input[name='paymentType']").addClass('is-invalid');
+                errorMessages.push('Please Select Multiple Date!');
+                isValid = false;
+            } 
+
             const terms = $("#agreeTerms").is(":checked");
             if (!terms) {
                 $('#agreeTerms').addClass('is-invalid');
@@ -587,7 +595,7 @@
         }
 
         // 🔹 Separate AJAX Function
-        function submitBookingForm(formData, antiForgeryToken) {
+        function submitBookingForm(formData, antiForgeryToken) {            
             $.ajax({
                 url: '/UserBooking/BookUserConfirmedHall',
                 type: 'POST',
@@ -602,42 +610,87 @@
                     if (response.isSuccess) {
                         notify(true, 'Booking Submitted Successfully! Redirecting to payment page...', true);
                         setTimeout(() => {
-                            window.location.href = "/UserBooking/UserHallBooking";
+                            window.location.href = "/UserBooking/BookingList";
                         }, 2000);
                     } else {
-                        notify(false, response.errorMessages, false);
+                        notify(false, response.errorMessages, true);
                     }
                 }
             });
+        }
+
+        function validateForDateChange() {
+            let isValid = true;
+            let errorMessages = [];
+
+            // Reset errors
+            $('.form-control, .form-select, .form-check-input').removeClass('is-invalid');
+            
+            const eventDurationType = $("#eventDurationType option:selected").val();
+            if (eventDurationType === '0' || eventDurationType === '' || eventDurationType === undefined) {
+                $('#eventDurationType').addClass('is-invalid');
+                errorMessages.push('Please Select Event Duration!');
+                isValid = false;
+            }
+
+            if (eventDurationType === 'single' && selectedEventDates.length === 0) {
+                $('#eventDate').addClass('is-invalid');
+                errorMessages.push('Please Select Date!');
+                isValid = false;
+            }
+            if (eventDurationType === 'multiple' && selectedEventDates.length === 0) {
+                $('#eventDatesRange').addClass('is-invalid');
+                errorMessages.push('Please Select Multiple Date!');
+                isValid = false;
+            }           
+
+            return { isValid, errorMessages };
         }
 
 
         $("input[name='paymentType']").on("change", function () {
             var selectedPaymentType = $(this).val();
 
-            //var sendValue = selectedPaymentType;
-            //if (selectedPaymentType === "1") {
-            //    sendValue = "2";
-            //}
+            const validation = validateForDateChange();
 
-            const AvailId = $("#HiddenHallAvailId").val();
+            if (validation.isValid)
+            {
+                const AvailId = $("#HiddenHallAvailId").val();
+                const totalDays = selectedEventDates.length;
 
-            $.ajax({
-                url: '/UserBooking/GetPaymentSummeryDetails',
-                data: { selectedPaymentType: selectedPaymentType, AvailId: AvailId },
-                type: 'GET',
-                dataType: 'HTML',
-                success: function (response) {
-                    if (response != '') {
-                        $("#partialPaymentSummery").empty();
-                        $("#partialPaymentSummery").html(response);                        
-                    }
+                $.ajax({
+                    url: '/UserBooking/GetPaymentSummeryDetails',
+                    data: { selectedPaymentType: selectedPaymentType, AvailId: AvailId, TotalDaysCount: totalDays },
+                    type: 'GET',
+                    dataType: 'HTML',
+                    beforeSend: function (xhr) {
+                        $(".loader").css("display", "flex");
+                    },
+                    success: function (response) {
+                        if (response != '') {
+                            $("#partialPaymentSummery").empty();
+                            $("#partialPaymentSummery").html(response);
+                        }
 
-                },
-                complete: function () {
-                    $(".loader").css("display", "none");
-                },
-            });
+                    },
+                    complete: function () {
+                        $(".loader").css("display", "none");
+                    },
+                });
+            }
+            else
+            {
+                const firstError = $('.is-invalid').first();
+                if (firstError.length) {
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
+                }
+            }
+
+            
+
+            
         });
 
         // Form change tracking
@@ -710,7 +763,25 @@
 
     // #region :: Booking list
     if (_ActionName === "bookinglist") {
-        
+
+        getAllHallBookedlistByUser();
+        function getAllHallBookedlistByUser() {
+            $.ajax({
+                url: '/UserBooking/UserHallBookedList',
+                type: 'GET',
+                dataType: 'HTML',
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {                    
+                    $('#partailHallBookedList').html('');
+                    $('#partailHallBookedList').html(response);
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+        }
     }
     // #endregion :: Booking list
 });

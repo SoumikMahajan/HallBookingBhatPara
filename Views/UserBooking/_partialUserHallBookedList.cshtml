@@ -1,0 +1,327 @@
+﻿@model HallBookingBhatPara.Domain.DTO.MultipleModel
+<!-- Bookings Grid Section -->
+@if (Model.bookedListDTOs.Count > 0)
+{
+    <section class="bookings-section">
+        <div class="bookings-grid" id="bookingsGrid">
+            @foreach (var item in Model.bookedListDTOs)
+            {
+                @if (item.booking_process_status_id == 3)
+                {
+                    <!-- Sample Booking Card 3 - Admin Approved -->
+                    <div class="booking-card" data-status="completed">
+                        <div class="booking-list-header">
+                            <div class="booking-id">Booking ID: @item.booking_reference_id</div>
+                            <h4 class="hall-name">@item.category_name - @item.hall_name</h4>
+                            <span class="booking-status status-completed">@item.booking_process_name</span>
+                        </div>
+                        <div class="booking-body">
+                            <div class="booking-details">
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                                    <span><strong>Floor Name:</strong> @item.floor_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                                    <span><strong>Event Date:</strong> @item.booking_date_range</span>
+                                </div>
+                                @* <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                                    <span><strong>Time:</strong> 9:00 AM - 5:00 PM</span>
+                                </div> *@
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-briefcase"></i></div>
+                                    <span><strong>Event Type:</strong> @item.event_type_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                                    <span><strong>Amount:</strong> ₹@item.payment_amount</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                                    <span><strong>Remaining Amount:</strong> ₹@item.remaining_payment_amount</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Booked On:</strong> @item.user_booked_on</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Booking Status:</strong> @item.booking_process_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Payment Status:</strong> @item.payment_process_name (@item.payment_percentage)</span>
+                                </div>
+                                @if (item.payment_percentage != 100 && item.booking_process_status_id == 3)
+                                {
+                                    <div class="detail-item">
+                                        <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                        <span><strong>You Need to Payment :</strong> ₹@item.remaining_payment_amount</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="booking-actions">
+                                <button class="action-btn-bookinglist btn-view" data-booking-id="@item.booking_reference_id">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                                <button class="action-btn-bookinglist btn-download" data-booking-id="@item.booking_reference_id">
+                                    <i class="fas fa-download"></i> Receipt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (item.booking_process_status_id == 1)
+                {
+                    <!-- Sample Booking Card 2 - Pending -->
+                    <div class="booking-card" data-status="pending">
+                        <div class="booking-list-header">
+                            <div class="booking-id">Booking ID: @item.booking_reference_id</div>
+                            <h4 class="hall-name">@item.category_name - @item.hall_name</h4>
+                            <span class="booking-status status-pending">@item.booking_process_name</span>
+                        </div>
+                        <div class="booking-body">
+                            <div class="booking-details">
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                                    <span><strong>Floor Name:</strong> @item.floor_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                                    <span><strong>Event Date:</strong> @item.booking_date_range</span>
+                                </div>
+                                @* <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                                    <span><strong>Time:</strong> 6:00 PM - 11:00 PM</span>
+                                </div> *@
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-users"></i></div>
+                                    <span><strong>Event Type:</strong> @item.event_type_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                                    <span><strong>Amount:</strong> ₹@item.remaining_payment_amount</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                                    <span><strong>Remaining Amount:</strong> ₹@item.remaining_payment_amount</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Booked On:</strong> @item.user_booked_on</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Booking Status:</strong> @item.booking_process_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Payment Status:</strong> @item.payment_process_name (@item.payment_percentage)</span>
+                                </div>
+
+                                @if (item.payment_percentage != 100 && item.booking_process_status_id == 3)
+                                {
+                                    <div class="detail-item">
+                                        <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                        <span><strong>You Need to Payment :</strong> ₹@item.remaining_payment_amount</span>
+                                    </div>
+                                }
+
+                                
+
+                            </div>
+                            <div class="booking-actions">
+                                <button class="action-btn-bookinglist btn-view" data-booking-id="@item.booking_reference_id">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                                <button class="action-btn-bookinglist btn-reschedule" data-booking-id="@item.booking_reference_id">
+                                    <i class="fas fa-edit"></i> Reschedule
+                                </button>
+                                <button class="action-btn-bookinglist btn-cancel" data-booking-id="@item.booking_reference_id">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (item.booking_process_status_id == 5)
+                {
+                    <!-- Sample Booking Card 3 - Completed -->
+                    <div class="booking-card" data-status="completed">
+                        <div class="booking-list-header">
+                            <div class="booking-id">Booking ID: @item.booking_reference_id</div>
+                            <h4 class="hall-name">@item.category_name - @item.hall_name</h4>
+                            <span class="booking-status status-completed">@item.booking_process_name</span>
+                        </div>
+                        <div class="booking-body">
+                            <div class="booking-details">
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                                    <span><strong>Floor Name:</strong> @item.floor_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                                    <span><strong>Event Date:</strong> @item.booking_date_range</span>
+                                </div>
+                                @* <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                                    <span><strong>Time:</strong> 9:00 AM - 5:00 PM</span>
+                                </div> *@
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-briefcase"></i></div>
+                                    <span><strong>Event Type:</strong> @item.event_type_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                                    <span><strong>Amount:</strong> ₹@item.payment_amount</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                                    <span><strong>Remaining Amount:</strong> ₹@item.remaining_payment_amount</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Booked On:</strong> @item.user_booked_on</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Booking Status:</strong> @item.booking_process_name</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                    <span><strong>Payment Status:</strong> @item.payment_process_name (@item.payment_percentage)</span>
+                                </div>
+                                @if (item.payment_type_id_fk == 2 && item.remaining_payment_amount == 0)
+                                {
+                                    <div class="detail-item">
+                                        <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                                        <span><strong>25 % Final Payment Done:</strong></span>
+                                    </div>
+                                }
+                                
+                            </div>
+                            <div class="booking-actions">
+                                <button class="action-btn-bookinglist btn-view" data-booking-id="@item.booking_reference_id">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                                <button class="action-btn-bookinglist btn-download" data-booking-id="@item.booking_reference_id">
+                                    <i class="fas fa-download"></i> Receipt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (item.booking_process_status_id == 6)
+                {
+                    <!-- Sample Booking Card 4 - Cancelled -->
+                    <div class="booking-card" data-status="cancelled">
+                        <div class="booking-list-header">
+                            <div class="booking-id">Booking ID: #BK001228</div>
+                            <h4 class="hall-name">Marriage Hall - Garden Area</h4>
+                            <span class="booking-status status-cancelled">Cancelled</span>
+                        </div>
+                        <div class="booking-body">
+                            <div class="booking-details">
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                                    <span><strong>Event Date:</strong> 5th December, 2024</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                                    <span><strong>Time:</strong> 4:00 PM - 11:00 PM</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-heart"></i></div>
+                                    <span><strong>Event Type:</strong> Engagement</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                                    <span><strong>Amount:</strong> ₹20,000 (Refunded)</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-ban"></i></div>
+                                    <span><strong>Cancelled On:</strong> 1st Dec, 2024</span>
+                                </div>
+                            </div>
+                            <div class="booking-actions">
+                                <button class="action-btn-bookinglist btn-view" data-booking-id="BK001228">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                                <button class="action-btn-bookinglist btn-download" data-booking-id="BK001228">
+                                    <i class="fas fa-download"></i> Refund Receipt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            
+
+            
+
+           
+
+           @*  <!-- Sample Booking Card 1 - Confirmed -->
+            <div class="booking-card" data-status="confirmed">
+                <div class="booking-list-header">
+                    <div class="booking-id">Booking ID: #BK001234</div>
+                    <h4 class="hall-name">Marriage Hall - Main Auditorium</h4>
+                    <span class="booking-status status-confirmed">Confirmed</span>
+                </div>
+                <div class="booking-body">
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                            <span><strong>Event Date:</strong> 25th December, 2024</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                            <span><strong>Time:</strong> 10:00 AM - 10:00 PM</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-heart"></i></div>
+                            <span><strong>Event Type:</strong> Wedding Reception</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-rupee-sign"></i></div>
+                            <span><strong>Amount:</strong> ₹25,000</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar-plus"></i></div>
+                            <span><strong>Booked On:</strong> 15th Nov, 2024</span>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="action-btn-bookinglist btn-view" data-booking-id="BK001234">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <button class="action-btn-bookinglist btn-download" data-booking-id="BK001234">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn-bookinglist btn-cancel" data-booking-id="BK001234">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div> *@
+
+            
+
+        </div>
+    </section>
+}
+else
+{
+
+    <!-- Empty State (Hidden by default, show when no bookings) -->
+    <div class="empty-state" id="emptyState">
+        <i class="fas fa-calendar-times"></i>
+        <h3>No Bookings Found</h3>
+        <p>You haven't made any bookings yet. Start by searching for available halls.</p>
+        <button class="search-new-btn">
+            <i class="fas fa-search"></i> Search Halls
+        </button>
+    </div>
+}

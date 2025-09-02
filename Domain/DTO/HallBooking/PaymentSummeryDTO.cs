@@ -8,5 +8,6 @@
         public double payable_amount { get; set; }
         public double payable_rate { get; set; }
         public long payment_type_id_fk { get; set; }
+        public double TotalPriceSummaryAmount { get; set; }
     }
 }

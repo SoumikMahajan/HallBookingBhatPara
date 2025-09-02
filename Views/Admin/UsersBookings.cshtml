@@ -1,0 +1,419 @@
+﻿@{
+    ViewData["Title"] = "Users Booking";
+}
+@model HallBookingBhatPara.Domain.DTO.MultipleModel
+
+<!-- Header Section -->
+<section class="booking-header">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="booking-title">
+                    <i class="fas fa-list-alt"></i> Users Bookings
+                </h1>
+                <p class="booking-subtitle">Manage and track all your hall bookings</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content Container -->
+<div class="container">
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h3 class="filter-title">
+            <i class="fas fa-filter"></i> Filter Bookings
+        </h3>
+
+        <!-- Status Filters -->
+        <div class="status-filters">
+            <div class="status-filter active" data-status="all">
+                <i class="fas fa-list"></i>
+                All Bookings
+            </div>
+            <div class="status-filter" data-status="confirmed">
+                <i class="fas fa-check-circle"></i>
+                Confirmed
+            </div>
+            <div class="status-filter" data-status="pending">
+                <i class="fas fa-clock"></i>
+                Pending
+            </div>
+            <div class="status-filter" data-status="completed">
+                <i class="fas fa-check-double"></i>
+                Completed
+            </div>
+            <div class="status-filter" data-status="cancelled">
+                <i class="fas fa-times-circle"></i>
+                Cancelled
+            </div>
+        </div>
+
+        <!-- Date Range and Search Filter -->
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="date" id="fromDate" class="form-control">
+                    <label for="fromDate"><i class="fas fa-calendar-alt"></i> From Date</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="date" id="toDate" class="form-control">
+                    <label for="toDate"><i class="fas fa-calendar-check"></i> To Date</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" id="searchHall" class="form-control" placeholder="Search by hall name...">
+                    <label for="searchHall"><i class="fas fa-search"></i> Search Hall</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-section">
+        <div class="table-header">
+            <h3 class="table-title">
+                <i class="fas fa-table"></i> Bookings Overview
+            </h3>
+            <div class="table-stats">
+                <div class="stat-item">
+                    <span class="stat-number">156</span>
+                    <span class="stat-label">Total</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">89</span>
+                    <span class="stat-label">Confirmed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">23</span>
+                    <span class="stat-label">Pending</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">44</span>
+                    <span class="stat-label">Completed</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Responsive Table -->
+        <div class="table-responsive">
+            <table class="table bookings-table" id="bookingsTable">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <i class="fas fa-hashtag"></i> Booking ID
+                        </th>
+                        <th scope="col">
+                            <i class="fas fa-user"></i> User Details
+                        </th>
+                        <th scope="col">
+                            <i class="fas fa-building"></i> Hall Details
+                        </th>
+                        <th scope="col">
+                            <i class="fas fa-calendar"></i> Event Info
+                        </th>
+                        <th scope="col">
+                            <i class="fas fa-rupee-sign"></i> Amount
+                        </th>
+                        <th scope="col">
+                            <i class="fas fa-info-circle"></i> Status
+                        </th>
+                        <th scope="col">
+                            <i class="fas fa-cogs"></i> Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-status="confirmed">
+                        <td>
+                            <strong>#BK001234</strong>
+                            <br>
+                            <small class="text-muted">25 Nov 2024</small>
+                        </td>
+                        <td>
+                            <div class="table-user-info">
+                                <strong>Rajesh Kumar</strong>
+                                <br>
+                                <small class="text-muted">rajesh@email.com</small>
+                                <br>
+                                <small class="text-muted">+91 98765-43210</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-hall-info">
+                                <strong>Marriage Hall</strong>
+                                <br>
+                                <small class="text-muted">Main Auditorium</small>
+                                <br>
+                                <small class="text-muted">Capacity: 500</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-event-info">
+                                <strong>25 Dec 2024</strong>
+                                <br>
+                                <small class="text-muted">10:00 AM - 10:00 PM</small>
+                                <br>
+                                <small class="text-muted">Wedding Reception</small>
+                            </div>
+                        </td>
+                        <td>
+                            <strong class="text-success">₹25,000</strong>
+                            <br>
+                            <small class="text-muted">Paid</small>
+                        </td>
+                        <td>
+                            <span class="status-badge status-confirmed">
+                                <i class="fas fa-check-circle"></i>
+                                Confirmed
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-action-buttons">
+                                <button class="table-action-btn table-btn-view" data-booking-id="BK001234">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="table-action-btn table-btn-edit" data-booking-id="BK001234">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </button>
+                                <button class="table-action-btn table-btn-download" data-booking-id="BK001234">
+                                    <i class="fas fa-download"></i>
+                                    Receipt
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-status="pending">
+                        <td>
+                            <strong>#BK001235</strong>
+                            <br>
+                            <small class="text-muted">20 Nov 2024</small>
+                        </td>
+                        <td>
+                            <div class="table-user-info">
+                                <strong>Priya Sharma</strong>
+                                <br>
+                                <small class="text-muted">priya@email.com</small>
+                                <br>
+                                <small class="text-muted">+91 87654-32109</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-hall-info">
+                                <strong>Community Center</strong>
+                                <br>
+                                <small class="text-muted">Hall B</small>
+                                <br>
+                                <small class="text-muted">Capacity: 200</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-event-info">
+                                <strong>15 Jan 2025</strong>
+                                <br>
+                                <small class="text-muted">6:00 PM - 11:00 PM</small>
+                                <br>
+                                <small class="text-muted">Birthday Party</small>
+                            </div>
+                        </td>
+                        <td>
+                            <strong class="text-warning">₹15,000</strong>
+                            <br>
+                            <small class="text-muted">Pending</small>
+                        </td>
+                        <td>
+                            <span class="status-badge status-pending">
+                                <i class="fas fa-clock"></i>
+                                Pending
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-action-buttons">
+                                <button class="table-action-btn table-btn-view" data-booking-id="BK001235">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="table-action-btn table-btn-edit" data-booking-id="BK001235">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </button>
+                                <button class="table-action-btn table-btn-delete" data-booking-id="BK001235">
+                                    <i class="fas fa-times"></i>
+                                    Cancel
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-status="completed">
+                        <td>
+                            <strong>#BK001230</strong>
+                            <br>
+                            <small class="text-muted">25 Oct 2024</small>
+                        </td>
+                        <td>
+                            <div class="table-user-info">
+                                <strong>Amit Singh</strong>
+                                <br>
+                                <small class="text-muted">amit@email.com</small>
+                                <br>
+                                <small class="text-muted">+91 76543-21098</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-hall-info">
+                                <strong>Seminar Hall</strong>
+                                <br>
+                                <small class="text-muted">Conference Room</small>
+                                <br>
+                                <small class="text-muted">Capacity: 100</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-event-info">
+                                <strong>10 Nov 2024</strong>
+                                <br>
+                                <small class="text-muted">9:00 AM - 5:00 PM</small>
+                                <br>
+                                <small class="text-muted">Corporate Meeting</small>
+                            </div>
+                        </td>
+                        <td>
+                            <strong class="text-success">₹18,000</strong>
+                            <br>
+                            <small class="text-muted">Paid</small>
+                        </td>
+                        <td>
+                            <span class="status-badge status-completed">
+                                <i class="fas fa-check-double"></i>
+                                Completed
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-action-buttons">
+                                <button class="table-action-btn table-btn-view" data-booking-id="BK001230">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="table-action-btn table-btn-download" data-booking-id="BK001230">
+                                    <i class="fas fa-download"></i>
+                                    Receipt
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-status="cancelled">
+                        <td>
+                            <strong>#BK001228</strong>
+                            <br>
+                            <small class="text-muted">20 Nov 2024</small>
+                        </td>
+                        <td>
+                            <div class="table-user-info">
+                                <strong>Neha Patel</strong>
+                                <br>
+                                <small class="text-muted">neha@email.com</small>
+                                <br>
+                                <small class="text-muted">+91 65432-10987</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-hall-info">
+                                <strong>Marriage Hall</strong>
+                                <br>
+                                <small class="text-muted">Garden Area</small>
+                                <br>
+                                <small class="text-muted">Capacity: 300</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-event-info">
+                                <strong>5 Dec 2024</strong>
+                                <br>
+                                <small class="text-muted">4:00 PM - 11:00 PM</small>
+                                <br>
+                                <small class="text-muted">Engagement</small>
+                            </div>
+                        </td>
+                        <td>
+                            <strong class="text-danger">₹20,000</strong>
+                            <br>
+                            <small class="text-muted">Refunded</small>
+                        </td>
+                        <td>
+                            <span class="status-badge status-cancelled">
+                                <i class="fas fa-times-circle"></i>
+                                Cancelled
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-action-buttons">
+                                <button class="table-action-btn table-btn-view" data-booking-id="BK001228">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="table-action-btn table-btn-download" data-booking-id="BK001228">
+                                    <i class="fas fa-download"></i>
+                                    Refund Receipt
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <div class="pagination-info">
+                Showing 1 to 6 of 156 entries
+            </div>
+            <nav aria-label="Bookings pagination">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                            <i class="fas fa-angle-left"></i> Previous
+                        </a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <span class="page-link">...</span>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">26</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">
+                            Next <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- Empty State (Hidden by default, show when no bookings) -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <i class="fas fa-calendar-times"></i>
+        <h3>No Bookings Found</h3>
+        <p>No bookings match your current filter criteria. Try adjusting your filters or search terms.</p>
+        <button class="search-new-btn">
+            <i class="fas fa-refresh"></i> Reset Filters
+        </button>
+    </div>
+
+</div>

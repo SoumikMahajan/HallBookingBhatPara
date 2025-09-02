@@ -337,7 +337,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             }
         }
 
-        public async Task<long> BookUserConfirmedHallAsync(InsertUserConfirmhallDTO model)
+        public async Task<long> BookUserConfirmedHallAsync(InsertUserConfirmhallDTO model, int PercentageOfIntialPaymentAmount, double RemainingAmount, int dateCount, double TotalPriceSummery, string bookingId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -345,23 +345,39 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 parameters.Add("@CatId", model.catId, DbType.Int64);
                 parameters.Add("@HallId", model.hallId, DbType.Int64);
                 parameters.Add("@HallAvlId", model.hallAvailId, DbType.Int64);
-                parameters.Add("@Rate", model.rate, DbType.Decimal);
-                parameters.Add("@SecurityMoney", model.securityMoney, DbType.Decimal);
-                parameters.Add("@InitialPaybleAmount", model.initial_payable_amount, DbType.Decimal);
+                parameters.Add("@Rate", model.PaymentSummeryDTO.rate, DbType.Decimal);
+                parameters.Add("@SecurityMoney", model.PaymentSummeryDTO.security_money, DbType.Decimal);
                 parameters.Add("@BookedUserName", model.fullName, DbType.String);
                 parameters.Add("@BookedUserMobile", model.phone, DbType.String);
                 parameters.Add("@BookedUserAlterMobile", model.alternatePhone, DbType.String);
                 parameters.Add("@BookedUserEmail", model.email, DbType.String);
                 parameters.Add("@BookedUserAddress", model.address, DbType.String);
                 parameters.Add("@EventTypeId", model.eventType, DbType.Int64);
-                parameters.Add("@BookingDate", model.eventDate, DbType.String);
                 parameters.Add("@EntryIp", model.EntryIP, DbType.String);
                 parameters.Add("@StakeId", model.userClaims.RolesId, DbType.Int64);
                 parameters.Add("@StakeDetailsId", model.userClaims.StackHolderId, DbType.Int64);
+                parameters.Add("@PaymentTypeId", model.OnloadPaymentTypeId, DbType.Int64);
+                parameters.Add("@BookedDayCount", dateCount, DbType.Int32);
 
-                parameters.Add("@OperationId", 6, DbType.Int32);
+                //-----------------------------------------------------------------------------------//
+                //-----------------------------------------------------------------------------------//
+
+                parameters.Add("@PaymentPercentage", PercentageOfIntialPaymentAmount, DbType.Int64);
+                parameters.Add("@PaymentAmount", model.PaymentSummeryDTO.payable_amount, DbType.Decimal);
+                parameters.Add("@RemainingPaymentAmount", RemainingAmount, DbType.Decimal);
+                parameters.Add("@TotalPriceSummaryAmount", TotalPriceSummery, DbType.Decimal);
+
+                //-----------------------------------------------------------------------------------//
+                //-----------------------------------------------------------------------------------//
+
+                parameters.Add("@BookingDate", model.eventDate, DbType.String);
+                parameters.Add("@BookingRefId", bookingId, DbType.String);
+
+
+
+                parameters.Add("@OperationId", 1, DbType.Int32);
                 var result = await connection.QueryFirstOrDefaultAsync<long>(
-                    "Bhatpara_HallBooking_Users",
+                    "UserHallBookingSp",
                     parameters,
                     commandType: CommandType.StoredProcedure
                 );
@@ -384,6 +400,57 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                     commandType: CommandType.StoredProcedure
                 );
                 return result;
+            }
+        }
+        public async Task<PaymentSummeryDTO> GetPaymentSummeryDetailsForMultipleDateAsync(long hallAvailId, long PaymentId, long PercentageOfIntialPaymentAmount, int dateCount)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@HallAvlId", hallAvailId, DbType.Int64);
+                parameters.Add("@PaymentTypeId", PaymentId, DbType.Int64);
+                parameters.Add("@PaymentPercentage", PercentageOfIntialPaymentAmount, DbType.Int64);
+                parameters.Add("@DateCount", dateCount, DbType.Int32);
+                parameters.Add("@OperationId", 8, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<PaymentSummeryDTO>(
+                    "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+
+        public async Task<int> IsEventDateAlreadyBookedAsync(long hallAvailId, string eventDate)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@HallAvlId", hallAvailId, DbType.Int64);
+                parameters.Add("@BookingDate", eventDate, DbType.String);
+                parameters.Add("@OperationId", 6, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<int>(
+                    "Bhatpara_HallBooking_Users",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+        }
+
+        public async Task<List<BookedListDTO>> UserHallBookedDetailsAsync(long userId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@StakeDetailsId", userId, DbType.Int64);
+                parameters.Add("@OperationId", 2, DbType.Int32);
+                var result = await connection.QueryAsync<BookedListDTO>(
+                    "UserHallBookingSp",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result.ToList();
             }
         }
 

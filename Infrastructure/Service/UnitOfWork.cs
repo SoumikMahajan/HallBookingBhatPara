@@ -26,6 +26,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
         public IHallFloorMasterRepository HallFloorMasterRepository { get; private set; }
         public IHallEventMasterRepository HallEventMasterRepository { get; private set; }
         public IUserRegistrationRepository UserRegistrationRepository { get; private set; }
+        public IHallBookingDetailsRepository HallBookingDetailsRepository { get; private set; }
         #endregion
 
         public UnitOfWork(ApplicationDbContext db, IConfiguration configuration, LogService logService)
@@ -48,6 +49,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             #region :: Hall Booking
             HallEventMasterRepository = new HallEventMasterService(_db);
             UserRegistrationRepository = new UserRegistrationService(_db);
+            HallBookingDetailsRepository = new HallBookingDetailsService(_db);
             #endregion
         }
 

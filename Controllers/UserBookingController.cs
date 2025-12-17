@@ -1,6 +1,9 @@
 ﻿using HallBookingBhatPara.Application.Interface;
+using HallBookingBhatPara.Application.Interface.Payments;
 using HallBookingBhatPara.Domain.DTO;
+using HallBookingBhatPara.Domain.DTO.CashFreePayment;
 using HallBookingBhatPara.Domain.DTO.HallBooking;
+using HallBookingBhatPara.Infrastructure.Repository;
 using HallBookingBhatPara.Infrastructure.Service;
 using HallBookingBhatPara.Model.Validator;
 using HallBookingBhatPara.Utility;
@@ -9,17 +12,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HallBookingBhatPara.Controllers
 {
-    [Authorize(Roles = "Public User,Dev")]
-    public class UserBookingController : Controller
+	//[Authorize(Roles = "Public User,Dev")]
+	[Authorize]
+	public class UserBookingController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenProvider _tokenProvider;
+		private readonly ICashfreeService _cashfreeService;
+        private readonly LogService _logService;
 
-        public UserBookingController(IUnitOfWork unitOfWork, ITokenProvider tokenProvider)
+		public UserBookingController(IUnitOfWork unitOfWork, ITokenProvider tokenProvider, ICashfreeService cashfreeService, LogService logService)
         {
             _unitOfWork = unitOfWork;
             _tokenProvider = tokenProvider;
-        }
+			_cashfreeService = cashfreeService;
+            _logService = logService;
+		}
 
         #region :: Hall Search
         public async Task<IActionResult> UserHallBooking()
@@ -138,21 +146,29 @@ namespace HallBookingBhatPara.Controllers
             // Ensure the generated booking ID is unique
             string bookingId = GenerateUniqueBookingIdAsync(bookingIdList);
 
-            var response = await _unitOfWork.SPRepository.BookUserConfirmedHallAsync(model, percentage, remainingAmount, dateCount, paymentSummery.TotalPriceSummaryAmount, bookingId);
+			//var response = await _unitOfWork.SPRepository.BookUserConfirmedHallAsync(model, percentage, remainingAmount, dateCount, paymentSummery.TotalPriceSummaryAmount, bookingId);
 
-            if (response == 0)
-            {
-                return Json(ResponseService.InternalServerResponse<string>("Failed."));
-            }
-
-            //string bookingId = BookingIdGenerator.Generate();
+			//if (response == 0)
+			//{
+			//	return Json(ResponseService.InternalServerResponse<string>("Failed."));
+			//}
 
 
+			//Cashfree Payment Integration			
+			var orderResponse = await CreateCashfreeOrderAsync(orderId: bookingId);
 
+			if (orderResponse != null && !string.IsNullOrEmpty(orderResponse.PaymentSessionId))
+			{
+				// Log order creation for audit trail
+				await _logService.LogCustomAsync($"Cashfree order created. OrderId: {orderResponse.OrderId}, SessionId: {orderResponse.PaymentSessionId}");
+                return Json(ResponseService.SuccessResponse<CreateOrderResponse>(orderResponse));
+			}
 
-            return Json(ResponseService.SuccessResponse<string>("Successfully"));
+			// Rollback database changes if order creation fails
+			return Json(ResponseService.ErrorResponse<string>("Failed to create payment order. Please try again."));
 
         }
+
 
         public string GenerateUniqueBookingIdAsync(ISet<string> existingIds)
         {
@@ -224,8 +240,227 @@ namespace HallBookingBhatPara.Controllers
 
             return PartialView("_partialUserHallBookedList", mm);
         }
-        #endregion
+		#endregion
 
 
-    }
+		#region :: CashFree Payment Intregation
+
+		//[HttpGet]
+		//public async Task<IActionResult> PaymentCallback(string order_id)
+		//{
+		//	try
+		//	{
+
+		//		if (string.IsNullOrEmpty(order_id))
+		//		{
+		//			return View("PaymentFailed");
+		//		}
+
+		//		// Fetch order status from Cashfree
+		//		var orderStatus = await _cashfreeService.GetOrderStatusAsync(order_id);
+		//		var paymentDetails = await _cashfreeService.GetPaymentDetailsAsync(order_id);
+
+		//		if (orderStatus != null)
+		//		{
+		//			// Check payment status
+		//			if (orderStatus.OrderStatus == "PAID")
+		//			{
+		//				// Payment successful - Update your database here
+		//				ViewBag.OrderId = order_id;
+		//				ViewBag.Amount = orderStatus.OrderAmount;
+		//				ViewBag.Status = "Success";
+		//				return View("PaymentSuccess");
+		//			}
+		//			else if (orderStatus.OrderStatus == "ACTIVE")
+		//			{
+		//				// Payment is still pending
+		//				ViewBag.Message = "Payment is being processed";
+		//				return View("PaymentPending");
+		//			}
+		//		}
+
+		//		// Payment failed or other status
+		//		ViewBag.OrderId = order_id;
+		//		ViewBag.Status = orderStatus?.OrderStatus ?? "Unknown";
+		//		return View("PaymentFailed");
+		//	}
+		//	catch (Exception)
+		//	{				
+		//		return View("PaymentFailed");
+		//	}
+		//}
+
+		private async Task<CreateOrderResponse?> CreateCashfreeOrderAsync(string orderId)
+		{
+			var customerId = $"cust_{DateTime.UtcNow.Ticks}";
+
+			var orderRequest = new CreateOrderRequest
+			{
+				OrderId = orderId,
+				OrderCurrency = "INR",
+				OrderAmount = 100,
+				CustomerDetails = new CustomerDetails
+				{
+					CustomerId = customerId,
+					CustomerPhone = "1234567890",
+					CustomerEmail = "sample@yopmail.com",
+					CustomerName = "Sample Test"
+				},
+				OrderNote = $"Payment for Order {orderId}",
+				OrderMeta = new OrderMeta
+				{
+					ReturnUrl = Url.Action("PaymentCallback", "UserBooking", null, Request.Scheme) + "?order_id={order_id}"
+					// NotifyUrl, PaymentMethods etc. can be added here if needed
+				}
+			};
+
+			var responce =  await _cashfreeService.CreateOrderAsync(orderRequest);
+
+            return responce;
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> PaymentCallback(string order_id)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(order_id))
+				{
+					await _logService.LogCustomAsync("PaymentCallback called without order_id");
+					return View("PaymentFailed", new PaymentResultViewModel
+					{
+						ErrorMessage = "Invalid payment reference"
+					});
+				}
+
+				// Fetch order status from Cashfree
+				var orderStatus = await _cashfreeService.GetOrderStatusAsync(order_id);
+
+				if (orderStatus == null)
+				{
+					await _logService.LogCustomAsync($"Failed to fetch order status from Cashfree. OrderId: {order_id}");
+					return View("PaymentFailed", new PaymentResultViewModel
+					{
+						OrderId = order_id,
+						ErrorMessage = "Unable to verify payment status"
+					});
+				}
+
+				// Verify payment details
+				var paymentDetails = await _cashfreeService.GetPaymentDetailsAsync(order_id);
+
+				// CRITICAL: Verify the payment amount matches your database record
+				//var bookingRecord = await _bookingService.GetBookingByOrderIdAsync(order_id);
+				//if (bookingRecord == null)
+				//{
+				//	_logger.LogError("Booking not found for OrderId: {OrderId}", order_id);
+				//	return View("PaymentFailed", new PaymentResultViewModel
+				//	{
+				//		OrderId = order_id,
+				//		ErrorMessage = "Booking reference not found"
+				//	});
+				//}
+
+				// Verify amount to prevent tampering
+				//if (orderStatus.OrderAmount != bookingRecord.Amount)
+				//{
+				//	_logger.LogError("Amount mismatch. Expected: {Expected}, Received: {Received}, OrderId: {OrderId}",
+				//		bookingRecord.Amount, orderStatus.OrderAmount, order_id);
+
+				//	return View("PaymentFailed", new PaymentResultViewModel
+				//	{
+				//		OrderId = order_id,
+				//		ErrorMessage = "Payment amount verification failed"
+				//	});
+				//}
+
+				switch (orderStatus.OrderStatus)
+				{
+					case "PAID":
+						// Payment successful - Update database with transaction lock
+						//var updateResult = await _bookingService.UpdatePaymentStatusAsync(
+						//	orderId: order_id,
+						//	status: "PAID",
+						//	transactionId: paymentDetails?.FirstOrDefault()?.CfPaymentId,
+						//	paymentMethod: paymentDetails?.FirstOrDefault()?.PaymentGroup,
+						//	paidAmount: orderStatus.OrderAmount
+						//);
+
+						//if (!updateResult)
+						//{
+						//	await _logService.LogCustomAsync($"Database update failed for paid order: {order_id}");
+						//	// Send alert to admin - payment received but DB update failed
+						//}
+
+						// Send confirmation email/SMS
+						//await SendBookingConfirmationAsync(bookingRecord);
+
+						return View("PaymentSuccess", new PaymentResultViewModel
+						{
+							OrderId = order_id,
+							Amount = orderStatus.OrderAmount,
+							Status = "Success",
+							BookingId = "",
+							TransactionId = paymentDetails?.FirstOrDefault()?.CfPaymentId
+						});
+
+					case "ACTIVE":
+						// Payment is still pending
+						await _logService.LogCustomAsync($"Payment pending for OrderId: {order_id}");
+						return View("PaymentPending", new PaymentResultViewModel
+						{
+							OrderId = order_id,
+							Message = "Your payment is being processed. You will receive confirmation shortly."
+						});
+
+					case "EXPIRED":
+						//await _bookingService.UpdatePaymentStatusAsync(order_id, "EXPIRED");
+						return View("PaymentFailed", new PaymentResultViewModel
+						{
+							OrderId = order_id,
+							Status = "Expired",
+							ErrorMessage = "Payment session expired. Please try booking again."
+						});
+
+					default:
+						// Payment failed or cancelled
+						await _logService.LogCustomAsync($"Payment failed/cancelled. OrderId: {order_id}, Status: {orderStatus.OrderStatus}");
+
+						//await _bookingService.UpdatePaymentStatusAsync(order_id, orderStatus.OrderStatus);
+
+						return View("PaymentFailed", new PaymentResultViewModel
+						{
+							OrderId = order_id,
+							Status = orderStatus.OrderStatus,
+							ErrorMessage = GetUserFriendlyErrorMessage(orderStatus.OrderStatus)
+						});
+				}
+
+			}
+			catch (Exception)
+			{
+				await _logService.LogCustomAsync($"Exception in PaymentCallback. OrderId: {order_id}");
+				return View("PaymentFailed", new PaymentResultViewModel
+				{
+					OrderId = order_id,
+					ErrorMessage = "An error occurred while processing your payment. Please contact support with your order reference."
+				});
+			}
+		}
+
+		private string GetUserFriendlyErrorMessage(string status)
+		{
+			return status switch
+			{
+				"USER_DROPPED" => "Payment was cancelled by you",
+				"VOID" => "Payment was cancelled",
+				"TERMINATED" => "Payment session terminated",
+				_ => "Payment could not be completed. Please try again."
+			};
+		}
+
+		#endregion
+
+
+	}
 }

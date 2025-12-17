@@ -21,6 +21,24 @@ const styles = [
 console.log('%c Thank you for using Bhatpara Municipality Hall Booking.', styles);
 console.log('%c This console is used by developers for development purpose, please avoid writing codes here to avoid malfunction of Website.', styles);
 
+let cashfree;
+let isSDKInitialized = false;
+
+// Initialize Cashfree SDK
+async function initializeSDK() {
+    try {
+        if (!isSDKInitialized) {
+            cashfree = await Cashfree({
+                mode: "sandbox" // Change to "production" for live
+            });
+            isSDKInitialized = true;
+            console.log("Cashfree SDK initialized successfully");
+        }
+    } catch (error) {
+        console.error("Failed to initialize Cashfree SDK:", error);
+    }
+}
+
 $(function () {
     $('.navbar-nav .nav-link').each(function () {
         const linkPath = $(this).attr('href').toLowerCase();
@@ -29,6 +47,9 @@ $(function () {
             $(this).addClass('active');
         }
     });
+
+    // Initialize SDK on page load
+    initializeSDK();
 });
 
 

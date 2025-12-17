@@ -12,7 +12,7 @@ namespace HallBookingBhatPara.Utility
             string base32 = Base32Encode(randomBytes);
 
             // Trim to desired length (e.g. 8 chars)
-            return $"#BK{base32[..8]}";
+            return $"BK-{base32[..8]}";
         }
 
         private static string Base32Encode(byte[] data)

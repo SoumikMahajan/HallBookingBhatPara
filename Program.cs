@@ -1,9 +1,12 @@
 ﻿using HallBookingBhatPara.Application.Interface;
+using HallBookingBhatPara.Application.Interface.Payments;
+using HallBookingBhatPara.Domain.DTO.CashFreePayment;
 using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Extension;
 using HallBookingBhatPara.Infrastructure.Data;
 using HallBookingBhatPara.Infrastructure.Repository;
 using HallBookingBhatPara.Infrastructure.Service;
+using HallBookingBhatPara.Infrastructure.Service.Payments;
 using HallBookingBhatPara.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
@@ -39,6 +42,10 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = 104857600; // 100 MB
 });
 
+// Configure Cashfree Settings from appsettings.json
+builder.Services.Configure<CashfreeSettings>(
+	builder.Configuration.GetSection("CashfreeSettings"));
+
 builder.Services.AddHttpContextAccessor();
 
 // Register custom services
@@ -48,6 +55,9 @@ builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<GlobalExceptionRedirection>();
 builder.Services.AddScoped<ExceptionHandlingHelper>();
 builder.Services.AddScoped<LogService>();
+
+// Register HttpClient for CashfreeService
+builder.Services.AddHttpClient<ICashfreeService, CashfreeService>();
 
 builder.Services.AddDistributedMemoryCache();
 

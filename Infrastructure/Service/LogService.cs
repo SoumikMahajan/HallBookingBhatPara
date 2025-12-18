@@ -11,7 +11,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
-            _logDirectory = Path.Combine(environment.ContentRootPath, "Logs");
+            _logDirectory = Path.Combine(environment.ContentRootPath, "CustomLogs");
             if (!Directory.Exists(_logDirectory))
             {
                 Directory.CreateDirectory(_logDirectory);
@@ -48,10 +48,10 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             await txtWriter.WriteLineAsync($"  :[LoggedInUser]: {userId}");
             await txtWriter.WriteLineAsync($"  :[Error]: {ex.Message}");
 
-            var stackTrace = ex.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
-                                   .Take(1);
+            //var stackTrace = ex.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+            //                       .Take(1);
 
-            await txtWriter.WriteLineAsync($"  :[StackTrace]: {string.Join(Environment.NewLine, stackTrace)}");
+            await txtWriter.WriteLineAsync($"  :[StackTrace]: {string.Join(Environment.NewLine, ex.StackTrace)}");
             await txtWriter.WriteLineAsync("---------------------------------------------------------------------------------------------");
         }
 

@@ -630,7 +630,7 @@
                         //        console.log("Redirecting to Cashfree checkout...");
                         //    }
                         //});
-                        initiatePayment(response.result.payment_session_id, submitBtn, originalText);
+                        initiatePayment(data.result.payment_session_id, submitBtn, originalText);
 
                     } else {
                         // Handle error from server

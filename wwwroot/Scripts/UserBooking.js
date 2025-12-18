@@ -401,6 +401,12 @@
                     `);
 
                     selectedDatesList.append(badge);
+
+                    var selectedPaymentType = $("input[name='paymentType']:checked").val();
+                    const AvailId = $("#HiddenHallAvailId").val();
+                    const totalDays = selectedEventDates.length;
+
+                    ChangesAmount(selectedPaymentType, AvailId, totalDays);
                 }
                 
             } else {
@@ -497,7 +503,7 @@
 
                 let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
 
-                submitBookingForm(formData, antiForgeryToken);
+                submitBookingForm(formData, antiForgeryToken, submitBtn, originalText);
 
             } else {
                 const firstError = $('.is-invalid').first();
@@ -595,28 +601,126 @@
         }
 
         // 🔹 Separate AJAX Function
-        function submitBookingForm(formData, antiForgeryToken) {            
+        function submitBookingForm(formData, antiForgeryToken, submitBtn, originalText) {            
             $.ajax({
                 url: '/UserBooking/BookUserConfirmedHall',
                 type: 'POST',
                 data: formData,
-                dataType: 'json',
+                //dataType: 'json',
                 beforeSend: function (xhr) {
                     $(".loader").css("display", "flex");
                     xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
                 },
-                success: function (response) {
+                success: function (data) {
+                    //console.log(data);
                     $(".loader").css("display", "none");
-                    if (response.isSuccess) {
-                        notify(true, 'Booking Submitted Successfully! Redirecting to payment page...', true);
-                        setTimeout(() => {
-                            window.location.href = "/UserBooking/BookingList";
-                        }, 2000);
+                    if (data.isSuccess && data.result.payment_session_id) {
+
+                        //const checkoutOptions = {
+                        //    paymentSessionId: data.result.payment_session_id,
+                        //    redirectTarget: "_self" // Redirects in same window
+                        //};
+
+                        //// Open Cashfree checkout
+                        //cashfree.checkout(checkoutOptions).then(function (result) {
+                        //    if (result.error) {
+                        //        notify(false, error.message, true);
+                        //    }
+                        //    if (result.redirect) {
+                        //        console.log("Redirecting to Cashfree checkout...");
+                        //    }
+                        //});
+                        initiatePayment(data.result.payment_session_id, submitBtn, originalText);
+
                     } else {
-                        notify(false, response.errorMessages, true);
+                        // Handle error from server
+                        const errorMessage = response.errorMessages ||
+                            response.message ||
+                            "Failed to create booking. Please try again.";
+
+                        notify(false, errorMessage, true);
+                        resetSubmitButton(submitBtn, originalText);
                     }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    $(".loader").css("display", "none");
+
+                    let errorMessage = "An error occurred while processing your booking.";
+
+                    if (status === "timeout") {
+                        errorMessage = "Request timeout. Please check your connection and try again.";
+                    } else if (xhr.status === 400) {
+                        errorMessage = "Invalid booking data. Please check all fields.";
+                    } else if (xhr.status === 500) {
+                        errorMessage = "Server error. Please try again or contact support.";
+                    } else if (xhr.status === 0) {
+                        errorMessage = "Network error. Please check your internet connection.";
+                    }
+
+                    // Try to parse error response
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.errorMessages) {
+                            errorMessage = response.errorMessages;
+                        }
+                    } catch (e) {
+                        console.error("Could not parse error response");
+                    }
+
+                    notify(false, errorMessage, true);
+                    resetSubmitButton(submitBtn, originalText);
+                },
+                complete: function () {
+                    // Always hide loader
+                    $(".loader").css("display", "none");
                 }
+                
             });
+        }
+
+
+        function initiatePayment(paymentSessionId, submitBtn, originalText) {
+            // Check if SDK is initialized
+            if (!isSDKInitialized || !cashfree) {
+                notify(false, "Payment system not ready. Please refresh the page.", true);
+                resetSubmitButton(submitBtn, originalText);
+                return;
+            }
+
+            const checkoutOptions = {
+                paymentSessionId: paymentSessionId,
+                redirectTarget: "_self" // Redirects in same window
+            };
+
+            // Open Cashfree checkout
+            cashfree.checkout(checkoutOptions).then(function (result) {
+                if (result.error) {
+                    console.error("Cashfree checkout error:", result.error);
+
+                    // User-friendly error message
+                    let errorMsg = "Payment initialization failed.";
+                    if (result.error.message) {
+                        errorMsg = result.error.message;
+                    }
+
+                    notify(false, errorMsg, true);
+                    resetSubmitButton(submitBtn, originalText);
+                }
+
+                if (result.redirect) {
+                    console.log("Redirecting to Cashfree checkout...");
+                    // Don't reset button - user is being redirected
+                }
+            }).catch(function (error) {
+                console.error("Cashfree checkout exception:", error);
+                notify(false, "Unable to open payment page. Please try again.", true);
+                resetSubmitButton(submitBtn, originalText);
+            });
+        }
+
+        function resetSubmitButton(submitBtn, originalText) {
+            submitBtn.html(originalText).prop('disabled', false);
         }
 
         function validateForDateChange() {
@@ -658,25 +762,9 @@
                 const AvailId = $("#HiddenHallAvailId").val();
                 const totalDays = selectedEventDates.length;
 
-                $.ajax({
-                    url: '/UserBooking/GetPaymentSummeryDetails',
-                    data: { selectedPaymentType: selectedPaymentType, AvailId: AvailId, TotalDaysCount: totalDays },
-                    type: 'GET',
-                    dataType: 'HTML',
-                    beforeSend: function (xhr) {
-                        $(".loader").css("display", "flex");
-                    },
-                    success: function (response) {
-                        if (response != '') {
-                            $("#partialPaymentSummery").empty();
-                            $("#partialPaymentSummery").html(response);
-                        }
+                ChangesAmount(selectedPaymentType, AvailId, totalDays);
 
-                    },
-                    complete: function () {
-                        $(".loader").css("display", "none");
-                    },
-                });
+                
             }
             else
             {
@@ -686,12 +774,30 @@
                         scrollTop: firstError.offset().top - 100
                     }, 500);
                 }
-            }
-
-            
-
-            
+            }                       
         });
+
+        function ChangesAmount(selectedPaymentType, AvailId, totalDays) {
+            $.ajax({
+                url: '/UserBooking/GetPaymentSummeryDetails',
+                data: { selectedPaymentType: selectedPaymentType, AvailId: AvailId, TotalDaysCount: totalDays },
+                type: 'GET',
+                dataType: 'HTML',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response != '') {
+                        $("#partialPaymentSummery").empty();
+                        $("#partialPaymentSummery").html(response);
+                    }
+
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                },
+            });
+        }
 
         // Form change tracking
         //let formChanged = false;
@@ -782,6 +888,20 @@
                 }
             });
         }
+
+        $(document).on('click', '.btn-view', function (e) {
+            e.preventDefault();
+
+            // Get booking data from the clicked element or its parent
+            const bookingId = $(this).closest('.booking-card').data('booking-id');
+            const hallName = $(this).closest('.booking-card').find('.hall-name').text();
+
+            // Populate modal with data (optional)
+            $('#bookingDetailsModal .modal-title').text('Booking Details - ' + hallName);
+
+            // Open the modal
+            $('#bookingDetailsModal').modal('show');
+        });
     }
     // #endregion :: Booking list
 });

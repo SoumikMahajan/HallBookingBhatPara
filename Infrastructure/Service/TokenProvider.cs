@@ -46,7 +46,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 Expires = DateTime.UtcNow.AddDays(2), // 2 days as requested
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict
+                SameSite = SameSiteMode.None
             };
             _contextAccessor.HttpContext?.Response.Cookies.Append(SD.AccessToken, accessToken, cookieOptions);
             _contextAccessor.HttpContext.Items["AccessToken"] = accessToken;

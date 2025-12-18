@@ -26,6 +26,7 @@ namespace HallBookingBhatPara.Controllers
         public IActionResult CategoryList()
         {
             return View();
+
         }
 
         [HttpPost]

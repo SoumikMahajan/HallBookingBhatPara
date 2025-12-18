@@ -1,0 +1,251 @@
+﻿@using HallBookingBhatPara.Domain.DTO.CashFreePayment
+@model PaymentResultViewModel
+@{
+    ViewData["Title"] = "Payment Pending";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center p-5">
+                    <!-- Pending Icon -->
+                    <div class="pending-icon mb-4">
+                        <div class="spinner-wrapper">
+                            <div class="spinner-circle"></div>
+                            <div class="spinner-inner">
+                                <i class="fas fa-clock text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="text-warning fw-bold mb-3">Payment Processing</h2>
+                    <p class="text-muted mb-4">
+                        @if (!string.IsNullOrEmpty(Model?.Message))
+                        {
+                            @Model.Message
+                        }
+                        else
+                        {
+                            <text>Your payment is being processed. Please wait while we confirm your transaction.</text>
+                        }
+                    </p>
+
+                    <!-- Payment Details -->
+                    @if (!string.IsNullOrEmpty(Model?.OrderId))
+                    {
+                        <div class="payment-details bg-light rounded p-4 mb-4">
+                            <div class="row">
+                                <div class="col-6 text-start">
+                                    <strong>Order ID:</strong>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <span class="text-muted">@Model.OrderId</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Status Check Progress -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Checking payment status...</strong>
+                        <div class="progress mt-3" style="height: 6px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                                 role="progressbar"
+                                 style="width: 100%"
+                                 aria-valuenow="100"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- What's Happening -->
+                    <div class="info-section text-start mb-4 p-4 bg-light rounded">
+                        <h6 class="fw-semibold mb-3">
+                            <i class="fas fa-question-circle text-primary me-2"></i>What's happening?
+                        </h6>
+                        <ul class="small text-muted mb-0">
+                            <li class="mb-2">Your payment is being verified with the bank</li>
+                            <li class="mb-2">This usually takes 30 seconds to 2 minutes</li>
+                            <li class="mb-2">Please do not close this window or press back button</li>
+                            <li>You will receive a confirmation email once payment is confirmed</li>
+                        </ul>
+                    </div>
+
+                    <!-- Auto-refresh Notice -->
+                    <div class="mb-4">
+                        <p class="small text-muted mb-2">
+                            <i class="fas fa-sync-alt me-2"></i>
+                            <span id="refresh-timer">This page will automatically refresh in <strong>10</strong> seconds</span>
+                        </p>
+                        <button onclick="checkPaymentStatus()" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-redo me-2"></i>Check Status Now
+                        </button>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-3">
+                        <a href="@Url.Action("MyBookings", "UserBooking")" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-2"></i>View My Bookings
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-link text-muted">
+                            <i class="fas fa-home me-2"></i>Return to Home
+                        </a>
+                    </div>
+
+                    <!-- Support Information -->
+                    <div class="mt-4 pt-4 border-top">
+                        <p class="small text-muted mb-0">
+                            Payment not reflecting? Wait for 5-10 minutes or contact
+                            <a href="mailto:support@yourdomain.com">support@yourdomain.com</a>
+                        </p>
+                        @if (!string.IsNullOrEmpty(Model?.OrderId))
+                        {
+                            <p class="small text-muted mt-2 mb-0">
+                                Reference: <strong>@Model.OrderId</strong>
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Pending Animation Styles */
+    .pending-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .spinner-wrapper {
+        width: 100px;
+        height: 100px;
+        position: relative;
+    }
+
+    .spinner-circle {
+        width: 100%;
+        height: 100%;
+        border: 4px solid rgba(255, 193, 7, 0.2);
+        border-top-color: #ffc107;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .spinner-inner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2.5rem;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        50% {
+            opacity: 0.7;
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+    }
+
+    .card {
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .progress-bar-animated {
+        animation: progress-bar-stripes 1s linear infinite;
+    }
+</style>
+
+@* <script>
+    // Auto-refresh countdown timer
+    let countdown = 10;
+    const timerElement = document.getElementById('refresh-timer');
+
+    const countdownInterval = setInterval(function() {
+        countdown--;
+        if (countdown > 0) {
+            timerElement.innerHTML = `This page will automatically refresh in <strong>${countdown}</strong> seconds`;
+        } else {
+            clearInterval(countdownInterval);
+            checkPaymentStatus();
+        }
+    }, 1000);
+
+    // Function to check payment status
+    function checkPaymentStatus() {
+        const orderId = '@Model?.OrderId';
+        if (orderId) {
+            // Show loading state
+            timerElement.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Checking status...';
+
+            // Reload the callback page to check updated status
+            window.location.href = '@Url.Action("PaymentCallback", "UserBooking")?order_id=' + orderId;
+        }
+    }
+
+    // Optional: Use AJAX to check status without page reload
+    function checkPaymentStatusAjax() {
+        const orderId = '@Model?.OrderId';
+        if (!orderId) return;
+
+        $.ajax({
+            url: '@Url.Action("CheckPaymentStatus", "UserBooking")',
+            type: 'GET',
+            data: { orderId: orderId },
+            success: function(response) {
+                if (response.status === 'PAID') {
+                    window.location.href = '@Url.Action("PaymentCallback", "UserBooking")?order_id=' + orderId;
+                } else if (response.status === 'FAILED' || response.status === 'EXPIRED') {
+                    window.location.href = '@Url.Action("PaymentCallback", "UserBooking")?order_id=' + orderId;
+                } else {
+                    // Still pending, continue countdown
+                    console.log('Payment still pending...');
+                }
+            },
+            error: function() {
+                console.error('Error checking payment status');
+            }
+        });
+    }
+
+    // Prevent accidental page close
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        e.returnValue = 'Your payment is being processed. Are you sure you want to leave?';
+        return e.returnValue;
+    });
+</script> *@

@@ -334,7 +334,15 @@ namespace HallBookingBhatPara.Controllers
         {
             return View();
         }
-        #endregion
+		#endregion
 
-    }
+		#region :: Users List
+		public IActionResult UsersList()
+		{
+			return View();
+
+		}
+		#endregion
+
+	}
 }

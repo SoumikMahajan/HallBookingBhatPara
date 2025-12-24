@@ -672,7 +672,7 @@ Main Content
 }
 
 /* Modern DataTable Look */
-table.dataTable {
+/*table.dataTable {
     border-collapse: separate;
     border-spacing: 0;
     border: 1px solid #dfe6f1;
@@ -681,18 +681,18 @@ table.dataTable {
     background-color: #fff;
     width: 100%;
     font-size: 15px;
-}
+}*/
 
-    table.dataTable thead th {
+/*    table.dataTable thead th {
         background-color: #003a8c;
         color: #fff;
         font-weight: bold;
         padding: 14px;
         text-align: left;
         border-bottom: 2px solid #dee2e6;
-    }
+    }*/
 
-    table.dataTable tbody td {
+/*    table.dataTable tbody td {
         padding: 12px;
         border-bottom: 1px solid #f0f0f0;
     }
@@ -700,7 +700,7 @@ table.dataTable {
     table.dataTable tbody tr:hover {
         background-color: #f4f8ff;
         cursor: pointer;
-    }
+    }*/
 
 /* Edit Button Style */
 .btn-edit {
@@ -1750,61 +1750,277 @@ table.dataTable {
     border: none;
 }
 
-.filter-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-    text-align: center;
-    position: relative;
+.stats-controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
 }
 
-    .filter-title::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(90deg, var(--accent-color), var(--orange));
-        border-radius: 2px;
-    }
-
-/* Status Filters */
-.status-filters {
+.stats-bar {
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-compact {
+    text-align: center;
+    flex: 1;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+    min-width: 90px;
+}
+
+    .stat-compact:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+    }
+
+.stat-number-compact {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label-compact {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Status Filters */
+
+/* Advanced Search Button */
+.advanced-search-btn {
+    background: linear-gradient(135deg, var(--accent-color), #ff8c00);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem 1.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    white-space: nowrap;
+}
+
+    .advanced-search-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        background: linear-gradient(135deg, #ff8c00, var(--accent-color));
+    }
+
+    .advanced-search-btn i {
+        font-size: 1.1rem;
+    }
+
+/* Modal Overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Advanced Search Modal */
+.advanced-search-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 700px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    animation: modalSlideIn 0.3s ease forwards;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes modalSlideIn {
+    to {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.modal-header-custom {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .modal-header-custom h4 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+
+.modal-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    font-size: 1.2rem;
+}
+
+    .modal-close-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+    }
+
+.modal-body-custom {
+    padding: 2rem;
+}
+
+.filter-group {
     margin-bottom: 1.5rem;
 }
 
-.status-filter {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 25px;
-    padding: 0.7rem 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
+.filter-group-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-    .status-filter:hover {
-        border-color: var(--secondary-color);
-        background: #f8fafc;
-        transform: translateY(-2px);
+    .filter-group-title i {
+        color: var(--accent-color);
     }
 
-    .status-filter.active {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        border-color: var(--primary-color);
-        color: white;
-        box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+/* Status Checkboxes */
+.status-checkboxes {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.status-checkbox-wrapper {
+    flex: 1;
+    min-width: 120px;
+}
+
+.status-checkbox {
+    display: none;
+}
+
+.status-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1rem;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status-checkbox:checked + .status-checkbox-label {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.status-checkbox-label:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* Modal Footer */
+.modal-footer-custom {
+    padding: 1.5rem 2rem;
+    border-top: 2px solid #f1f5f9;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-reset {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .btn-reset:hover {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
     }
+
+.btn-apply {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+    .btn-apply:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+
 /* Bookings Grid */
 .bookings-section {
     /*padding: 1rem 0;*/
@@ -2195,6 +2411,10 @@ table.dataTable {
 
 
 
+.allUsersbookingContainer {
+    max-width: 1716px;
+}
+
 
 
 /* ✅ NEW: Modal enhancements for better organization */
@@ -2286,13 +2506,11 @@ table.dataTable {
 /* Table Section */
 .table-section {
     background: white;
-    border-radius: 20px;
-    padding: 2.5rem;
-    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12), 0 8px 16px rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     margin: 2rem 0;
-    overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
     .table-section::before {
@@ -2302,9 +2520,23 @@ table.dataTable {
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--orange));
-        background-size: 300% 100%;
-        animation: gradientShift 6s ease infinite;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 16px 16px 0 0;
+    }
+
+.table-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+    .table-title i {
+        color: var(--secondary-color);
+        font-size: 1.5rem;
     }
 
 @keyframes gradientShift {
@@ -2424,61 +2656,42 @@ table.dataTable {
     margin: 0;
     border: none;
     width: 100%;
-    background: white;
-    overflow: hidden;
+    background-color: green !important;   
 }
 
     .bookings-table thead {
         background: linear-gradient(135deg, var(--dark-bg) 0%, var(--primary-color) 50%, var(--secondary-color) 100%);
         position: relative;
     }
-        .bookings-table thead::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent-color), var(--orange), var(--accent-color));
-        }
-
-        .bookings-table thead th {            
+        .bookings-table thead th {           
             font-weight: 700;
-            padding: 1.2rem 1rem;
+            padding: 1rem 1rem;
             border: none;
-            font-size: small;
+            font-size: 0.85rem;
             letter-spacing: 0.5px;
-            position: relative;
             text-align: left;
             vertical-align: middle;
             text-transform: uppercase;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }           
+            white-space: nowrap;
+        }
 
-            .bookings-table thead th:not(:last-child)::after {
-                content: '';
-                position: absolute;
-                right: 0;
-                top: 25%;
-                bottom: 25%;
-                width: 1px;
-                background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent);
+            .bookings-table thead th i {
+                margin-right: 0.4rem;
+                opacity: 0.9;
             }
 
     .bookings-table tbody tr {
         background: white;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         border-bottom: 1px solid #f1f5f9;
-        position: relative;
-    }        
-        .bookings-table tbody tr:hover::before {
-            background: linear-gradient(135deg, var(--secondary-color), var(--info-color));
-        }
+    }
+
         .bookings-table tbody tr:hover {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            transform: translateX(8px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
+
         .bookings-table tbody tr:nth-child(even) {
             background: #f9fafb;
         }
@@ -2487,13 +2700,11 @@ table.dataTable {
                 background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             }
 
-
     .bookings-table tbody td {
-        padding: 1.2rem 1rem;
+        padding: 1rem 1rem;
         vertical-align: middle;
         border: none;
-        font-size: 0.95rem;
-        position: relative;
+        font-size: 0.9rem;
     }
 
 .table-user-info,
@@ -2508,7 +2719,7 @@ table.dataTable {
         color: var(--primary-color);
         font-weight: 700;
         display: block;
-        //margin-bottom: 0.3rem;
+        margin-bottom: 0.15rem;
         font-size: 1rem;
     }
 
@@ -2516,11 +2727,64 @@ table.dataTable {
     .table-hall-info small,
     .table-event-info small {
         color: #64748b;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         display: block;
-        line-height: 1.2;
-        margin-bottom: 0.1rem;
+        line-height: 1.2;       
     }
+
+.dataTables_wrapper {
+    padding: 0;
+}
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 1.5rem;
+    }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
+            margin: 0 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+        }
+
+            .dataTables_wrapper .dataTables_filter input:focus {
+                border-color: var(--secondary-color);
+                outline: none;
+            }
+
+    /* DataTables Pagination */
+    .dataTables_wrapper .dataTables_paginate {
+        margin-top: 1.5rem;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.5rem 0.75rem;
+            margin: 0 0.25rem;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: var(--primary-color);
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+                background: var(--secondary-color);
+                color: white !important;
+                border-color: var(--secondary-color);
+            }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: var(--primary-color);
+                color: white !important;
+                border-color: var(--primary-color);
+            }
 
 
 /* Status Badges */
@@ -2729,9 +2993,84 @@ table.dataTable {
         box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
     }
 
+/*#region :: userlist css*/
 
-/************************************************************************/
-/******************* START OF Responsive adjustments ********************/
+.allUserslistContainer {
+    max-width: 1716px;
+}
+
+.slide-modal .modal-dialog {
+    transform: translateY(-50px);
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+}
+
+/* When modal is shown */
+.slide-modal.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.user-table {
+    margin: 0;
+    border: none;
+    width: 100%;
+    background-color: green !important;
+}
+
+.user-table thead {
+    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--primary-color) 50%, var(--secondary-color) 100%);
+    position: relative;
+}
+
+.user-table thead th {
+    font-weight: 700;
+    padding: 1rem 1rem;
+    border: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    text-align: left;
+    vertical-align: middle;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.user-table thead th i {
+    margin-right: 0.4rem;
+    opacity: 0.9;
+}
+
+.user-table tbody tr {
+    background: white;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.user-table tbody tr:hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.user-table tbody tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.user-table tbody tr:nth-child(even):hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+    .user-table tbody td {
+        padding: 1rem 1rem;
+        vertical-align: middle;
+        border: none;
+        font-size: 0.9rem;
+    }
+
+/*#endregion*/
+
+/*#region :: Responsive css*/
+
 @media (max-width: 768px) {
     .profile-section {
         flex-direction: row;
@@ -2751,6 +3090,7 @@ table.dataTable {
         width: 12px;
         height: 12px;
     }
+
     .header-content {
         flex-direction: column;
         text-align: center;
@@ -2780,6 +3120,7 @@ table.dataTable {
     .stat-card {
         margin-bottom: 20px;
     }
+
     .search-hero {
         padding: 30px 0;
     }
@@ -2810,6 +3151,7 @@ table.dataTable {
         justify-content: center;
         width: 100%;
     }
+
     .booking-title {
         font-size: 2rem;
     }
@@ -2844,6 +3186,7 @@ table.dataTable {
     .btn-primary-custom, .btn-secondary-custom {
         min-width: 100%;
     }
+
     .booking-card {
         margin: 0 0.5rem 1.5rem 0.5rem;
     }
@@ -2914,6 +3257,7 @@ table.dataTable {
         .modal-body .card-body {
             padding: 1rem;
         }
+
     .stats-section {
         margin: -40px 1rem 2rem 1rem;
     }
@@ -2936,6 +3280,7 @@ table.dataTable {
         height: 50px;
         font-size: 1.2rem;
     }
+
     .table-section {
         padding: 1.5rem;
         margin: 2rem 1rem;
@@ -2951,9 +3296,34 @@ table.dataTable {
         justify-content: space-between;
     }
 
-    .stat-item {
-        flex: 1;
-        min-width: 80px;
+    .stats-bar {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .advanced-search-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .advanced-search-modal {
+        width: 95%;
+    }
+
+    .modal-body-custom {
+        padding: 1.5rem;
+    }
+
+    .status-checkboxes {
+        flex-direction: column;
+    }
+
+    .modal-footer-custom {
+        flex-direction: column;
+    }
+
+    .btn-reset, .btn-apply {
+        width: 100%;
     }
 }
 
@@ -2966,6 +3336,7 @@ table.dataTable {
     .user-info {
         text-align: center;
     }
+
     .municipality-name {
         font-size: 1.5rem;
     }
@@ -2977,6 +3348,7 @@ table.dataTable {
     .stat-number {
         font-size: 2rem;
     }
+
     .booking-header {
         padding: 1.5rem 0;
     }
@@ -2994,6 +3366,7 @@ table.dataTable {
         margin: 0 1rem 2rem 1rem;
         padding: 1rem;
     }
+
     .bookings-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -3030,20 +3403,16 @@ table.dataTable {
         font-size: 1.8rem;
     }
 
-    .booking-header {
-        padding: 1rem;
-    }
-
     .booking-body {
         padding: 0 1rem 1rem;
     }
+
     .stats-grid {
         grid-template-columns: 1fr;
         max-width: 300px;
         margin: 0 auto 2rem auto;
     }
 }
-/* Responsive Design */
 @media (max-width: 1200px) {
     .bookings-table {
         font-size: 0.9rem;
@@ -3051,6 +3420,14 @@ table.dataTable {
 
         .bookings-table thead th,
         .bookings-table tbody td {
+            padding: 1rem 0.8rem;
+        }
+    .user-table {
+        font-size: 0.9rem;
+    }
+
+        .user-table thead th,
+        .user-table tbody td {
             padding: 1rem 0.8rem;
         }
 }
@@ -3073,5 +3450,4 @@ table.dataTable {
     }
 }
 
-/************************************************************************/
-/******************* END OF Responsive adjustments *********************/
+/*#endregion*/

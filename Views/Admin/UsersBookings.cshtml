@@ -18,90 +18,43 @@
 </section>
 
 <!-- Main Content Container -->
-<div class="container">
+<div class="container allUsersbookingContainer">
 
     <!-- Filter Section -->
     <div class="filter-section">
-        <h3 class="filter-title">
-            <i class="fas fa-filter"></i> Filter Bookings
-        </h3>
+        <div class="stats-controls-row">
+            <div class="stats-bar">
+                <div class="stat-compact">
+                    <span class="stat-number-compact">156</span>
+                    <span class="stat-label-compact">Total</span>
+                </div>
+                <div class="stat-compact">
+                    <span class="stat-number-compact">89</span>
+                    <span class="stat-label-compact">Confirmed</span>
+                </div>
+                <div class="stat-compact">
+                    <span class="stat-number-compact">23</span>
+                    <span class="stat-label-compact">Pending</span>
+                </div>
+                <div class="stat-compact">
+                    <span class="stat-number-compact">44</span>
+                    <span class="stat-label-compact">Completed</span>
+                </div>
+            </div>
 
-        <!-- Status Filters -->
-        <div class="status-filters">
-            <div class="status-filter active" data-status="all">
-                <i class="fas fa-list"></i>
-                All Bookings
-            </div>
-            <div class="status-filter" data-status="confirmed">
-                <i class="fas fa-check-circle"></i>
-                Confirmed
-            </div>
-            <div class="status-filter" data-status="pending">
-                <i class="fas fa-clock"></i>
-                Pending
-            </div>
-            <div class="status-filter" data-status="completed">
-                <i class="fas fa-check-double"></i>
-                Completed
-            </div>
-            <div class="status-filter" data-status="cancelled">
-                <i class="fas fa-times-circle"></i>
-                Cancelled
-            </div>
-        </div>
-
-        <!-- Date Range and Search Filter -->
-        <div class="row g-3">
-            <div class="col-md-4">
-                <div class="form-floating">
-                    <input type="date" id="fromDate" class="form-control">
-                    <label for="fromDate"><i class="fas fa-calendar-alt"></i> From Date</label>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-floating">
-                    <input type="date" id="toDate" class="form-control">
-                    <label for="toDate"><i class="fas fa-calendar-check"></i> To Date</label>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-floating">
-                    <input type="text" id="searchHall" class="form-control" placeholder="Search by hall name...">
-                    <label for="searchHall"><i class="fas fa-search"></i> Search Hall</label>
-                </div>
-            </div>
-        </div>
+            <!-- Advanced Search Button -->
+            <button class="advanced-search-btn" id="openAdvancedSearch">
+                <i class="fas fa-sliders-h"></i>
+                Advanced Search
+            </button>
+        </div>        
     </div>
 
     <!-- Table Section -->
-    <div class="table-section">
-        <div class="table-header">
-            <h3 class="table-title">
-                <i class="fas fa-table"></i> Bookings Overview
-            </h3>
-            <div class="table-stats">
-                <div class="stat-item">
-                    <span class="stat-number">156</span>
-                    <span class="stat-label">Total</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">89</span>
-                    <span class="stat-label">Confirmed</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">23</span>
-                    <span class="stat-label">Pending</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">44</span>
-                    <span class="stat-label">Completed</span>
-                </div>
-            </div>
-        </div>
-
+    <div class="table-section">       
         <!-- Responsive Table -->
-        <div class="table-responsive">
-            <table class="table bookings-table" id="bookingsTable">
+        <div class="">
+            <table class="table bookings-table" id="adminbookingsTable">
                 <thead>
                     <tr>
                         <th scope="col">
@@ -136,29 +89,23 @@
                         </td>
                         <td>
                             <div class="table-user-info">
-                                <strong>Rajesh Kumar</strong>
-                                <br>
-                                <small class="text-muted">rajesh@email.com</small>
-                                <br>
-                                <small class="text-muted">+91 98765-43210</small>
+                                <strong>Rajesh Kumar</strong>                                
+                                <small>rajesh@email.com</small>
+                                <small>+91 98765-43210</small>
                             </div>
                         </td>
                         <td>
                             <div class="table-hall-info">
-                                <strong>Marriage Hall</strong>
-                                <br>
-                                <small class="text-muted">Main Auditorium</small>
-                                <br>
-                                <small class="text-muted">Capacity: 500</small>
+                                <strong>Marriage Hall</strong>                               
+                                <small>Main Auditorium</small>
+                                <small>Capacity: 500</small>
                             </div>
                         </td>
                         <td>
                             <div class="table-event-info">
                                 <strong>25 Dec 2024</strong>
-                                <br>
-                                <small class="text-muted">10:00 AM - 10:00 PM</small>
-                                <br>
-                                <small class="text-muted">Wedding Reception</small>
+                                <small>10:00 AM - 10:00 PM</small>
+                                <small>Wedding Reception</small>
                             </div>
                         </td>
                         <td>
@@ -189,7 +136,62 @@
                             </div>
                         </td>
                     </tr>
-                    <tr data-status="pending">
+                    <tr data-status="confirmed">
+                        <td>
+                            <strong>#BK001234</strong>
+                            <br>
+                            <small class="text-muted">25 Nov 2024</small>
+                        </td>
+                        <td>
+                            <div class="table-user-info">
+                                <strong>Rajesh Kumar</strong>
+                                <small>rajesh@email.com</small>
+                                <small>+91 98765-43210</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-hall-info">
+                                <strong>Marriage Hall</strong>
+                                <small>Main Auditorium</small>
+                                <small>Capacity: 500</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-event-info">
+                                <strong>25 Dec 2024</strong>
+                                <small>10:00 AM - 10:00 PM</small>
+                                <small>Wedding Reception</small>
+                            </div>
+                        </td>
+                        <td>
+                            <strong class="text-success">₹25,000</strong>
+                            <br>
+                            <small class="text-muted">Paid</small>
+                        </td>
+                        <td>
+                            <span class="status-badge table-status-confirmed">
+                                <i class="fas fa-check-circle"></i>
+                                Confirmed
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-action-buttons">
+                                <button class="table-action-btn table-btn-view" data-booking-id="BK001234">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="table-action-btn table-btn-edit" data-booking-id="BK001234">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </button>
+                                <button class="table-action-btn table-btn-download" data-booking-id="BK001234">
+                                    <i class="fas fa-download"></i>
+                                    Receipt
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    @* <tr data-status="pending">
                         <td>
                             <strong>#BK001235</strong>
                             <br>
@@ -363,12 +365,12 @@
                                 </button>
                             </div>
                         </td>
-                    </tr>
+                    </tr> *@
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination -->
+        @* <!-- Pagination -->
         <div class="pagination-container">
             <div class="pagination-info">
                 Showing 1 to 6 of 156 entries
@@ -402,7 +404,7 @@
                     </li>
                 </ul>
             </nav>
-        </div>
+        </div> *@
 
     </div>
 
@@ -416,4 +418,107 @@
         </button>
     </div>
 
+</div>
+
+<!-- Modal Overlay -->
+<div class="modal-overlay" id="modalOverlay"></div>
+
+<!-- Advanced Search Modal -->
+<div class="advanced-search-modal" id="advancedSearchModal">
+    <div class="modal-header-custom">
+        <h4>
+            <i class="fas fa-search-plus"></i>
+            Advanced Search & Filters
+        </h4>
+        <button class="modal-close-btn" id="closeModal">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="modal-body-custom">
+        <!-- Status Filter -->
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-filter"></i>
+                Booking Status
+            </div>
+            <div class="status-checkboxes">
+                <div class="status-checkbox-wrapper">
+                    <input type="checkbox" id="statusAll" class="status-checkbox" checked>
+                    <label for="statusAll" class="status-checkbox-label">
+                        <i class="fas fa-list"></i>
+                        All
+                    </label>
+                </div>
+                <div class="status-checkbox-wrapper">
+                    <input type="checkbox" id="statusConfirmed" class="status-checkbox">
+                    <label for="statusConfirmed" class="status-checkbox-label">
+                        <i class="fas fa-check-circle"></i>
+                        Confirmed
+                    </label>
+                </div>
+                <div class="status-checkbox-wrapper">
+                    <input type="checkbox" id="statusPending" class="status-checkbox">
+                    <label for="statusPending" class="status-checkbox-label">
+                        <i class="fas fa-clock"></i>
+                        Pending
+                    </label>
+                </div>
+                <div class="status-checkbox-wrapper">
+                    <input type="checkbox" id="statusCompleted" class="status-checkbox">
+                    <label for="statusCompleted" class="status-checkbox-label">
+                        <i class="fas fa-check-double"></i>
+                        Completed
+                    </label>
+                </div>
+                <div class="status-checkbox-wrapper">
+                    <input type="checkbox" id="statusCancelled" class="status-checkbox">
+                    <label for="statusCancelled" class="status-checkbox-label">
+                        <i class="fas fa-times-circle"></i>
+                        Cancelled
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Range -->
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-calendar-range"></i>
+                Date Range
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="fromDate" class="form-label">
+                        <i class="fas fa-calendar-alt"></i> From Date
+                    </label>
+                    <input type="date" id="fromDate" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label for="toDate" class="form-label">
+                        <i class="fas fa-calendar-check"></i> To Date
+                    </label>
+                    <input type="date" id="toDate" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <!-- Hall Search -->
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-building"></i>
+                Search by Hall
+            </div>
+            <input type="text" id="searchHall" class="form-control" placeholder="Enter hall name...">
+        </div>
+    </div>
+
+    <div class="modal-footer-custom">
+        <button class="btn-reset" id="resetFilters">
+            <i class="fas fa-redo"></i> Reset
+        </button>
+        <button class="btn-apply" id="applyFilters">
+            <i class="fas fa-check"></i> Apply Filters
+        </button>
+    </div>
 </div>

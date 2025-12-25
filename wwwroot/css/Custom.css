@@ -1344,8 +1344,8 @@ Main Content
 .form-control, .form-select {
     border-radius: 10px;
     border: 2px solid #e2e8f0;
-    padding: 0.8rem 1rem;
-    font-size: 0.95rem;
+    /*padding: 0.8rem 1rem;
+    font-size: 0.95rem;*/
     transition: all 0.3s ease;
     background: #f8fafc;
 }

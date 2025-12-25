@@ -20,4 +20,22 @@
         public string? EntryIP { get; set; }
         public long? CreatedBy { get; set; }
     }
+
+	public class AddUserDto
+	{
+		public string FirstName { get; set; } = string.Empty;
+		public string LastName { get; set; } = string.Empty;
+		public string Email { get; set; } = string.Empty;
+		public string Phone { get; set; } = string.Empty;
+		public long Gender { get; set; } = 0;
+        public int Role { get; set; } = 0;
+		public DateOnly DOB { get; set; }
+		public string Address { get; set; } = string.Empty;
+		public string City { get; set; } = string.Empty;
+		public string Pincode { get; set; } = string.Empty;
+		public string Password { get; set; } = string.Empty;
+		public string BasePassword { get; set; } = string.Empty;		
+		public string EntryIP { get; set; } = string.Empty;
+        public long CreatedBy { get; set; } = 0;
+	}
 }

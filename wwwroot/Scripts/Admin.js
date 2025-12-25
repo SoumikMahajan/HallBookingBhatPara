@@ -18,7 +18,7 @@
             else {
                 $("#categoryName").removeClass("is-invalid");
             }
-            let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+            let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();                                                                                                                                                                                                                                               
             $.ajax({
                 url: '/Admin/AddCategory',
                 type: 'POST',
@@ -1036,5 +1036,235 @@
        
     }
     // #endregion :: HallAvailability
+
+    // #region :: users manage list
+    if (_ActionName === "userslist") {
+
+        const today = flatpickr.formatDate(new Date(), "Y-m-d");
+
+        let startPicker = flatpickr("#dob", {
+            dateFormat: "Y-m-d",
+            defaultDate: today
+        });
+
+        var userDataTable = null;
+
+        getAllUserList();
+
+        function getAllUserList() {
+            $.ajax({
+                url: '/Admin/GetAllUsersList',
+                type: 'GET',
+                dataType: 'HTML',                
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response != '') {
+                        $('#partialUserList').html('');
+                        $('#partialUserList').html(response);
+                        if (userDataTable !== null) {
+                            userDataTable.destroy();
+                        }
+                        userDataTable = $('#userListTable').DataTable({
+                            responsive: true,
+                            autoWidth: false,
+                            lengthMenu: [[50, 100, -1], [50, 100, "All"]],
+                            language: {
+                                searchPlaceholder: "Search Users...",
+                                search: ""
+                            },
+                            order: [[0, 'asc']]
+                        });
+                    }
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+        }
+
+        $(document).on('click', '#openAddUser', function (e) {
+            $('#addUserModal').modal('show');
+        });
+
+        $(".togglePassword").on("click", function (e) {
+            const passwordInput = $('#password');
+            const toggleIcon = $(this).find('i');
+
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+                toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInput.attr('type', 'password');
+                toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
+        $(document).on('click', '#adminAdduser', function (e) {
+            e.preventDefault();
+
+            if (validateRegistrationForm()) {
+                adduser();
+            }
+        });
+
+
+        function validateRegistrationForm() {
+            let hasError = false;
+
+            const firstName = $('#firstName').val()?.trim() || "";
+            const lastName = $('#lastName').val()?.trim() || "";
+            const email = $('#email').val()?.trim() || "";
+            const phone = $('#phone').val()?.trim() || "";
+            const gender = $('#gender').val();
+            const role = $('#role').val();
+            const dob = $('#dob').val()?.trim() || "";
+            const address = $('#address').val()?.trim() || "";
+            const city = $('#city').val()?.trim() || "";
+            const pincode = $('#pincode').val()?.trim() || "";
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phonePattern = /^\d{10}$/;
+            const pinPattern = /^\d{6}$/;
+
+            if (firstName === '') {
+                showError("#firstName", "Enter a valid First Name.");
+                hasError = true;
+            } else {
+                showValid('#firstName');
+            }
+
+            if (lastName === '') {
+                showError("#lastName", "Enter a valid Last Name.");
+                hasError = true;
+            } else {
+                showValid('#lastName');
+            }
+
+            if (!emailPattern.test(email)) {
+                showError("#email", "Enter a valid email address.");
+                hasError = true;
+            } else {
+                showValid('#email');
+            }
+
+            if (!phonePattern.test(phone)) {
+                showError("#phone", "Enter a 10-digit mobile number.");
+                hasError = true;
+            } else {
+                showValid('#phone');
+            }
+
+            if (gender === '') {
+                showError("#gender", "Please select gender.");
+                hasError = true;
+            } else {
+                showValid('#gender');
+            }
+
+            if (role === '') {
+                showError("#role", "Please select role.");
+                hasError = true;
+            } else {
+                showValid('#role');
+            }
+
+            if (!dob) {
+                showError("#dob", "Please enter birthdate.");
+                hasError = true;
+            } else {
+                showValid('#dob');
+            }
+
+            if (!address) {
+                showError("#address", "Enter full address.");
+                hasError = true;
+            } else {
+                showValid('#address');
+            }
+
+            if (!city) {
+                showError("#city", "Enter city.");
+                hasError = true;
+            } else {
+                showValid('#city');
+            }
+
+            if (!pinPattern.test(pincode)) {
+                showError("#pincode", "Enter a 6-digit PIN code.");
+                hasError = true;
+            } else {
+                showValid('#pincode');
+            }
+
+            return !hasError;
+        }
+
+        function adduser() {
+            const formData = new FormData();
+
+            formData.append("FirstName", $('#firstName').val()?.trim() || "");
+            formData.append("LastName", $('#lastName').val()?.trim() || "");
+            formData.append("Email", $('#email').val()?.trim() || "");
+            formData.append("Phone", $('#phone').val()?.trim() || "");
+            formData.append("Gender", $('#gender').val());
+            formData.append("Role", $('#role').val());
+            formData.append("DOB", $('#dob').val()?.trim() || "");
+            formData.append("Address", $('#address').val()?.trim() || "");
+            formData.append("City", $('#city').val()?.trim() || "");
+            formData.append("Pincode", $('#pincode').val()?.trim() || "");
+            formData.append("Password", $('#password').val());
+            formData.append("BasePassword", $('#password').val());
+
+            $.ajax({
+                url: '/Admin/AddUserDto',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                    $('#adminAdduser').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Registering...');
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    if (response.isSuccess) {
+                        notify(true, response.result, true);
+                        getAllUserList();
+                    }
+                    else {
+                        notify(false, response.errorMessages, false);
+                    }
+                },
+                complete: function () {
+                    $('#adminAdduser').prop('disabled', false).html('<i class="fas fa-user-plus me-2"></i>Create Account');
+                }
+            });
+        }
+
+        function showError(selector, message) {
+            const $input = $(selector);
+            const $parent = $input.closest(".form-floating, .input-group, .form-check");
+
+            $input.addClass("is-invalid");
+            $parent.find(".invalid-feedback").text(message).show();
+
+            // Auto-clear after 2 seconds
+            setTimeout(() => {
+                $input.removeClass("is-invalid");
+                $parent.find(".invalid-feedback").hide();
+            }, 2000);
+        }
+
+        function showValid(input) {
+            const $input = $(input);
+            const $container = $input.closest('.form-floating, .input-group, .form-check');
+
+            $input.removeClass('is-invalid');
+            $container.find('.invalid-feedback').hide();
+        }        
+    }
+    // #endregion :: users manage list
 
 });

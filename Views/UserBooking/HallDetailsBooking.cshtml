@@ -95,30 +95,59 @@
                 <input type="hidden" id="hiddenHallId" value='@Model.hallBookingDTO.hall_id_pk' />
                 <input type="hidden" id="HiddenHallAvailId" value='@Model.hallBookingDTO.hall_availability_id_pk' />
                 <input type="hidden" id="hiddenRate" value='@rate' />
-                <input type="hidden" id="hiddenSecurityMoney" value='@securityMoney' />                
+                <input type="hidden" id="hiddenSecurityMoney" value='@securityMoney' />
                 <input type="hidden" id="paymentTypeId" value='@Model.hallBookingDTO.payment_type_id_fk' />
 
                 <h4 class="section-title">
                     <i class="fas fa-user"></i> Personal Information
                 </h4>
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="fullName" value="@Model.public_User_Registration.user_name">
-                        <div class="invalid-feedback">Please enter your full name.</div>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address <span class="required">*</span></label>
-                        <input type="email" class="form-control" id="email" value="@Model.public_User_Registration.email">
-                        <div class="invalid-feedback">Please enter a valid email address.</div>
-                    </div>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Dev"))
+                    {
+                        <div class="col-md-4">
+                            <label for="userDdl" class="form-label">Users <span class="required">*</span></label>
+                            <select class="form-select" id="userDdl">  
+                                <option value=""></option>
+                                <!option value="1">Name</!option>
+                                <!option value="2">Test</!option>
+                                @* @foreach (var item in Model.dropDownListDTOs)
+                                {
+                                    <!option value="@item.Id">@item.Name</!option>
+                                } *@
+                            </select>
+                            <div class="invalid-feedback">Please select an user.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="fullName" value="" disabled>
+                            <div class="invalid-feedback">Please enter your full name.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                            <input type="email" class="form-control" id="email" value="" disabled>
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-6">
+                            <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="fullName" value="@Model.public_User_Registration.user_name">
+                            <div class="invalid-feedback">Please enter your full name.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                            <input type="email" class="form-control" id="email" value="@Model.public_User_Registration.email">
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                        </div>
+                    }                   
                     <div class="col-md-6">
                         <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
-                        <input type="tel" class="form-control" id="phone" value="@Model.public_User_Registration.mobile">
+                        <input type="tel" class="form-control" id="phone" value="@(User.IsInRole("Dev") ? "" : Model.public_User_Registration.mobile)" @(User.IsInRole("Dev") ? "disabled" : "")>
                         <div class="invalid-feedback">Please enter your phone number.</div>
                     </div>
                     <div class="col-md-6">
-                        <label for="alternatePhone" class="form-label">Alternate Phone<span class="required">*</span></label>
+                        <label for="alternatePhone" class="form-label">Alternate Phone</label>
                         <input type="tel" class="form-control" id="alternatePhone">
                         <div class="invalid-feedback">Please enter your alter phone number.</div>
                     </div>
@@ -351,14 +380,14 @@
                             <label class="payment-card">
                                 <input type="radio" name="paymentType" value="10" checked />
                                 <span>💰 Full Payment</span>
-                            </label>                           
+                            </label>
                         </div>
                     </div>
                 }
-                
+
 
                 <div class="price-summary" id="partialPaymentSummery">
-                    @await Html.PartialAsync("_partialPriceSummary", Model)                    
+                    @await Html.PartialAsync("_partialPriceSummary", Model)
                 </div>
             </div>
 

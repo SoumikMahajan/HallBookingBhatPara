@@ -274,6 +274,14 @@
             }
         });
 
+        if ($('#userDdl').length > 0) {
+            $('#userDdl').select2({
+                placeholder: '--Select User--',
+                allowClear: true,
+                width: '100%'
+            });
+        }
+
         // Show single date selection
         function showSingleDateSelection() {
             $('#singleDateContainer').slideDown(300);
@@ -552,12 +560,12 @@
                 isValid = false;
             }
 
-            const Alterphone = $('#alternatePhone').val().trim().replace(/\D/g, '');
-            if (Alterphone === '' || Alterphone.length !== 10) {
-                $('#alternatePhone').addClass('is-invalid');
-                errorMessages.push('Alternate phone number must be 10 digits!');
-                isValid = false;
-            }
+            //const Alterphone = $('#alternatePhone').val().trim().replace(/\D/g, '');
+            //if (Alterphone === '' || Alterphone.length !== 10) {
+            //    $('#alternatePhone').addClass('is-invalid');
+            //    errorMessages.push('Alternate phone number must be 10 digits!');
+            //    isValid = false;
+            //}
 
             const eventType = $("#eventType option:selected").val();
             if (eventType === '0' || eventType === '' || eventType === undefined) {
@@ -997,168 +1005,4 @@
     }
     // #endregion :: Admin users booking list
 
-    // #region :: users manage list
-    if (_ActionName === "userslist") {
-
-        const today = flatpickr.formatDate(new Date(), "Y-m-d");
-
-        let startPicker = flatpickr("#dob", {
-            dateFormat: "Y-m-d",            
-            defaultDate: today          
-        });
-
-        $(document).on('click', '#openAddUser', function (e) {
-            $('#addUserModal').modal('show');
-        });  
-
-        $(".togglePassword").on("click", function (e) {
-            const passwordInput = $('#password');
-            const toggleIcon = $(this).find('i');
-
-            if (passwordInput.attr('type') === 'password') {
-                passwordInput.attr('type', 'text');
-                toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash');
-            } else {
-                passwordInput.attr('type', 'password');
-                toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
-            }
-        });
-
-        $(document).on('click', '#adminAdduser', function (e) {
-            e.preventDefault();
-
-            if (validateRegistrationForm()) {
-                //adduser();
-            }
-        }); 
-        
-
-        function validateRegistrationForm() {
-            let hasError = false;
-
-            const firstName = $('#firstName').val()?.trim() || "";
-            const lastName = $('#lastName').val()?.trim() || "";
-            const email = $('#email').val()?.trim() || "";
-            const phone = $('#phone').val()?.trim() || "";
-            const gender = $('#gender').val();
-            const role = $('#role').val();
-            const dob = $('#dob').val()?.trim() || "";
-            const address = $('#address').val()?.trim() || "";
-            const city = $('#city').val()?.trim() || "";
-            const pincode = $('#pincode').val()?.trim() || "";
-
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const phonePattern = /^\d{10}$/;
-            const pinPattern = /^\d{6}$/;
-
-            if (firstName === '') {
-                showError("#firstName", "Enter a valid First Name.");
-                hasError = true;
-            } else {
-                showValid('#firstName');
-            }
-
-            if (lastName === '') {
-                showError("#lastName", "Enter a valid Last Name.");
-                hasError = true;
-            } else {
-                showValid('#lastName');
-            }
-
-            if (!emailPattern.test(email)) {
-                showError("#email", "Enter a valid email address.");
-                hasError = true;
-            } else {
-                showValid('#email');
-            }
-
-            if (!phonePattern.test(phone)) {
-                showError("#phone", "Enter a 10-digit mobile number.");
-                hasError = true;
-            } else {
-                showValid('#phone');
-            }
-
-            if (gender === '') {
-                showError("#gender", "Please select gender.");
-                hasError = true;
-            } else {
-                showValid('#gender');
-            }
-
-            if (role === '') {
-                showError("#role", "Please select role.");
-                hasError = true;
-            } else {
-                showValid('#role');
-            }
-
-            if (!dob) {
-                showError("#dob", "Please enter birthdate.");
-                hasError = true;
-            } else {
-                showValid('#dob');
-            }
-
-            if (!address) {
-                showError("#address", "Enter full address.");
-                hasError = true;
-            } else {
-                showValid('#address');
-            }
-
-            if (!city) {
-                showError("#city", "Enter city.");
-                hasError = true;
-            } else {
-                showValid('#city');
-            }
-
-            if (!pinPattern.test(pincode)) {
-                showError("#pincode", "Enter a 6-digit PIN code.");
-                hasError = true;
-            } else {
-                showValid('#pincode');
-            }
-
-            return !hasError;
-        }
-
-        function showError(selector, message) {
-            const $input = $(selector);
-            const $parent = $input.closest(".form-floating, .input-group, .form-check");
-
-            $input.addClass("is-invalid");
-            $parent.find(".invalid-feedback").text(message).show();
-
-            // Auto-clear after 2 seconds
-            setTimeout(() => {
-                $input.removeClass("is-invalid");
-                $parent.find(".invalid-feedback").hide();
-            }, 2000);
-        }
-
-        function showValid(input) {
-            const $input = $(input);
-            const $container = $input.closest('.form-floating, .input-group, .form-check');
-
-            $input.removeClass('is-invalid');
-            $container.find('.invalid-feedback').hide();
-        }
-
-        $('#userListTable').DataTable({
-            responsive: true,
-            autoWidth: false,
-            lengthMenu: [[50,100, -1], [50,100, "All"]],
-            language: {
-                searchPlaceholder: "Search Users...",
-                search: ""
-            }
-            //,
-            //columnDefs: [
-            //    { targets: 6, orderable: false }
-            //]
-        });
-    }
-    // #endregion :: users manage list
 });

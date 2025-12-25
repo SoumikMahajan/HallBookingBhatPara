@@ -1,6 +1,7 @@
 ﻿using HallBookingBhatPara.Application.Interface;
 using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.User;
 using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Infrastructure.Service;
 using HallBookingBhatPara.Model.Validator;
@@ -343,6 +344,54 @@ namespace HallBookingBhatPara.Controllers
 			return View();
 
 		}
+
+		public async Task<IActionResult> GetAllUsersList()
+		{
+			//var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+			//				 .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+			//				 .ToList();
+
+			//var SubCategory = await _unitOfWork.SubCategoryMasterRepository.GetAsync(h => h.hall_id_pk == SubCategoryId);
+			MultipleModel mm = new();
+
+			//mm.dropDownListDTOs = dropDownList;
+			//mm.hall_Master = SubCategory;
+
+			return PartialView("_partialUsersList", mm);
+
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> AddUser([FromForm] AddUserDto model)
+		{
+			var validator = new AddUserValidator();
+			var validationResult = validator.Validate(model);
+
+			if (!validationResult.IsValid)
+			{
+				return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
+			}
+
+			model.EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
+
+			model.CreatedBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
+			
+
+			var EncriptedPassword = PasswordHasher.ComputeSha256Hash(model.Password);
+			model.Password = EncriptedPassword;
+
+			//var userId = await _unitOfWork.SPRepository.RegistrationAsync(model);
+			//if (userId <= 0)
+			//{
+			//	return Json(ResponseService.InternalServerResponse<object>("Registration failed. Please try again."));
+			//}
+			
+
+
+			return Json(ResponseService.SuccessResponse<object>("User Added Successful!"));
+
+		}
+
 		#endregion
 
 	}

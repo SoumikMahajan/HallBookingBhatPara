@@ -14,10 +14,11 @@ namespace HallBookingBhatPara.Application.Interface
         ISubCategoryMasterRepository SubCategoryMasterRepository { get; }
         IHallAvailMasterRepository HallAvailMasterRepository { get; }
         IHallFloorMasterRepository HallFloorMasterRepository { get; }
-        #endregion
+        IStackHolderLoginRepository StackHolderLoginRepository { get; }
+		#endregion
 
-        #region :: Hall Booking
-        IHallEventMasterRepository HallEventMasterRepository { get; }
+		#region :: Hall Booking
+		IHallEventMasterRepository HallEventMasterRepository { get; }
         IUserRegistrationRepository UserRegistrationRepository { get; }
         IHallBookingDetailsRepository HallBookingDetailsRepository { get; }
         #endregion

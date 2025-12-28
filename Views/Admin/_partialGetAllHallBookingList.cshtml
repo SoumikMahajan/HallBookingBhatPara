@@ -1,0 +1,124 @@
+﻿@model HallBookingBhatPara.Domain.DTO.MultipleModel
+
+@if (Model?.hallBookingDetails != null && Model.hallBookingDetails.Any())
+{
+    @foreach (var item in Model.hallBookingDetails)
+    {
+        <tr>
+            <td>
+                <strong>@item.RowNum</strong>               
+            </td>
+            <td>
+                <strong>@item.booking_reference_id</strong>
+                <br>
+                <small class="text-muted">@item.user_booked_on</small>
+            </td>
+            <td>
+                <div class="table-user-info">
+                    <strong>@item.user_name</strong>
+                    <small>@item.email</small>
+                    <small>+91 @item.mobile</small>
+                </div>
+            </td>
+            <td>
+                <div class="table-hall-info">
+                    <strong>@item.category_name (@item.hall_name)</strong>
+                    @if (!string.IsNullOrEmpty(item.floor_name))
+                    {
+                        <small>@item.floor_name</small>
+                    }                                      
+                </div>
+            </td>
+            <td>
+                <div class="table-event-info">
+                    <strong>@item.booking_date_range</strong>
+                    @* <small>10:00 AM - 10:00 PM</small> *@
+                    <small>@item.event_type_name</small>
+                </div>
+            </td>
+            <td>
+                <strong class="text-success">₹@item.total_price_summary_amount</strong>
+                <br>
+                <small class="text-muted">@item.payment_status</small>
+            </td>
+            <td>
+                @if (item.booking_process_status_id == 5)
+                {
+                    <span class="status-badge table-status-confirmed">
+                        <i class="fas fa-check-circle"></i>
+                        @item.booking_process_name
+                    </span>
+                }
+                else if (item.booking_process_status_id == 1)
+                {
+                    <span class="status-badge table-status-pending">
+                        <i class="fas fa-clock"></i>
+                        @item.booking_process_name
+                    </span>
+                }
+                else if (item.booking_process_status_id == 3)
+                {
+                    <span class="status-badge table-status-completed">
+                        <i class="fas fa-check-double"></i>
+                        @item.booking_process_name
+                    </span>
+                }
+                else if (item.booking_process_status_id == 2)
+                {
+                    <span class="status-badge table-status-cancelled">
+                        <i class="fas fa-times-circle"></i>
+                        @item.booking_process_name
+                    </span>
+                }
+                else if (item.booking_process_status_id == 6)
+                {
+                    <span class="status-badge table-status-cancelled">
+                        <i class="fas fa-times-circle"></i>
+                        @item.booking_process_name
+                    </span>
+                }
+
+            </td>
+            <td>
+                <div class="table-action-buttons">
+                    <button class="table-action-btn table-btn-view" data-booking-ref-id="@item.booking_reference_id" data-booking-id="@item.hall_booking_id_pk">
+                        <i class="fas fa-eye"></i>
+                        View
+                    </button>
+
+                    @if (item.booking_process_status_id == 1)
+                    {
+                        <button class="table-action-btn table-btn-approve" data-booking-ref-id="@item.booking_reference_id" data-booking-id="@item.hall_booking_id_pk">
+                            <i class="fas fa-edit"></i>
+                            Approve
+                        </button>
+                        <button class="table-action-btn table-btn-reject" data-booking-ref-id="@item.booking_reference_id" data-booking-id="@item.hall_booking_id_pk">
+                            <i class="fas fa-edit"></i>
+                            Reject
+                        </button>
+                    }
+                    
+                    @if (item.booking_process_status_id == 5)
+                    {
+                        <button class="table-action-btn table-btn-download" data-booking-ref-id="@item.booking_reference_id" data-booking-id="@item.hall_booking_id_pk">
+                            <i class="fas fa-download"></i>
+                            Receipt
+                        </button>
+                    }
+
+                    @* <button class="table-action-btn table-btn-edit" data-booking-id="@item.booking_reference_id">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </button> *@
+                    
+                </div>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="8" class="text-center">No Booking found</td>
+    </tr>
+}

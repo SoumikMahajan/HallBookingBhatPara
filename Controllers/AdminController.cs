@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HallBookingBhatPara.Controllers
 {
-    [Authorize(Roles = "Super Admin,Admin,Dev")]
+    [Authorize(Roles = "Super Admin,Admin,Dev,Counter Admin")]
     public class AdminController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -336,26 +336,115 @@ namespace HallBookingBhatPara.Controllers
         {
             return View();
         }
-		#endregion
 
-		#region :: Users List
-		public IActionResult UsersList()
+
+		public async Task<IActionResult> GetAllHallBookingList()
 		{
-			return View();
+
+			var roleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
+
+			long StakeId = 0;
+			long StakeDetailsId = 0;
+
+			if (roleId != 2 && roleId != 4 && roleId != 1)
+			{
+				StakeId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
+				StakeDetailsId = Convert.ToInt64(_tokenProvider.GetUserClaims().StackHolderId);
+			}
+
+
+			var hallBookingList = await _unitOfWork.SPRepository.UserHallBookedDetailsAsync(StakeId, StakeDetailsId);
+
+			MultipleModel mm = new();
+			mm.hallBookingDetails = hallBookingList;
+
+			return PartialView("_partialGetAllHallBookingList", mm);
 
 		}
 
+		[HttpPost]
+		public async Task<IActionResult> ApproveBookedHall(long BookingId,string BookingReferenceId)
+		{
+
+            if (BookingId <= 0)
+            {
+                return Json(ResponseService.BadRequestResponse<string>("BookingId can not be null or 0"));
+			}
+            if (string.IsNullOrEmpty(BookingReferenceId))
+            {
+				return Json(ResponseService.BadRequestResponse<string>("BookingReferenceId can not be null or empty"));
+			}
+			
+
+			var UpdateBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
+			var loggedInRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
+			var EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
+
+
+			var result = await _unitOfWork.SPRepository.ApproveHallAsync(BookingId,BookingReferenceId,UpdateBy,loggedInRoleId, EntryIP);
+            if (result != "SUCCESS")
+            {
+                return Json(ResponseService.InternalServerResponse<object>("Something Went Wrong. Please try again."));
+            }
+
+
+
+            return Json(ResponseService.SuccessResponse<object>($"This Booking Id {BookingReferenceId} is Approved Succesfully"));
+
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> RejectBookedHall(long BookingId, string BookingReferenceId)
+		{
+
+			if (BookingId <= 0)
+			{
+				return Json(ResponseService.BadRequestResponse<string>("BookingId can not be null or 0"));
+			}
+			if (string.IsNullOrEmpty(BookingReferenceId))
+			{
+				return Json(ResponseService.BadRequestResponse<string>("BookingReferenceId can not be null or empty"));
+			}
+
+
+			var UpdateBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
+			var loggedInRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
+			var EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
+
+
+			var result = await _unitOfWork.SPRepository.RejectHallAsync(BookingId, BookingReferenceId, UpdateBy, loggedInRoleId, EntryIP);
+			if (result != "SUCCESS")
+			{
+				return Json(ResponseService.InternalServerResponse<object>("Something Went Wrong. Please try again."));
+			}
+
+
+
+			return Json(ResponseService.SuccessResponse<object>($"This Booking Id {BookingReferenceId} is Rejected"));
+
+		}
+
+		#endregion
+
+		#region :: Users List
+		public  IActionResult UsersList()
+		{
+
+
+			return View();
+
+		}
+		
 		public async Task<IActionResult> GetAllUsersList()
 		{
-			//var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
-			//				 .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
-			//				 .ToList();
-
-			//var SubCategory = await _unitOfWork.SubCategoryMasterRepository.GetAsync(h => h.hall_id_pk == SubCategoryId);
 			MultipleModel mm = new();
 
-			//mm.dropDownListDTOs = dropDownList;
-			//mm.hall_Master = SubCategory;
+			var roleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
+
+            var userList = await _unitOfWork.SPRepository.GetUserListOnAdminAsync(roleId);
+
+			
+			mm.User_List_Admin = userList;			
 
 			return PartialView("_partialUsersList", mm);
 
@@ -389,6 +478,82 @@ namespace HallBookingBhatPara.Controllers
 
 
 			return Json(ResponseService.SuccessResponse<object>("User Added Successful!"));
+
+		}
+
+		public async Task<IActionResult> GetUserById(long UserId,int roleId)
+		{
+            if (UserId <= 0)
+            {
+				return Json(ResponseService.BadRequestResponse<string>("UserId Can not be 0"));
+			}
+
+			if (roleId <= 0)
+			{
+				return Json(ResponseService.BadRequestResponse<string>("roleId Can not be 0"));
+			}
+
+
+
+			MultipleModel mm = new();
+
+			var userDetails = await _unitOfWork.SPRepository.GetUserListOnAdminAsync(UserId, roleId);
+            mm.userDetailsForAdminDTO = userDetails;
+
+
+			return PartialView("_partialUserDeatilsById", mm);
+
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> UpdateUser([FromForm] EditUserDto model)
+		{
+			var validator = new EditUserValidator();
+			var validationResult = validator.Validate(model);
+
+			if (!validationResult.IsValid)
+			{
+				return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
+			}			
+
+			model.UpdateBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
+
+            var responce = await _unitOfWork.SPRepository.UpdateUserOnAdminAsync(model);
+
+            if (responce != "SUCCESS")
+            {
+				return Json(ResponseService.InternalServerResponse<string>("Something Went Wrong!"));
+			}
+
+
+			return Json(ResponseService.SuccessResponse<object>("User Update Successful!"));
+
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> UpdateUserPassWord(string Password,long UserId,string EmailId)
+		{
+            if (string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(EmailId))
+            {
+                return Json(ResponseService.BadRequestResponse<string>("Please Enter Password"));
+            }
+
+            if (UserId <= 0)
+            {
+				return Json(ResponseService.BadRequestResponse<string>("Something Went Wrong"));
+			}
+
+            var EncriptedPassword = PasswordHasher.ComputeSha256Hash(Password);
+
+            var responce = await _unitOfWork.StackHolderLoginRepository.UpdatePasswordAsync(Password, UserId, EmailId, EncriptedPassword);
+            if (!responce)
+			{
+                return Json(ResponseService.InternalServerResponse<string>("Something Went Wrong!"));
+			}
+
+
+
+			return Json(ResponseService.SuccessResponse<object>("Change Password Successful!"));
 
 		}
 

@@ -186,3 +186,8 @@ $('.form-control, .form-select, .form-check-input').on('input change', function 
         $(this).removeClass('is-invalid');
     }
 });
+
+$('.modal').on('show.bs.modal', function () {
+    // Remove focus from any element during modal transition
+    $(document.activeElement).trigger('blur');
+});

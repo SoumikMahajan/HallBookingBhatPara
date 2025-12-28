@@ -52,12 +52,19 @@ h1, h2, h3, h4, h5, h6 {
     background-image: none !important;
 }
 
-svg {
+.custom-svg svg {
     width: 100px;
     height: 100px;
     margin: 20px;
     display: inline-block;
 }
+
+/*svg {
+    width: 100px;
+    height: 100px;
+    margin: 20px;
+    display: inline-block;
+}*/
 
 /* Header Styles */
 .top-bar {
@@ -1344,8 +1351,8 @@ Main Content
 .form-control, .form-select {
     border-radius: 10px;
     border: 2px solid #e2e8f0;
-    /*padding: 0.8rem 1rem;
-    font-size: 0.95rem;*/
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
     transition: all 0.3s ease;
     background: #f8fafc;
 }
@@ -1677,7 +1684,7 @@ Main Content
     color: white !important;
 }*/
 
-.flatpickr-calendar {
+/*.flatpickr-calendar {
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     border-radius: 10px;
     border: none;
@@ -1691,7 +1698,9 @@ Main Content
     .flatpickr-day.selected:hover {
         background: var(--secondary-color) !important;
         border-color: var(--secondary-color) !important;
-    }
+    }*/
+
+
 
 /* Additional CSS for the new elements */
 .selected-dates-container {
@@ -2254,6 +2263,18 @@ Main Content
         background: linear-gradient(135deg, #059669, #047857);
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        color: white;
+    }
+.btn-payment {
+    background: linear-gradient(135deg, #eab308, #ca8a04);
+    color: white;
+    box-shadow: 0 2px 8px rgba(234, 179, 8, 0.2);
+}
+
+    .btn-payment:hover {
+        background: linear-gradient(135deg, #ca8a04, #a16207);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
         color: white;
     }
 
@@ -3451,3 +3472,51 @@ Main Content
 }
 
 /*#endregion*/
+
+
+/* ============================= */
+/* Select2 → Match form-select   */
+/* ============================= */
+
+.select2-container--bootstrap-5 .select2-selection {
+    min-height: 56px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 0.75rem 0.75rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.select2-container--bootstrap-5 .select2-selection--single {
+    display: flex;
+    align-items: center;
+}
+
+.select2-container--bootstrap-5 .select2-selection__rendered {
+    color: #374151;
+    padding-left: 0;
+}
+
+.select2-container--bootstrap-5 .select2-selection__arrow {
+    height: 100%;
+}
+
+.select2-container--bootstrap-5.select2-container--focus .select2-selection {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+    background: white;
+}
+
+/* Dropdown menu */
+.select2-container--bootstrap-5 .select2-dropdown {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Option hover */
+.select2-container--bootstrap-5 .select2-results__option--highlighted {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+}

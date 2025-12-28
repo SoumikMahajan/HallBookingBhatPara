@@ -89,7 +89,7 @@
                                         <div class="detail-icon">
                                             <i class="fas fa-exclamation-triangle"></i>
                                         </div>
-                                        <span><strong>Payment:</strong> <!--75% Complete - ₹1500 Due--> @item.payment_status - ₹</span>
+                                        <span><strong>Payment:</strong> <!--75% Complete - ₹1500 Due-->- ₹@item.total_price_summary_amount</span>
                                     </div>
                                 </div>
                     
@@ -97,9 +97,9 @@
                                     <button class="action-btn-bookinglist btn-view">
                                         <i class="fas fa-eye"></i> View Details
                                     </button>
-                                    <button class="action-btn-bookinglist btn-download">
-                                        <i class="fas fa-receipt"></i> Receipt
-                                    </button>
+                                    <button class="action-btn-bookinglist btn-payment">
+                                        <i class="fas fa-eye"></i> Make Payment
+                                    </button>                                   
                                 </div>
                             </div>
                         </div>
@@ -143,9 +143,54 @@
                                     <button class="action-btn-bookinglist btn-view">
                                         <i class="fas fa-eye"></i> View Details
                                     </button>
-                                    <button class="action-btn-bookinglist btn-cancel">
+                                    @* <button class="action-btn-bookinglist btn-cancel">
                                         <i class="fas fa-times"></i> Cancel
+                                    </button> *@
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (item.booking_process_status_id == 6)
+                    {
+                        <!-- Booking Card 5 - Reject -->
+                        <div class="booking-card" data-booking-id="@item.booking_reference_id">
+                            <div class="booking-list-header">
+                                <div class="booking-id">#@item.booking_reference_id</div>
+                                <h4 class="hall-name">@item.category_name - @item.hall_name</h4>
+                                <div class="booking-status status-cancelled">@item.booking_process_name.ToUpper()</div>
+                            </div>
+
+                            <div class="booking-body">
+                                <div class="booking-details">
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="fas fa-calendar"></i>
+                                        </div>
+                                        <span><strong>Event Date:</strong> @item.booking_date_range</span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="fas fa-tag"></i>
+                                        </div>
+                                        <span><strong>Event Type:</strong> @item.event_type_name</span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="fas fa-rupee-sign"></i>
+                                        </div>
+                                        <span><strong>Total Amount:</strong> ₹@item.total_price_summary_amount</span>
+                                    </div>
+                                </div>
+
+                                <div class="booking-actions">
+                                    <button class="action-btn-bookinglist btn-view">
+                                        <i class="fas fa-eye"></i> View Details
                                     </button>
+                                    @* <button class="action-btn-bookinglist btn-cancel">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button> *@
                                 </div>
                             </div>
                         </div>

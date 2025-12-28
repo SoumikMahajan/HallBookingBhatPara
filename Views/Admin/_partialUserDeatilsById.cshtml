@@ -1,0 +1,69 @@
+﻿@model HallBookingBhatPara.Domain.DTO.MultipleModel   
+
+
+
+<input type="text" class="form-control" id="UpUserId" value="@Model.userDetailsForAdminDTO.user_id_pk" hidden>
+<input type="text" class="form-control" id="UproleId" value="@Model.userDetailsForAdminDTO.role_id" hidden>
+<div class="row g-1">
+    <div class="col-md-6">
+        <div class="form-floating">
+            <input type="text" class="form-control" id="UpFirstName" placeholder="First Name" value="@Model.userDetailsForAdminDTO.FirstName">
+            <label for="UpFirstName">First Name</label>
+            <div class="invalid-feedback">Enter a valid First Name (only letters, min 2 chars).</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating">
+            <input type="text" class="form-control" id="UpLastName" placeholder="Last Name" value="@Model.userDetailsForAdminDTO.LastName">
+            <label for="UpLastName">Last Name</label>
+            <div class="invalid-feedback">Enter a valid Last Name (only letters, min 2 chars).</div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-floating">
+            <select class="form-select" id="UpGender">
+                @{
+                    var gender = Model.userDetailsForAdminDTO.gender;
+                }
+                <!option value="0">Select Gender</!option>
+                <!option value="1" @(gender == 1 ? "selected" : "")>Male</!option>
+                <!option value="2" @(gender == 2 ? "selected" : "")>Female</!option>
+                <!option value="3" @(gender == 3 ? "selected" : "")>Other</!option>
+            </select>
+            <label for="UpGender">Gender</label>
+            <div class="invalid-feedback">Please select gender.</div>
+        </div>
+    </div>
+   
+    <div class="col-md-6">
+        <div class="form-floating">
+            <input type="text" class="form-control" id="UpDob" placeholder="Date of Birth" value="@Model.userDetailsForAdminDTO.dob">
+            <label for="UpDob"><i class="fas fa-calendar-alt"></i>Date of Birth</label>
+            <div class="invalid-feedback">Please enter birthdate.</div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="form-floating">
+            <textarea class="form-control" id="UpAddress" placeholder="Full Address" style="height: 100px">@Model.userDetailsForAdminDTO.address</textarea>
+            <label for="UpAddress">Full Address</label>
+            <div class="invalid-feedback">Enter full address.</div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-floating">
+            <input type="text" class="form-control" id="UpCity" placeholder="City" value="@Model.userDetailsForAdminDTO.city">
+            <label for="UpCity">City</label>
+            <div class="invalid-feedback">Enter city name.</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating">
+            <input type="text" class="form-control" id="UpPincode" placeholder="PIN Code" value="@Model.userDetailsForAdminDTO.pin">
+            <label for="UpPincode">PIN Code</label>
+            <div class="invalid-feedback">Enter a 6-digit PIN code.</div>
+        </div>
+    </div>
+</div>

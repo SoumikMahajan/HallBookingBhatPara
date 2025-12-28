@@ -9,14 +9,16 @@ namespace HallBookingBhatPara.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long stake_holder_login_id_pk { get; set; }
         public long stake_id_fk { get; set; }
-        public string login_id { get; set; }
-        public string login_password { get; set; }
-        public short active_status { get; set; }
-        public DateTime entry_time { get; set; }
-        public DateTime update_time { get; set; }
-        public string entry_ip { get; set; }
-        public string stake_holder_details { get; set; }
+        public string login_id { get; set; } = string.Empty;
+        public string login_password { get; set; } = string.Empty;
+		public short active_status { get; set; }
+        public DateTime? entry_time { get; set; }
+        public DateTime? update_time { get; set; }
+        public string entry_ip { get; set; } = string.Empty;
+        public string stake_holder_details { get; set; } = string.Empty;
         public long stake_details_id_fk { get; set; }
-        public string base_password { get; set; }
-    }
+        public string base_password { get; set; } = string.Empty;
+		public byte[]? profile_img { get; set; }
+		public string ProfilePicPath { get; set; } = string.Empty;
+	}
 }

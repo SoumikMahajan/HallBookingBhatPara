@@ -1,63 +1,42 @@
 ﻿@model HallBookingBhatPara.Domain.DTO.MultipleModel
 
-<tr>
-    <td>
-        <strong>Rajesh Kumar</strong>
-    </td>
-    <td>
-        <strong>Rajesh Kumar</strong>
-    </td>
-    <td>
-        <strong>Rajesh Kumar</strong>
-    </td>
-    <td>
-        <strong>Rajesh Kumar</strong>
-    </td>
-    <td>
-        <strong>Rajesh Kumar</strong>
-    </td>
-    <td>
-        <strong>Rajesh Kumar</strong>
-    </td>
-    <td>
-        <div class="table-action-buttons">
-            <button class="table-action-btn table-btn-edit" data-booking-id="BK001234">
-                <i class="fas fa-edit"></i>
-                Edit
-            </button>
-        </div>
-    </td>
-</tr>     
-
-@* @if (Model?.userlistDTO != null && Model.userlistDTO.Any())
+@if (Model?.User_List_Admin != null && Model.User_List_Admin.Any())
 {
-    @foreach (var user in Model.userlistDTO)
+    @foreach (var item in Model.User_List_Admin)
     {
         <tr>
             <td>
-                <strong>@user.Name</strong>
+                <strong>@item.user_name</strong>
             </td>
             <td>
-                @user.Email
+                <strong>@item.email</strong>
             </td>
             <td>
-                @user.Phone
+                <strong>@item.mobile</strong>
             </td>
             <td>
-                @user.City
+                <strong>@item.city</strong>
             </td>
             <td>
-                @user.PinCode
+                <strong>@item.pin</strong>
             </td>
             <td>
-                @user.Role
+                <strong>@item.role_name</strong>
             </td>
             <td>
                 <div class="table-action-buttons">
-                    <button class="table-action-btn table-btn-edit" data-user-id="@user.Id">
+                    <button class="table-action-btn table-btn-edit editUser" data-userid="@item.user_id_pk" data-roleid="@item.role_id">
                         <i class="fas fa-edit"></i>
                         Edit
                     </button>
+                    @if (User.Identity.IsAuthenticated && !User.IsInRole("Counter Admin"))
+                    {
+                        <button class="table-action-btn table-btn-view ChangePassword" data-userid="@item.user_id_pk" data-emailid="@item.email">
+                            <i class="fas fa-key"></i>
+                            Change Password
+                        </button>
+                    }
+                    
                 </div>
             </td>
         </tr>
@@ -66,6 +45,6 @@
 else
 {
     <tr>
-        <td colspan="7" class="text-center">No users found</td>
+        <td colspan="7" class="text-center">No Booking found</td>
     </tr>
-} *@
+}

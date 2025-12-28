@@ -27,9 +27,10 @@ namespace HallBookingBhatPara.Infrastructure.Repository
         public IHallEventMasterRepository HallEventMasterRepository { get; private set; }
         public IUserRegistrationRepository UserRegistrationRepository { get; private set; }
         public IHallBookingDetailsRepository HallBookingDetailsRepository { get; private set; }
-        #endregion
+        public IStackHolderLoginRepository StackHolderLoginRepository { get; private set; }
+		#endregion
 
-        public UnitOfWork(ApplicationDbContext db, IConfiguration configuration, LogService logService)
+		public UnitOfWork(ApplicationDbContext db, IConfiguration configuration, LogService logService)
         {
             _db = db;
             _configuration = configuration;
@@ -44,13 +45,17 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             SubCategoryMasterRepository = new SubCategoryMasterService(_db);
             HallAvailMasterRepository = new HallAvailMasterService(_db);
             HallFloorMasterRepository = new HallFloorService(_db);
-            #endregion
+            StackHolderLoginRepository = new StackHolderLoginService(_db);
 
-            #region :: Hall Booking
-            HallEventMasterRepository = new HallEventMasterService(_db);
+			#endregion
+
+			#region :: Hall Booking
+			HallEventMasterRepository = new HallEventMasterService(_db);
             UserRegistrationRepository = new UserRegistrationService(_db);
             HallBookingDetailsRepository = new HallBookingDetailsService(_db);
             #endregion
+
+
         }
 
 

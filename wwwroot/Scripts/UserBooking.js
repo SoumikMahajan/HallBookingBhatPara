@@ -34,6 +34,13 @@
             }
         });
 
+        $('#hallType').select2({
+            theme: 'bootstrap-5',
+            placeholder: '--Select HallType--',
+            allowClear: true,
+            width: '100%'
+        });
+
         // Form submission
         $('#searchForm').on('submit', function (e) {
             e.preventDefault();
@@ -44,7 +51,7 @@
             const startDate = $('#startDate').val();
             const endDate = $('#endDate').val();
 
-            if (catType == '0' || catType === undefined) {
+            if (catType == '' || catType === undefined) {
                 notify(false, 'Please select hall type', false);
                 $("#hallType").addClass("is-invalid");
                 return;
@@ -237,9 +244,7 @@
             `).join('');
 
             $('#resultsContainer').html(resultsHtml);
-        }
-
-
+        }       
 
     }
     // #endregion :: User Hall Search
@@ -276,6 +281,7 @@
 
         if ($('#userDdl').length > 0) {
             $('#userDdl').select2({
+                theme: 'bootstrap-5',
                 placeholder: '--Select User--',
                 allowClear: true,
                 width: '100%'
@@ -479,9 +485,12 @@
             $(this).val(value);
         });
 
-        // 🔹 Main Form Handler
-        $('#bookingForm').on('submit', function (e) {
-            e.preventDefault();            
+       
+
+        // #region :: Public Hall Booking
+
+        $(document).on('click', '#publicSubmit', function (e) {
+            e.preventDefault();
 
             const validation = validateBookingForm();
 
@@ -494,7 +503,7 @@
                 const formData = {
                     catId: $("#hiddenCatId").val(),
                     hallId: $("#hiddenHallId").val(),
-                    hallAvailId: $("#HiddenHallAvailId").val(),                                                          
+                    hallAvailId: $("#HiddenHallAvailId").val(),
                     fullName: $("#fullName").val().trim(),
                     phone: $("#phone").val().trim(),
                     alternatePhone: $("#alternatePhone").val().trim(),
@@ -523,7 +532,6 @@
             }
         });
 
-        // 🔹 Separate Validation Function
         function validateBookingForm() {
             let isValid = true;
             let errorMessages = [];
@@ -596,7 +604,7 @@
                 $("input[name='paymentType']").addClass('is-invalid');
                 errorMessages.push('Please Select Multiple Date!');
                 isValid = false;
-            } 
+            }
 
             const terms = $("#agreeTerms").is(":checked");
             if (!terms) {
@@ -608,8 +616,7 @@
             return { isValid, errorMessages };
         }
 
-        // 🔹 Separate AJAX Function
-        function submitBookingForm(formData, antiForgeryToken, submitBtn, originalText) {            
+        function submitBookingForm(formData, antiForgeryToken, submitBtn, originalText) {
             $.ajax({
                 url: '/UserBooking/BookUserConfirmedHall',
                 type: 'POST',
@@ -619,27 +626,41 @@
                     $(".loader").css("display", "flex");
                     xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
                 },
-                success: function (data) {
+                success: function (response) {
                     //console.log(data);
                     $(".loader").css("display", "none");
-                    if (data.isSuccess && data.result.payment_session_id) {
+                    if (response.isSuccess) {                       
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Booking Submitted Successfully!',
+                            html: response.result || 'Your booking has been submitted.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#28a745',
+                            allowOutsideClick: false,
+                            customClass: {
+                                popup: 'booking-success-popup'
+                            },
+                            timer: 10000,
+                            timerProgressBar: true
+                        }).then((result) => {
+                            // Redirect if user clicked OK or timer expired
+                            if (result.isConfirmed || result.dismiss === Swal.DismissReason.timer) {
+                                window.location.href = "/UserBooking/BookingList";
+                            }
+                        });
 
-                        //const checkoutOptions = {
-                        //    paymentSessionId: data.result.payment_session_id,
-                        //    redirectTarget: "_self" // Redirects in same window
-                        //};
-
-                        //// Open Cashfree checkout
-                        //cashfree.checkout(checkoutOptions).then(function (result) {
-                        //    if (result.error) {
-                        //        notify(false, error.message, true);
-                        //    }
-                        //    if (result.redirect) {
-                        //        console.log("Redirecting to Cashfree checkout...");
-                        //    }
+                        //Swal.fire({
+                        //    icon: 'success',
+                        //    title: 'Booking Submitted Successfully!',
+                        //    text: response.result || 'Booking created successfully!',
+                        //    confirmButtonText: 'OK',
+                        //    confirmButtonColor: '#3085d6',
+                        //    allowOutsideClick: false,
+                        //    timer: 3000,
+                        //    timerProgressBar: true
+                        //}).then((result) => {
+                        //    window.location.href = "/UserBooking/UserHallBooking";
                         //});
-                        initiatePayment(data.result.payment_session_id, submitBtn, originalText);
-
                     } else {
                         // Handle error from server
                         const errorMessage = response.errorMessages ||
@@ -683,9 +704,207 @@
                     // Always hide loader
                     $(".loader").css("display", "none");
                 }
-                
+
             });
         }
+        // #endregion :: Public Hall Booking
+
+        // #region :: Counter Admin Hall Booking
+
+        $(document).on('click', '#counterAdminSubmit', function (e) {
+            e.preventDefault();
+
+            const validation = validateBookingFormForCounnterAdmin();
+
+            if (validation.isValid) {
+                const submitBtn = $('.btn-primary-custom');
+                const originalText = submitBtn.html();
+                submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Processing...')
+                    .prop('disabled', true);
+
+                const formData = {
+                    catId: $("#hiddenCatId").val(),
+                    hallId: $("#hiddenHallId").val(),
+                    hallAvailId: $("#HiddenHallAvailId").val(),
+                    fullName: $("#fullName").val().trim(),
+                    email: $("#email").val().trim(),
+                    phone: $("#phone").val().trim(),
+                    eventType: $("#eventType").val(),
+                    eventDate: selectedEventDates.join('^'),
+                    OnloadPaymentTypeId: $("#paymentTypeId").val(),
+                    SelectedPaymentTypeId: $("input[name='paymentType']:checked").val(),
+                    MrNumber: $("#mrNumber").val().trim()
+                };
+
+                //console.log(selectedEventDates);
+                //return;
+
+                let antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+                submitBookingFormForCounterAdmin(formData, antiForgeryToken, submitBtn, originalText);
+
+            } else {
+                const firstError = $('.is-invalid').first();
+                if (firstError.length) {
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
+                }
+            }
+        });
+
+        function validateBookingFormForCounnterAdmin() {
+            let isValid = true;
+            let errorMessages = [];
+
+            // Reset errors
+            $('.form-control, .form-select, .form-check-input').removeClass('is-invalid');
+
+            const hiddenCatId = $("#hiddenCatId").val();
+            const hiddenHallId = $("#hiddenHallId").val();
+            const hiddenHallAvailId = $("#HiddenHallAvailId").val();
+            if (hiddenCatId === '0' || hiddenHallId === '0' || hiddenHallAvailId === '0') {
+                return { isValid: false, errorMessages };
+            }
+
+
+            var userId = $("#userDdl option:selected").val();
+            if (userId === '') {
+                $('#userDdl').addClass('is-invalid');
+                errorMessages.push('Please select User!');
+                isValid = false;
+            }
+
+            const fullName = $("#fullName").val().trim();
+            if (fullName === '') {
+                $('#fullName').addClass('is-invalid');
+                errorMessages.push('Please enter Full Name!');
+                isValid = false;
+            }
+
+            const email = $('#email').val().trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === '' || !emailRegex.test(email)) {
+                $('#email').addClass('is-invalid');
+                errorMessages.push('Please enter a valid email address!');
+                isValid = false;
+            }           
+
+            const eventType = $("#eventType option:selected").val();
+            if (eventType === '0' || eventType === '' || eventType === undefined) {
+                $('#eventType').addClass('is-invalid');
+                errorMessages.push('Please Select Event Type!');
+                isValid = false;
+            }
+
+            const eventDurationType = $("#eventDurationType option:selected").val();
+            if (eventDurationType === '0' || eventDurationType === '' || eventDurationType === undefined) {
+                $('#eventDurationType').addClass('is-invalid');
+                errorMessages.push('Please Select Event Duration!');
+                isValid = false;
+            }
+
+            if (eventDurationType === 'single' && selectedEventDates.length === 0) {
+                $('#eventDate').addClass('is-invalid');
+                errorMessages.push('Please Select Date!');
+                isValid = false;
+            }
+            if (eventDurationType === 'multiple' && selectedEventDates.length === 0) {
+                $('#eventDatesRange').addClass('is-invalid');
+                errorMessages.push('Please Select Multiple Date!');
+                isValid = false;
+            }
+
+            if ($("input[name='paymentType']:checked").length == 0) {
+                $("input[name='paymentType']").addClass('is-invalid');
+                errorMessages.push('Please Select Multiple Date!');
+                isValid = false;
+            }
+
+            var mRNumber = $("#mrNumber").val().trim();
+            if (mRNumber === '') {
+                $('#mrNumber').addClass('is-invalid');
+                errorMessages.push('Please enter Money Receipt Number!');
+                isValid = false;
+            }
+
+            const terms = $("#agreeTerms").is(":checked");
+            if (!terms) {
+                $('#agreeTerms').addClass('is-invalid');
+                errorMessages.push('Please Check Terms!');
+                isValid = false;
+            }
+
+            return { isValid, errorMessages };
+        }
+
+        function submitBookingFormForCounterAdmin(formData, antiForgeryToken, submitBtn, originalText) {
+            $.ajax({
+                url: '/UserBooking/BookUserConfirmedHallForCounterAdmin',
+                type: 'POST',
+                data: formData,
+                //dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                    xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
+                },
+                success: function (data) {
+                    //console.log(data);
+                    $(".loader").css("display", "none");
+                    if (data.isSuccess) {
+                        notify(true, "Hall Booked Successfully", true);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+
+                    } else {
+                        // Handle error from server
+                        const errorMessage = data.errorMessages ||
+                            data.message ||
+                            "Failed to create booking. Please try again.";
+
+                        notify(false, errorMessage, true);
+                        resetSubmitButton(submitBtn, originalText);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    $(".loader").css("display", "none");
+
+                    let errorMessage = "An error occurred while processing your booking.";
+
+                    if (status === "timeout") {
+                        errorMessage = "Request timeout. Please check your connection and try again.";
+                    } else if (xhr.status === 400) {
+                        errorMessage = "Invalid booking data. Please check all fields.";
+                    } else if (xhr.status === 500) {
+                        errorMessage = "Server error. Please try again or contact support.";
+                    } else if (xhr.status === 0) {
+                        errorMessage = "Network error. Please check your internet connection.";
+                    }
+
+                    // Try to parse error response
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.errorMessages) {
+                            errorMessage = response.errorMessages;
+                        }
+                    } catch (e) {
+                        console.error("Could not parse error response");
+                    }
+
+                    notify(false, errorMessage, true);
+                    resetSubmitButton(submitBtn, originalText);
+                },
+                complete: function () {
+                    // Always hide loader
+                    $(".loader").css("display", "none");
+                }
+
+            });
+        }
+        // #endregion :: Counter Admin Hall Booking
+        
 
 
         function initiatePayment(paymentSessionId, submitBtn, originalText) {
@@ -871,6 +1090,43 @@
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         });
+
+        $(document).on('change', '#userDdl', function (e) {
+            e.preventDefault();
+            const userId = $(this).val();
+            if (userId === '' || userId === undefined) {
+                notify(false, "Please select user", false);
+                return;
+            }
+            $.ajax({
+                url: '/UserBooking/GetUserDetailsOnHallBookingByUserId',
+                type: 'GET',
+                data: { UserId: userId },
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response.isSuccess) {
+                        if (response.isSuccess && response.result) {
+                            console.log(response);
+                            $("#fullName").val(response.result.user_name);
+                            $("#email").val(response.result.email);
+                            $("#phone").val(response.result.mobile);
+                        }
+                    } else {
+                        $("#fullName").val('');
+                        $("#email").val('');
+                        $("#phone").val('');
+                        notify(false, response.errorMessages, false);
+                    }
+
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+        });
     }
 
     //#endregion :: User Booking Form
@@ -912,97 +1168,5 @@
         });
     }
     // #endregion :: Booking list
-
-    // #region :: Admin users booking list
-    if (_ActionName === "usersbookings") {
-
-        $(document).on('click', '#openAdvancedSearch', function (e) {
-            $('#modalOverlay').fadeIn(300);
-            $('#advancedSearchModal').fadeIn(300);
-        });
-
-        function closeModal() {
-            $('#modalOverlay').fadeOut(300);
-            $('#advancedSearchModal').fadeOut(300);
-        }
-
-        $(document).on('click', '#closeModal, #modalOverlay', function (e) {
-            closeModal();
-        });
-
-        $(document).on('click', '#advancedSearchModal', function (e) {
-            e.stopPropagation();
-        });
-
-        $(document).on('change', '#statusAll', function (e) {
-            if ($(this).is(':checked')) {
-                $('.status-checkbox').not('#statusAll').prop('checked', false);
-            }
-        });        
-
-        $(document).on('change', '.status-checkbox:not(#statusAll)', function () {
-            if ($(this).is(':checked')) {
-                $('#statusAll').prop('checked', false);
-            }
-
-            // If no checkbox is selected, check "All"
-            if ($('.status-checkbox:checked').length === 0) {
-                $('#statusAll').prop('checked', true);
-            }
-        });
-
-        $(document).on('click', '#resetFilters', function (e) {
-            $('#fromDate, #toDate, #searchHall').val('');
-            $('.status-checkbox').prop('checked', false);
-            $('#statusAll').prop('checked', true);
-        });
-
-        $(document).on('click', '#applyFilters', function (e) {
-            const filters = {
-                statuses: [],
-                fromDate: $('#fromDate').val(),
-                toDate: $('#toDate').val(),
-                hallName: $('#searchHall').val()
-            };
-
-            // Get selected statuses
-            if ($('#statusAll').is(':checked')) {
-                filters.statuses.push('all');
-            } else {
-                $('.status-checkbox:checked').each(function () {
-                    const statusId = $(this).attr('id').replace('status', '').toLowerCase();
-                    filters.statuses.push(statusId);
-                });
-            }
-
-            console.log('Applied Filters:', filters);
-
-            // Add your filtering logic here
-
-            closeModal();
-        });
-
-
-        // Close modal with Escape key
-        $(document).on('keydown', function (e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        $('#adminbookingsTable').DataTable({           
-            responsive: true,
-            autoWidth: false,
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-            language: {
-                searchPlaceholder: "Search Booking...",
-                search: ""
-            },
-            columnDefs: [
-                { targets: 6, orderable: false }
-            ]
-        });
-    }
-    // #endregion :: Admin users booking list
 
 });

@@ -9,7 +9,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow rounded-4 p-4 bg-white">
-                <div class="text-center mb-4">
+                <div class="text-center mb-1">
                     <div class="logo-icon mb-3">
                         <i class="fas fa-building"></i>
                     </div>
@@ -18,17 +18,17 @@
                 </div>
 
                 <form id="singleRegisterForm">
-                    <div class="row g-3">
+                    <div class="row g-1">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                                <input type="text" class="form-control" id="firstName" placeholder="First Name" autocomplete="off">
                                 <label for="firstName">First Name</label>
                                 <div class="invalid-feedback">Enter a valid First Name (only letters, min 2 chars).</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                                <input type="text" class="form-control" id="lastName" placeholder="Last Name" autocomplete="off">
                                 <label for="lastName">Last Name</label>
                                 <div class="invalid-feedback">Enter a valid Last Name (only letters, min 2 chars).</div>
                             </div>
@@ -36,14 +36,14 @@
 
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="email" placeholder="Email Address">
+                                <input type="email" class="form-control" id="email" placeholder="Email Address" autocomplete="new-email">
                                 <label for="email">Email Address</label>
                                 <div class="invalid-feedback">Enter a valid email address.</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
+                                <input type="tel" class="form-control" id="phone" placeholder="Phone Number" autocomplete="off">
                                 <label for="phone">Phone Number</label>
                                 <div class="invalid-feedback">Enter a 10-digit mobile number.</div>
                             </div>
@@ -52,10 +52,10 @@
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <select class="form-select" id="gender">
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
+                                    <option value="">--Select Gender--</option>
+                                    <option value="1">Male</option>
+                                    <option value="2">Female</option>
+                                    <option value="3">Other</option>
                                 </select>
                                 <label for="gender">Gender</label>
                                 <div class="invalid-feedback">Please select your gender.</div>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="date" class="form-control" id="dob" placeholder="Date of Birth">
+                                <input type="text" class="form-control" id="dob" placeholder="Date of Birth">
                                 <label for="dob">Date of Birth</label>
                                 <div class="invalid-feedback">Please enter your birthdate.</div>
                             </div>
@@ -79,14 +79,14 @@
 
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="city" placeholder="City" value="Bhatpara">
+                                <input type="text" class="form-control" id="city" placeholder="City" value="Bhatpara" autocomplete="off">
                                 <label for="city">City</label>
                                 <div class="invalid-feedback">Enter your city name.</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="pincode" placeholder="PIN Code">
+                                <input type="text" class="form-control" id="pincode" placeholder="PIN Code" autocomplete="off">
                                 <label for="pincode">PIN Code</label>
                                 <div class="invalid-feedback">Enter a 6-digit PIN code.</div>
                             </div>
@@ -95,7 +95,7 @@
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="password" placeholder="Password">
+                                <input type="password" class="form-control" id="password" placeholder="Password" autocomplete="new-password">
                                 <span class="input-group-text password-toggle togglePassword">
                                     <i class="fas fa-eye"></i>
                                 </span>

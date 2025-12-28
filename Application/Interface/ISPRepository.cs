@@ -1,7 +1,10 @@
-﻿using HallBookingBhatPara.Domain.DTO;
+﻿using Dapper;
+using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
 using HallBookingBhatPara.Domain.DTO.HallBooking;
 using HallBookingBhatPara.Domain.DTO.User;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace HallBookingBhatPara.Application.Interface
 {
@@ -27,12 +30,28 @@ namespace HallBookingBhatPara.Application.Interface
 
         Task<List<HallSearchDTO>> HallAvailableSearchResultAsync(long catType, string startDate, string endDate);
         Task<HallBookingDTO> GetHallDetailsAfterSearchAsync(long hallAvlId);
-        Task<long> BookUserConfirmedHallAsync(InsertUserConfirmhallDTO model, int PercentageOfIntialPaymentAmount, double RemainingAmount, int dateCount, double TotalPriceSummery, string bookingId);
-        Task<PaymentSummeryDTO> GetPaymentSummeryDetailsAsync(long hallAvailId, long PaymentId, long PercentageOfIntialPaymentAmount);
+        Task<long> BookUserConfirmedHallAsync(InsertUserConfirmhallDTO model, int dateCount, double TotalPriceSummery, string bookingId);
+
+        Task<long> BookUserConfirmedHallForCounterAdminAsync(InsertUserConfirmhallForCounterAdminDTO model, int PercentageOfIntialPaymentAmount, double RemainingAmount, int dateCount, double TotalPriceSummery, string bookingId);
+		Task<PaymentSummeryDTO> GetPaymentSummeryDetailsAsync(long hallAvailId, long PaymentId, long PercentageOfIntialPaymentAmount);
         Task<PaymentSummeryDTO> GetPaymentSummeryDetailsForMultipleDateAsync(long hallAvailId, long PaymentId, long PercentageOfIntialPaymentAmount, int dateCount);
         Task<int> IsEventDateAlreadyBookedAsync(long hallAvailId, string eventDate);
-        Task<List<BookedListDTO>> UserHallBookedDetailsAsync(long userId);
+        Task<List<BookedListDTO>> PublicUserHallBookedDetailsAsync(long loggedInRoleId,long loggedInStackId);
 
-        #endregion
-    }
+		Task<List<UserListDTO>> GetAllUserListForHallBooking();
+
+		#endregion
+
+		#region :: Admin
+
+		Task<List<HallBookingDetailsDTO>> UserHallBookedDetailsAsync(long StakeId,long StakeDetailsId);
+		Task<List<UserListForAdminDTO>> GetUserListOnAdminAsync(long RoleId);
+		Task<UserDetailsForAdminDTO> GetUserListOnAdminAsync(long UserId, int roleId);
+		Task<string> UpdateUserOnAdminAsync(EditUserDto model);
+        Task<List<DropDownListDTO>> UserRoleAsync();
+        Task<string> ApproveHallAsync(long BookingId, string BookingReferenceId,long UpdateBy,long loggedInRoleId,string EntryIP);
+		Task<string> RejectHallAsync(long BookingId, string BookingReferenceId, long UpdateBy, long loggedInRoleId, string EntryIP);
+
+		#endregion
+	}
 }

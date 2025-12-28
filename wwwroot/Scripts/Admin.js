@@ -3,7 +3,7 @@
     let _ActionName = _QueryParameter[2].toLocaleLowerCase();
 
     // #region :: Category
-    if (_ActionName === "categorylist") {        
+    if (_ActionName === "categorylist") {               
 
         getAllcategories();
       
@@ -167,6 +167,13 @@
     // #region :: SubCategory
     if (_ActionName === "subcategorylist") {
 
+        $('#categorylist').select2({
+            theme: 'bootstrap-5',
+            placeholder: '--Select Category--',
+            allowClear: true,
+            width: '100%'
+        });
+
         getAllSubcategories();
 
 
@@ -209,7 +216,7 @@
         $('#addSubCategoryForm').on('submit', function (e) {
             e.preventDefault();
             const categoryid = $('#categorylist option:selected').val();
-            if (categoryid === "0") {
+            if (categoryid === '' || categoryid === undefined) {
                 notify(false, "Select Category from list.", false);
                 $("#categorylist").addClass("is-invalid");
                 return;
@@ -502,6 +509,13 @@
     // #region :: HallAvailability
     if (_ActionName === "addhallavailabilitydetails") {
 
+        $('#hallCategorylist').select2({
+            theme: 'bootstrap-5',
+            placeholder: '--Select Category--',
+            allowClear: true,
+            width: '100%'
+        });
+
         const today = flatpickr.formatDate(new Date(), "Y-m-d");
         $('#availableFrom, #availableTo').attr('min', today);
 
@@ -555,24 +569,33 @@
                 success: function (response) {
                     if (response.isSuccess) {
                         if (response.isSuccess && response.result && response.result.length > 0) {
-                            let html = '<option value="0">-- Select Subcategory --</option>';
+                            let html = '<option></option>';
 
                             response.result.forEach(item => {
                                 html += `<option value="${item.id}">${item.name}</option>`;
                             });
                             $('#hallSubCategorylist').html(html);
+
+                            
                         }
                     } else {
-                        $('#hallSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
+                        $('#hallSubCategorylist').html('<option></option>');
                         notify(false, response.errorMessages, false);
                     }
+
+                    $('#hallSubCategorylist').select2({
+                        theme: 'bootstrap-5',
+                        placeholder: '--Select SubCategory--',
+                        allowClear: true,
+                        width: '100%'
+                    });
 
                 },
                 complete: function () {
                     $(".loader").css("display", "none");
                 },
                 error: function (xhr, status, error) {
-                    $('#hallSubCategorylist').html('<option value="0">-- Select Subcategory --</option>');
+                    $('#hallSubCategorylist').html('<option></option>');
                     handleAjaxError(xhr, status, error);
                 }
             });
@@ -1047,7 +1070,6 @@
             defaultDate: today
         });
 
-        var userDataTable = null;
 
         getAllUserList();
 
@@ -1061,12 +1083,12 @@
                 },
                 success: function (response) {
                     if (response != '') {
-                        $('#partialUserList').html('');
-                        $('#partialUserList').html(response);
-                        if (userDataTable !== null) {
-                            userDataTable.destroy();
+                        if ($.fn.DataTable.isDataTable('#userListTable')) {
+                            $('#userListTable').DataTable().destroy();
                         }
-                        userDataTable = $('#userListTable').DataTable({
+                        $('#partialUserList').html(response);
+ 
+                        $('#userListTable').DataTable({
                             responsive: true,
                             autoWidth: false,
                             lengthMenu: [[50, 100, -1], [50, 100, "All"]],
@@ -1076,6 +1098,7 @@
                             },
                             order: [[0, 'asc']]
                         });
+                       
                     }
                 },
                 complete: function () {
@@ -1086,6 +1109,7 @@
 
         $(document).on('click', '#openAddUser', function (e) {
             $('#addUserModal').modal('show');
+
         });
 
         $(".togglePassword").on("click", function (e) {
@@ -1100,6 +1124,8 @@
                 toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
             }
         });
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,}$/;
 
         $(document).on('click', '#adminAdduser', function (e) {
             e.preventDefault();
@@ -1123,6 +1149,8 @@
             const address = $('#address').val()?.trim() || "";
             const city = $('#city').val()?.trim() || "";
             const pincode = $('#pincode').val()?.trim() || "";
+            const password = $('#password').val().trim() || "";
+            const confirmPassword = $('#confirmPassword').val().trim() || "";
 
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const phonePattern = /^\d{10}$/;
@@ -1197,6 +1225,32 @@
             } else {
                 showValid('#pincode');
             }
+            if (password === '') {
+                showError('#password', 'Enter a password.');
+                hasError = true;
+            }
+
+            else if (!passwordRegex.test(password)) {
+                showError(
+                    '#password',
+                    'Password must be 6+ chars with uppercase, lowercase & special character.'
+                );
+                hasError = true;
+            } else {
+                showValid('#password');
+            }
+
+            if (confirmPassword === '') {
+                showError('#confirmPassword', 'Confirm your password.');
+                hasError = true;
+            }
+            // 4️⃣ Match validation
+            else if (password !== confirmPassword) {
+                showError('#confirmPassword', 'Passwords do not match.');
+                hasError = true;
+            } else {
+                showValid('#confirmPassword');
+            }
 
             return !hasError;
         }
@@ -1263,8 +1317,501 @@
 
             $input.removeClass('is-invalid');
             $container.find('.invalid-feedback').hide();
-        }        
+        } 
+
+
+
+        $(document).on('click', '.editUser', function (e) {
+
+            var userId = $(this).data('userid');
+            var roleId = $(this).data('roleid');
+
+            $.ajax({
+                url: '/Admin/GetUserById',
+                type: 'GET',
+                data: { UserId: userId, roleId: roleId },
+                dataType: 'HTML',
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response != '') {
+                        $('#updateUserForm').html(response);
+
+                        flatpickr("#UpDob", {
+                            dateFormat: "Y-m-d",
+                            defaultDate: today
+                        });
+
+                        $('#editUserModal').modal('show');
+
+                    }
+                    else {
+                        notify(false, 'Unable to fetch user details.', false);
+                    }
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+
+        });
+
+        $(document).on('click', '#adminUpdateUser', function (e) {
+            e.preventDefault();
+
+            if (validateUpdateUserForm()) {
+                upDateUser();
+            }
+        });
+
+        function validateUpdateUserForm() {
+            let hasError = false;
+
+            const firstName = $('#UpFirstName').val()?.trim() || "";
+            const lastName = $('#UpLastName').val()?.trim() || "";           
+            const gender = $('#UpGender').val();
+            //const role = $('#UpRole').val();
+            const dob = $('#UpDob').val()?.trim() || "";
+            const address = $('#UpAddress').val()?.trim() || "";
+            const city = $('#UpCity').val()?.trim() || "";
+            const pincode = $('#UpPincode').val()?.trim() || "";           
+            const pinPattern = /^\d{6}$/;
+
+
+            if (firstName === '') {
+                showError("#UpFirstName", "Enter a valid First Name.");
+                hasError = true;
+            } else {
+                showValid('#UpFirstName');
+            }
+
+            if (lastName === '') {
+                showError("#UpLastName", "Enter a valid Last Name.");
+                hasError = true;
+            } else {
+                showValid('#UpLastName');
+            }            
+
+            if (gender === '') {
+                showError("#UpGender", "Please select gender.");
+                hasError = true;
+            } else {
+                showValid('#UpGender');
+            }
+
+            
+
+            if (!dob) {
+                showError("#UpDob", "Please enter birthdate.");
+                hasError = true;
+            } else {
+                showValid('#UpDob');
+            }
+
+            if (!address) {
+                showError("#UpAddress", "Enter full address.");
+                hasError = true;
+            } else {
+                showValid('#UpAddress');
+            }
+
+            if (!city) {
+                showError("#UpCity", "Enter city.");
+                hasError = true;
+            } else {
+                showValid('#UpCity');
+            }
+
+            if (!pinPattern.test(pincode)) {
+                showError("#UpPincode", "Enter a 6-digit PIN code.");
+                hasError = true;
+            } else {
+                showValid('#UpPincode');
+            }
+
+            return !hasError;
+        }
+
+        function upDateUser() {
+            const formData = new FormData();
+
+            formData.append("UserId", $('#UpUserId').val()?.trim() || "");
+            formData.append("RoleId", $('#UproleId').val()?.trim() || "");
+            formData.append("FirstName", $('#UpFirstName').val()?.trim() || "");
+            formData.append("LastName", $('#UpLastName').val()?.trim() || "");            
+            formData.append("Gender", $('#UpGender').val());
+            formData.append("DOB", $('#UpDob').val()?.trim() || "");
+            formData.append("Address", $('#UpAddress').val()?.trim() || "");
+            formData.append("City", $('#UpCity').val()?.trim() || "");
+            formData.append("Pincode", $('#UpPincode').val()?.trim() || "");
+
+
+            $.ajax({
+                url: '/Admin/UpdateUser',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                    $('#adminUpdateUser').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Updateing...');
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    if (response.isSuccess) {
+                        notify(true, response.result, true);
+
+                        $('#editUserModal').modal('hide');
+                        getAllUserList();
+                    }
+                    else {
+                        notify(false, response.errorMessages, false);
+                    }
+                },
+                complete: function () {
+                    $('#adminUpdateUser').prop('disabled', false).html('<i class="fas fa-user-plus me-2"></i>Update Account');
+                }
+            });
+        }
+
+        $(document).on('click', '.ChangePassword', function (e) {
+
+            var userId = $(this).data('userid');
+            var emailId = $(this).data('emailid');
+
+            $("#passChangeUserid").val(userId);
+            $("#passChangeEmailId").val(emailId);
+
+            $('#UserPasswordModal').modal('show');
+
+        });
+
+        $(".togglePasswordForChange").on("click", function (e) {
+            const passwordInput = $('#UpPassword');
+            const toggleIcon = $(this).find('i');
+
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+                toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInput.attr('type', 'password');
+                toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
+        
+
+        $(document).on('click', '#adminUpdateUserPass', function (e) {
+            e.preventDefault();
+
+            let hasError = false;
+
+            const password = $('#UpPassword').val().trim();
+            const confirmPassword = $('#UpConfirmPassword').val().trim();
+
+            if (password === '') {
+                showError('#UpPassword', 'Enter a password.');
+                hasError = true;
+            }
+
+            else if (!passwordRegex.test(password)) {
+                showError(
+                    '#UpPassword',
+                    'Password must be 6+ chars with uppercase, lowercase & special character.'
+                );
+                hasError = true;
+            } else {
+                showValid('#UpPassword');
+            }
+
+            if (confirmPassword === '') {
+                showError('#UpConfirmPassword', 'Confirm your password.');
+                hasError = true;
+            }
+            // 4️⃣ Match validation
+            else if (password !== confirmPassword) {
+                showError('#UpConfirmPassword', 'Passwords do not match.');
+                hasError = true;
+            } else {
+                showValid('#UpConfirmPassword');
+            }
+
+            if (hasError) return;
+
+            var UserId = $("#passChangeUserid").val();
+            var EmailId = $("#passChangeEmailId").val();
+
+            $.ajax({
+                url: '/Admin/UpdateUserPassWord',
+                type: 'POST',
+                data: { Password: password, UserId: UserId, EmailId: EmailId },
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                    $('#adminUpdateUserPass').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Updateing...');
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    if (response.isSuccess) {
+                        notify(true, response.result, true);
+                        getAllUserList();
+                        $('#UserPasswordModal').modal('hide');
+                    }
+                    else {
+                        notify(false, response.errorMessages, false);
+                    }
+                },
+                complete: function () {
+                    $('#adminUpdateUserPass').prop('disabled', false).html('<i class="fas fa-user-plus me-2"></i>Change Password');
+                }
+            });
+        });
     }
     // #endregion :: users manage list
+
+    // #region :: user Booking manage list
+    if (_ActionName === "usersbookings") {
+       
+       
+
+        getAllUserBookingList();
+
+        function getAllUserBookingList() {
+            $.ajax({
+                url: '/Admin/GetAllHallBookingList',
+                type: 'GET',
+                dataType: 'HTML',
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response != '') {                       
+                        // Destroy existing DataTable if it exists
+                        if ($.fn.DataTable.isDataTable('#adminbookingsTable')) {
+                            $('#adminbookingsTable').DataTable().destroy();
+                        }
+
+                        $('#partialGetAllHallBooking').html(response);
+
+                        // Initialize DataTable
+                        $('#adminbookingsTable').DataTable({
+                            responsive: true,
+                            autoWidth: false,
+                            lengthMenu: [[50, 100, -1], [50, 100, "All"]],
+                            language: {
+                                searchPlaceholder: "Search Users...",
+                                search: ""
+                            },
+                            order: [[0, 'asc']]
+                        });
+                    }
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+        }
+
+        $(document).on('click', '#openAdvancedSearch', function (e) {
+            $('#modalOverlay').fadeIn(300);
+            $('#advancedSearchModal').fadeIn(300);
+        });
+
+        function closeModal() {
+            $('#modalOverlay').fadeOut(300);
+            $('#advancedSearchModal').fadeOut(300);
+        }
+
+        $(document).on('click', '#closeModal, #modalOverlay', function (e) {
+            closeModal();
+        });
+
+        $(document).on('click', '#advancedSearchModal', function (e) {
+            e.stopPropagation();
+        });
+
+        $(document).on('change', '#statusAll', function (e) {
+            if ($(this).is(':checked')) {
+                $('.status-checkbox').not('#statusAll').prop('checked', false);
+            }
+        });
+
+        $(document).on('change', '.status-checkbox:not(#statusAll)', function () {
+            if ($(this).is(':checked')) {
+                $('#statusAll').prop('checked', false);
+            }
+
+            // If no checkbox is selected, check "All"
+            if ($('.status-checkbox:checked').length === 0) {
+                $('#statusAll').prop('checked', true);
+            }
+        });
+
+        $(document).on('click', '#resetFilters', function (e) {
+            $('#fromDate, #toDate, #searchHall').val('');
+            $('.status-checkbox').prop('checked', false);
+            $('#statusAll').prop('checked', true);
+        });
+
+        $(document).on('click', '#applyFilters', function (e) {
+            const filters = {
+                statuses: [],
+                fromDate: $('#fromDate').val(),
+                toDate: $('#toDate').val(),
+                hallName: $('#searchHall').val()
+            };
+
+            // Get selected statuses
+            if ($('#statusAll').is(':checked')) {
+                filters.statuses.push('all');
+            } else {
+                $('.status-checkbox:checked').each(function () {
+                    const statusId = $(this).attr('id').replace('status', '').toLowerCase();
+                    filters.statuses.push(statusId);
+                });
+            }
+
+            console.log('Applied Filters:', filters);
+
+            // Add your filtering logic here
+
+            closeModal();
+        });
+
+
+        // Close modal with Escape key
+        $(document).on('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        $(document).on('click', '.table-btn-approve', function (e) {
+            var BookingReferenceId = $(this).data('booking-ref-id');
+            var BookingId = $(this).data('booking-id');
+
+            Swal.fire({
+                title: 'Confirm Approval',
+                html: `Are you sure you want to approve this booking?<br><br><strong>Booking ID:</strong> ${BookingReferenceId}`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Approve',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Call the approval function
+                    approveBooking(BookingId, BookingReferenceId);
+                }
+            });
+
+
+        });
+
+        function approveBooking(BookingId, BookingReferenceId) {
+            $.ajax({
+                url: '/Admin/ApproveBookedHall',
+                type: 'POST',
+                dataType: 'JSON',
+                data: { BookingId: BookingId, BookingReferenceId: BookingReferenceId },
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response.isSuccess) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Approved Submitted Successfully!',
+                            html: response.result || 'Booking has been approved.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#28a745',
+                            allowOutsideClick: false,
+                            timer: 10000,
+                            timerProgressBar: true
+                        }).then((result) => {
+                            // Redirect if user clicked OK or timer expired
+                            if (result.isConfirmed || result.dismiss === Swal.DismissReason.timer) {
+                                getAllUserBookingList();
+                            }
+                        });
+
+                    }
+                    else {
+                        notify(false, response.errorMessages, false);
+                    }
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+        }
+
+        $(document).on('click', '.table-btn-reject', function (e) {
+            var BookingReferenceId = $(this).data('booking-ref-id');
+            var BookingId = $(this).data('booking-id');
+
+            Swal.fire({
+                title: 'Confirm Reject',
+                html: `Are you sure you want to reject this booking?<br><br><strong>Booking ID:</strong> ${BookingReferenceId}`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Reject',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Call the approval function
+                    rejectBooking(BookingId, BookingReferenceId);
+                }
+            });
+
+
+        });
+
+        function rejectBooking(BookingId, BookingReferenceId) {
+            $.ajax({
+                url: '/Admin/RejectBookedHall',
+                type: 'POST',
+                dataType: 'JSON',
+                data: { BookingId: BookingId, BookingReferenceId: BookingReferenceId },
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    if (response.isSuccess) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Rejected Successfully!',
+                            html: response.result || 'Your booking has been rejected.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#28a745',
+                            allowOutsideClick: false,
+                            timer: 10000,
+                            timerProgressBar: true
+                        }).then((result) => {
+                            // Redirect if user clicked OK or timer expired
+                            if (result.isConfirmed || result.dismiss === Swal.DismissReason.timer) {
+                                getAllUserBookingList();
+                            }
+                        });
+
+                    }
+                    else {
+                        notify(false, response.errorMessages, false);
+                    }
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+        }
+        
+    }
+    // #endregion :: users Booking list
 
 });

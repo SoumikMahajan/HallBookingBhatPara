@@ -100,6 +100,14 @@
     // #region :: Registrion
     if (_ActionName === "registration") {
 
+        const today = flatpickr.formatDate(new Date(), "Y-m-d");
+
+        flatpickr("#dob", {
+            dateFormat: "Y-m-d",
+            defaultDate: today
+        });
+
+
         $(".togglePassword").on("click", function (e) {
             const passwordInput = $('#password');
             const toggleIcon = $(this).find('i');
@@ -228,10 +236,13 @@
             const address = $('#address').val()?.trim() || "";
             const city = $('#city').val()?.trim() || "";
             const pincode = $('#pincode').val()?.trim() || "";
+            const password = $('#password').val().trim() || "";
+            const confirmPassword = $('#confirmPassword').val().trim() || "";
 
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const phonePattern = /^\d{10}$/;
             const pinPattern = /^\d{6}$/;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,}$/;
 
             if (firstName === '') {
                 showError("#firstName", "Enter a valid First Name.");
@@ -296,6 +307,33 @@
                 showValid('#pincode');
             }
 
+            if (password === '') {
+                showError('#password', 'Enter a password.');
+                hasError = true;
+            }
+
+            else if (!passwordRegex.test(password)) {
+                showError(
+                    '#password',
+                    'Password must be 6+ chars with uppercase, lowercase & special character.'
+                );
+                hasError = true;
+            } else {
+                showValid('#password');
+            }
+
+            if (confirmPassword === '') {
+                showError('#confirmPassword', 'Confirm your password.');
+                hasError = true;
+            }
+            // 4️⃣ Match validation
+            else if (password !== confirmPassword) {
+                showError('#confirmPassword', 'Passwords do not match.');
+                hasError = true;
+            } else {
+                showValid('#confirmPassword');
+            }
+
             return !hasError;
         }
 
@@ -329,8 +367,7 @@
                     $(".loader").css("display", "flex");
                     $('.btn-register').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Registering...');
                 },
-                success: function (response) {
-                    $(".loader").css("display", "none");
+                success: function (response) {                  
                     if (response.isSuccess) {
                         notify(true, response.result, true);                        
                         setTimeout(function () {
@@ -342,6 +379,7 @@
                     }
                 },
                 complete: function () {
+                    $(".loader").css("display", "none");
                     $('.btn-register').prop('disabled', false).html('<i class="fas fa-user-plus me-2"></i>Create Account');
                 }
             });

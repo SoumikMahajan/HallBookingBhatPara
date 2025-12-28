@@ -38,4 +38,18 @@
 		public string EntryIP { get; set; } = string.Empty;
         public long CreatedBy { get; set; } = 0;
 	}
+
+	public class EditUserDto
+	{
+		public long UserId { get; set; }
+		public int RoleId { get; set; }
+		public string FirstName { get; set; } = string.Empty;
+		public string LastName { get; set; } = string.Empty;		
+		public long Gender { get; set; } = 0;
+		public DateOnly DOB { get; set; }
+		public string Address { get; set; } = string.Empty;
+		public string City { get; set; } = string.Empty;
+		public string Pincode { get; set; } = string.Empty;				
+		public long UpdateBy { get; set; } = 0;
+	}
 }

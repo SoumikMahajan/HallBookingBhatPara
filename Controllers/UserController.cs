@@ -57,7 +57,7 @@ namespace HallBookingBhatPara.Controllers
                 Email = response.login_id,
                 Name = response.stake_holder_details,
                 Roles = response.stake_details,
-                RolesId = response.stake_details_id_fk.ToString(),
+                RolesId = response.stake_id_fk.ToString(),
                 StackHolderId = response.stake_details_id_fk.ToString(),
                 ProfileImagePath = response.profile_display ?? ""
             };

@@ -86,34 +86,37 @@
 
     <!-- Booking Form -->
     <div class="booking-form-container">
-        <form id="bookingForm">
-            <!-- Personal Information -->
-            <div class="form-section">
-                @Html.AntiForgeryToken()
-                <input type="hidden" id="allowedDatesHidden" value='@allowedDatesJson' />
-                <input type="hidden" id="hiddenCatId" value='@Model.hallBookingDTO.category_id_pk' />
-                <input type="hidden" id="hiddenHallId" value='@Model.hallBookingDTO.hall_id_pk' />
-                <input type="hidden" id="HiddenHallAvailId" value='@Model.hallBookingDTO.hall_availability_id_pk' />
-                <input type="hidden" id="hiddenRate" value='@rate' />
-                <input type="hidden" id="hiddenSecurityMoney" value='@securityMoney' />
-                <input type="hidden" id="paymentTypeId" value='@Model.hallBookingDTO.payment_type_id_fk' />
 
-                <h4 class="section-title">
-                    <i class="fas fa-user"></i> Personal Information
-                </h4>
-                <div class="row g-3">
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Dev"))
-                    {
+        @if (User.Identity.IsAuthenticated && (User.IsInRole("Dev") || User.IsInRole("Counter Admin")))
+        {
+            <form id="bookingForm">
+                <!-- Personal Information -->
+                <div class="form-section">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="allowedDatesHidden" value='@allowedDatesJson' />
+                    <input type="hidden" id="hiddenCatId" value='@Model.hallBookingDTO.category_id_pk' />
+                    <input type="hidden" id="hiddenHallId" value='@Model.hallBookingDTO.hall_id_pk' />
+                    <input type="hidden" id="HiddenHallAvailId" value='@Model.hallBookingDTO.hall_availability_id_pk' />
+                    <input type="hidden" id="hiddenRate" value='@rate' />
+                    <input type="hidden" id="hiddenSecurityMoney" value='@securityMoney' />
+                    <input type="hidden" id="paymentTypeId" value='@Model.hallBookingDTO.payment_type_id_fk' />
+
+                    @{
+                            var userid = Model.userListDTOs;
+                        }
+
+                    <h4 class="section-title">
+                        <i class="fas fa-user"></i> Personal Information
+                    </h4>
+                    <div class="row g-3">
                         <div class="col-md-4">
                             <label for="userDdl" class="form-label">Users <span class="required">*</span></label>
-                            <select class="form-select" id="userDdl">  
-                                <option value=""></option>
-                                <!option value="1">Name</!option>
-                                <!option value="2">Test</!option>
-                                @* @foreach (var item in Model.dropDownListDTOs)
+                            <select class="form-select" id="userDdl">
+                                <!option></!option>
+                                @foreach (var item in Model.userListDTOs)
                                 {
-                                    <!option value="@item.Id">@item.Name</!option>
-                                } *@
+                                    <!option value="@item.user_id_pk">@item.user_name (@item.mobile)</!option>
+                                }
                             </select>
                             <div class="invalid-feedback">Please select an user.</div>
                         </div>
@@ -127,9 +130,200 @@
                             <input type="email" class="form-control" id="email" value="" disabled>
                             <div class="invalid-feedback">Please enter a valid email address.</div>
                         </div>
-                    }
-                    else
-                    {
+                        <input type="tel" class="form-control" id="phone" value="" hidden>
+                    </div>
+                </div>
+
+                <!-- Event Details -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-calendar-alt"></i> Event Details (@Model.hallBookingDTO.category_name - @Model.hallBookingDTO.hall_name)
+                        @if (!string.IsNullOrEmpty(Model.hallBookingDTO.floor_name))
+                        {
+                            <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
+                        }
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="eventType" class="form-label">Event Type <span class="required">*</span></label>
+                            <select class="form-select" id="eventType">
+                                <!option value="0">--Select Event Type--</!option>
+                                @foreach (var item in Model.dropDownListDTOs)
+                                {
+                                    <!option value="@item.Id">@item.Name</!option>
+                                }
+                            </select>
+                            <div class="invalid-feedback">Please select an event type.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="eventDurationType" class="form-label">Event Duration Type <span class="required">*</span></label>
+                            <select class="form-select" id="eventDurationType">
+                                <option value="">--Select Duration Type--</option>
+                                <option value="single">Single Day Event</option>
+                                <option value="multiple">Multiple Days Event</option>
+                            </select>
+                            <div class="invalid-feedback">Please select event duration type.</div>
+                        </div>
+
+                        <!-- Single Day Event Date -->
+                        <div class="col-md-6" id="singleDateContainer" style="display: none;">
+                            <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="eventDate" placeholder="--Select Event Date--" readonly>
+                            <div class="invalid-feedback">Please select event date.</div>
+                        </div>
+
+                        <!-- Multiple Days Event Dates -->
+                        <div class="col-md-6" id="multipleDatesContainer" style="display: none;">
+                            <label for="eventDatesRange" class="form-label">Event Dates Range <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="eventDatesRange" placeholder="--Select Date Range--" readonly>
+                            <div class="invalid-feedback">Please select event dates range.</div>
+                            <small class="text-muted">Select start and end dates for your event</small>
+                        </div>
+
+                        <!-- Selected Dates Display for Multiple Days -->
+                        <div class="col-12" id="selectedDatesDisplay" style="display: none;">
+                            <label class="form-label">Selected Event Dates:</label>
+                            <div class="selected-dates-container">
+                                <div id="selectedDatesList" class="d-flex flex-wrap gap-2">
+                                    <!-- Selected dates will be displayed here as badges -->
+                                </div>
+                                <small class="text-muted">Total selected days: <span id="totalSelectedDays">0</span></small>
+                            </div>
+                        </div>
+
+                        <!-- Event Timeline -->
+                        <div class="event-timeline">
+                            <h6><i class="fas fa-clock"></i> Event Timeline</h6>
+                            <div class="timeline-item">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                <div>
+                                    <strong>Hall Access:</strong> 2 hours before event start
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div>
+                                    <strong>Event Duration:</strong> As per selected time
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-broom"></i>
+                                </div>
+                                <div>
+                                    <strong>Cleanup Time:</strong> 1 hour after event end
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Summary -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-calculator"></i> Price Summary
+                        </h4>
+
+                        @if (Model.hallBookingDTO.payment_type_id_fk == 2)
+                        {
+                            <!-- Payment Option Selection -->
+                            <div class="payment-options-section">
+                                <p class="payment-label">Please select your payment type</p>
+                                <div class="payment-options">
+                                    <label class="payment-card">
+                                        <input type="radio" name="paymentType" value="10" />
+                                        <span>💰 Full Payment</span>
+                                    </label>
+                                    <label class="payment-card">
+                                        <input type="radio" name="paymentType" value="20" checked />
+                                        <span>💰 Half Payment</span>
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.hallBookingDTO.payment_type_id_fk == 1)
+                        {
+                            <!-- Payment Option Selection -->
+                            <div class="payment-options-section">
+                                <p class="payment-label">Please select your payment type</p>
+                                <div class="payment-options">
+                                    <label class="payment-card">
+                                        <input type="radio" name="paymentType" value="10" checked />
+                                        <span>💰 Full Payment</span>
+                                    </label>
+                                </div>
+                            </div>
+                        }
+
+
+                        <div class="price-summary" id="partialPaymentSummery">
+                            @await Html.PartialAsync("_partialPriceSummary", Model)
+                        </div>
+
+
+                        <br />
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="mrNumber" class="form-label">Money Receipt <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="mrNumber" />
+                                <div class="invalid-feedback">Please Enter Money Receipt Number.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="terms-section">
+                        <h6><i class="fas fa-file-contract"></i> Terms & Conditions</h6>
+                        <ul class="terms-list">
+                            <li>25% advance payment required to confirm booking</li>
+                            <li>Remaining 75% amount to be paid wintin 1 month before event</li>
+                            <li>Security deposit is refundable after event completion</li>
+                            @* <li>Cancellation must be made 72 hours in advance</li> *@
+                            <li>Any damage to property will be charged separately</li>
+                            <li>Check in 8AM check out next day 7AM</li>
+                        </ul>
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms">
+                            <label class="form-check-label" for="agreeTerms">
+                                I agree to all terms and conditions <span class="required">*</span>
+                            </label>
+                            <div class="invalid-feedback">You must agree to the terms and conditions.</div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary-custom">
+                            <i class="fas fa-arrow-left"></i> Back to Search
+                        </button>
+                        <button type="submit" class="btn-primary-custom" id="counterAdminSubmit">
+                            <i class="fas fa-credit-card"></i> Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+        else
+        {
+            <form id="bookingForm">
+                <!-- Personal Information -->
+                <div class="form-section">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="allowedDatesHidden" value='@allowedDatesJson' />
+                    <input type="hidden" id="hiddenCatId" value='@Model.hallBookingDTO.category_id_pk' />
+                    <input type="hidden" id="hiddenHallId" value='@Model.hallBookingDTO.hall_id_pk' />
+                    <input type="hidden" id="HiddenHallAvailId" value='@Model.hallBookingDTO.hall_availability_id_pk' />
+                    <input type="hidden" id="hiddenRate" value='@rate' />
+                    <input type="hidden" id="hiddenSecurityMoney" value='@securityMoney' />
+                    <input type="hidden" id="paymentTypeId" value='@Model.hallBookingDTO.payment_type_id_fk' />
+
+                    <h4 class="section-title">
+                        <i class="fas fa-user"></i> Personal Information
+                    </h4>
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
                             <input type="text" class="form-control" id="fullName" value="@Model.public_User_Registration.user_name">
@@ -140,97 +334,96 @@
                             <input type="email" class="form-control" id="email" value="@Model.public_User_Registration.email">
                             <div class="invalid-feedback">Please enter a valid email address.</div>
                         </div>
-                    }                   
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
-                        <input type="tel" class="form-control" id="phone" value="@(User.IsInRole("Dev") ? "" : Model.public_User_Registration.mobile)" @(User.IsInRole("Dev") ? "disabled" : "")>
-                        <div class="invalid-feedback">Please enter your phone number.</div>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="alternatePhone" class="form-label">Alternate Phone</label>
-                        <input type="tel" class="form-control" id="alternatePhone">
-                        <div class="invalid-feedback">Please enter your alter phone number.</div>
-                    </div>
-                    <div class="col-12">
-                        <label for="address" class="form-label">Full Address <span class="required">*</span></label>
-                        <textarea class="form-control" id="address" rows="3"></textarea>
-                        <div class="invalid-feedback">Please enter your full address.</div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
+                            <input type="tel" class="form-control" id="phone" value="@Model.public_User_Registration.mobile">
+                            <div class="invalid-feedback">Please enter your phone number.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="alternatePhone" class="form-label">Alternate Phone</label>
+                            <input type="tel" class="form-control" id="alternatePhone">
+                            <div class="invalid-feedback">Please enter your alter phone number.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="address" class="form-label">Full Address <span class="required">*</span></label>
+                            <textarea class="form-control" id="address" rows="3"></textarea>
+                            <div class="invalid-feedback">Please enter your full address.</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Event Details -->
-            <div class="form-section">
-                <h4 class="section-title">
-                    <i class="fas fa-calendar-alt"></i> Event Details (@Model.hallBookingDTO.category_name - @Model.hallBookingDTO.hall_name)
-                    @if (!string.IsNullOrEmpty(Model.hallBookingDTO.floor_name))
-                    {
-                        <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
-                    }
-                </h4>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="eventType" class="form-label">Event Type <span class="required">*</span></label>
-                        <select class="form-select" id="eventType">
-                            <!option value="0">--Select Event Type--</!option>
-                            @foreach (var item in Model.dropDownListDTOs)
-                            {
-                                <!option value="@item.Id">@item.Name</!option>
-                            }
-                        </select>
-                        <div class="invalid-feedback">Please select an event type.</div>
-                    </div>
+                <!-- Event Details -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-calendar-alt"></i> Event Details (@Model.hallBookingDTO.category_name - @Model.hallBookingDTO.hall_name)
+                        @if (!string.IsNullOrEmpty(Model.hallBookingDTO.floor_name))
+                        {
+                            <span class="hall-floor">@Model.hallBookingDTO.floor_name</span>
+                        }
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="eventType" class="form-label">Event Type <span class="required">*</span></label>
+                            <select class="form-select" id="eventType">
+                                <!option value="0">--Select Event Type--</!option>
+                                @foreach (var item in Model.dropDownListDTOs)
+                                {
+                                    <!option value="@item.Id">@item.Name</!option>
+                                }
+                            </select>
+                            <div class="invalid-feedback">Please select an event type.</div>
+                        </div>
 
-                    @* <div class="col-md-4">
+                        @* <div class="col-md-4">
                         <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
                         <input type="text" class="form-control" id="eventDate" placeholder="--Select Event Date--">
                         <div class="invalid-feedback">Please select event date.</div>
                     </div> *@
-                    <!-- New Event Duration Type Field -->
-                    <!-- New Event Duration Type Field -->
-                    <!-- New Event Duration Type Field -->
-                    <div class="col-md-6">
-                        <label for="eventDurationType" class="form-label">Event Duration Type <span class="required">*</span></label>
-                        <select class="form-select" id="eventDurationType">
-                            <option value="">--Select Duration Type--</option>
-                            <option value="single">Single Day Event</option>
-                            <option value="multiple">Multiple Days Event</option>
-                        </select>
-                        <div class="invalid-feedback">Please select event duration type.</div>
-                    </div>
-
-                    <!-- Single Day Event Date -->
-                    <div class="col-md-6" id="singleDateContainer" style="display: none;">
-                        <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="eventDate" placeholder="--Select Event Date--" readonly>
-                        <div class="invalid-feedback">Please select event date.</div>
-                    </div>
-
-                    <!-- Multiple Days Event Dates -->
-                    <div class="col-md-6" id="multipleDatesContainer" style="display: none;">
-                        <label for="eventDatesRange" class="form-label">Event Dates Range <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="eventDatesRange" placeholder="--Select Date Range--" readonly>
-                        <div class="invalid-feedback">Please select event dates range.</div>
-                        <small class="text-muted">Select start and end dates for your event</small>
-                    </div>
-
-                    <!-- Selected Dates Display for Multiple Days -->
-                    <div class="col-12" id="selectedDatesDisplay" style="display: none;">
-                        <label class="form-label">Selected Event Dates:</label>
-                        <div class="selected-dates-container">
-                            <div id="selectedDatesList" class="d-flex flex-wrap gap-2">
-                                <!-- Selected dates will be displayed here as badges -->
-                            </div>
-                            <small class="text-muted">Total selected days: <span id="totalSelectedDays">0</span></small>
+                        <!-- New Event Duration Type Field -->
+                        <!-- New Event Duration Type Field -->
+                        <!-- New Event Duration Type Field -->
+                        <div class="col-md-6">
+                            <label for="eventDurationType" class="form-label">Event Duration Type <span class="required">*</span></label>
+                            <select class="form-select" id="eventDurationType">
+                                <option value="">--Select Duration Type--</option>
+                                <option value="single">Single Day Event</option>
+                                <option value="multiple">Multiple Days Event</option>
+                            </select>
+                            <div class="invalid-feedback">Please select event duration type.</div>
                         </div>
-                    </div>
 
-                    @* <div class="col-md-6">
+                        <!-- Single Day Event Date -->
+                        <div class="col-md-6" id="singleDateContainer" style="display: none;">
+                            <label for="eventDate" class="form-label">Event Date <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="eventDate" placeholder="--Select Event Date--" readonly>
+                            <div class="invalid-feedback">Please select event date.</div>
+                        </div>
+
+                        <!-- Multiple Days Event Dates -->
+                        <div class="col-md-6" id="multipleDatesContainer" style="display: none;">
+                            <label for="eventDatesRange" class="form-label">Event Dates Range <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="eventDatesRange" placeholder="--Select Date Range--" readonly>
+                            <div class="invalid-feedback">Please select event dates range.</div>
+                            <small class="text-muted">Select start and end dates for your event</small>
+                        </div>
+
+                        <!-- Selected Dates Display for Multiple Days -->
+                        <div class="col-12" id="selectedDatesDisplay" style="display: none;">
+                            <label class="form-label">Selected Event Dates:</label>
+                            <div class="selected-dates-container">
+                                <div id="selectedDatesList" class="d-flex flex-wrap gap-2">
+                                    <!-- Selected dates will be displayed here as badges -->
+                                </div>
+                                <small class="text-muted">Total selected days: <span id="totalSelectedDays">0</span></small>
+                            </div>
+                        </div>
+
+                        @* <div class="col-md-6">
                         <label for="eventName" class="form-label">Event Name <span class="required">*</span></label>
                         <input type="text" class="form-control" id="eventName" placeholder="e.g., Wedding Reception">
                         <div class="invalid-feedback">Please enter the event name.</div>
                     </div> *@
-                    @* @if (!string.IsNullOrEmpty(@Model.hallBookingDTO.floor_name))
+                        @* @if (!string.IsNullOrEmpty(@Model.hallBookingDTO.floor_name))
                     {
                         <div class="col-md-4">
                             <label for="floorType" class="form-label">Floor Type <span class="required">*</span></label>
@@ -252,7 +445,7 @@
                             <div class="invalid-feedback">Please select floor type.</div>
                         </div>
                     } *@
-                    @* <div class="col-md-4">
+                        @* <div class="col-md-4">
                         <label for="startTime" class="form-label">Start Time <span class="required">*</span></label>
                         <input type="time" class="form-control" id="startTime">
                         <div class="invalid-feedback">Please select start time.</div>
@@ -262,53 +455,53 @@
                         <input type="time" class="form-control" id="endTime">
                         <div class="invalid-feedback">Please select end time.</div>
                     </div> *@
-                    @* <div class="col-md-6">
+                        @* <div class="col-md-6">
                         <label for="guestCount" class="form-label">Expected Guests <span class="required">*</span></label>
                         <input type="number" class="form-control" id="guestCount" min="1" max="500" required>
                         <div class="invalid-feedback">Please enter expected number of guests (1-500).</div>
                     </div> *@
-                    @* <div class="col-md-6">
+                        @* <div class="col-md-6">
                         <label for="duration" class="form-label">Duration (Hours)</label>
                         <input type="number" class="form-control" id="duration" min="1" value="8" readonly>
                     </div> *@
-                    @* <div class="col-12">
+                        @* <div class="col-12">
                         <label for="eventDescription" class="form-label">Event Description</label>
                         <textarea class="form-control" id="eventDescription" rows="3" placeholder="Brief description of your event..."></textarea>
                     </div> *@
+                    </div>
+
+                    <!-- Event Timeline -->
+                    <div class="event-timeline">
+                        <h6><i class="fas fa-clock"></i> Event Timeline</h6>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div>
+                                <strong>Hall Access:</strong> 2 hours before event start
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div>
+                                <strong>Event Duration:</strong> As per selected time
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="fas fa-broom"></i>
+                            </div>
+                            <div>
+                                <strong>Cleanup Time:</strong> 1 hour after event end
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Event Timeline -->
-                <div class="event-timeline">
-                    <h6><i class="fas fa-clock"></i> Event Timeline</h6>
-                    <div class="timeline-item">
-                        <div class="timeline-icon">
-                            <i class="fas fa-key"></i>
-                        </div>
-                        <div>
-                            <strong>Hall Access:</strong> 2 hours before event start
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-icon">
-                            <i class="fas fa-play"></i>
-                        </div>
-                        <div>
-                            <strong>Event Duration:</strong> As per selected time
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-icon">
-                            <i class="fas fa-broom"></i>
-                        </div>
-                        <div>
-                            <strong>Cleanup Time:</strong> 1 hour after event end
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Additional Services -->
-            @* <div class="form-section">
+                <!-- Additional Services -->
+                @* <div class="form-section">
                 <h4 class="section-title">
                     <i class="fas fa-plus-circle"></i> Additional Services
                 </h4>
@@ -348,78 +541,81 @@
                 </div>
             </div> *@
 
-            <!-- Price Summary -->
-            <div class="form-section">
-                <h4 class="section-title">
-                    <i class="fas fa-calculator"></i> Price Summary
-                </h4>
+                <!-- Price Summary -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-calculator"></i> Price Summary
+                    </h4>
 
-                @if (Model.hallBookingDTO.payment_type_id_fk == 2)
-                {
-                    <!-- Payment Option Selection -->
-                    <div class="payment-options-section">
-                        <p class="payment-label">Please select your payment type</p>
-                        <div class="payment-options">
-                            <label class="payment-card">
-                                <input type="radio" name="paymentType" value="10" />
-                                <span>💰 Full Payment</span>
-                            </label>
-                            <label class="payment-card">
-                                <input type="radio" name="paymentType" value="20" checked />
-                                <span>💰 Half Payment</span>
-                            </label>
+                    @if (Model.hallBookingDTO.payment_type_id_fk == 2)
+                    {
+                        <!-- Payment Option Selection -->
+                        <div class="payment-options-section">
+                            <p class="payment-label">Please select your payment type</p>
+                            <div class="payment-options">
+                                <label class="payment-card">
+                                    <input type="radio" name="paymentType" value="10" />
+                                    <span>💰 Full Payment</span>
+                                </label>
+                                <label class="payment-card">
+                                    <input type="radio" name="paymentType" value="20" checked />
+                                    <span>💰 Half Payment</span>
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                }
-                @if (Model.hallBookingDTO.payment_type_id_fk == 1)
-                {
-                    <!-- Payment Option Selection -->
-                    <div class="payment-options-section">
-                        <p class="payment-label">Please select your payment type</p>
-                        <div class="payment-options">
-                            <label class="payment-card">
-                                <input type="radio" name="paymentType" value="10" checked />
-                                <span>💰 Full Payment</span>
-                            </label>
+                    }
+                    @if (Model.hallBookingDTO.payment_type_id_fk == 1)
+                    {
+                        <!-- Payment Option Selection -->
+                        <div class="payment-options-section">
+                            <p class="payment-label">Please select your payment type</p>
+                            <div class="payment-options">
+                                <label class="payment-card">
+                                    <input type="radio" name="paymentType" value="10" checked />
+                                    <span>💰 Full Payment</span>
+                                </label>
+                            </div>
                         </div>
+                    }
+
+
+                    <div class="price-summary" id="partialPaymentSummery">
+                        @await Html.PartialAsync("_partialPriceSummary", Model)
                     </div>
-                }
-
-
-                <div class="price-summary" id="partialPaymentSummery">
-                    @await Html.PartialAsync("_partialPriceSummary", Model)
                 </div>
-            </div>
 
-            <!-- Terms and Conditions -->
-            <div class="terms-section">
-                <h6><i class="fas fa-file-contract"></i> Terms & Conditions</h6>
-                <ul class="terms-list">
-                    <li>25% advance payment required to confirm booking</li>
-                    <li>Remaining 75% amount to be paid wintin 1 month before event</li>
-                    <li>Security deposit is refundable after event completion</li>
-                    @* <li>Cancellation must be made 72 hours in advance</li> *@
-                    <li>Any damage to property will be charged separately</li>
-                    <li>Check in 8AM check out next day 7AM</li>
-                </ul>
-                <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" id="agreeTerms">
-                    <label class="form-check-label" for="agreeTerms">
-                        I agree to all terms and conditions <span class="required">*</span>
-                    </label>
-                    <div class="invalid-feedback">You must agree to the terms and conditions.</div>
+                <!-- Terms and Conditions -->
+                <div class="terms-section">
+                    <h6><i class="fas fa-file-contract"></i> Terms & Conditions</h6>
+                    <ul class="terms-list">
+                        <li>25% advance payment required to confirm booking</li>
+                        <li>Remaining 75% amount to be paid wintin 1 month before event</li>
+                        <li>Security deposit is refundable after event completion</li>
+                        @* <li>Cancellation must be made 72 hours in advance</li> *@
+                        <li>Any damage to property will be charged separately</li>
+                        <li>Check in 8AM check out next day 7AM</li>
+                    </ul>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" id="agreeTerms">
+                        <label class="form-check-label" for="agreeTerms">
+                            I agree to all terms and conditions <span class="required">*</span>
+                        </label>
+                        <div class="invalid-feedback">You must agree to the terms and conditions.</div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button type="button" class="btn-secondary-custom">
-                    <i class="fas fa-arrow-left"></i> Back to Search
-                </button>
-                <button type="submit" class="btn-primary-custom">
-                    <i class="fas fa-credit-card"></i> Proceed to Payment
-                </button>
-            </div>
-        </form>
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="button" class="btn-secondary-custom">
+                        <i class="fas fa-arrow-left"></i> Back to Search
+                    </button>
+                    <button type="submit" class="btn-primary-custom" id="publicSubmit">
+                        <i class="fas fa-credit-card"></i> Submit
+                    </button>
+                </div>
+            </form>
+        }
+
+
     </div>
 </div>

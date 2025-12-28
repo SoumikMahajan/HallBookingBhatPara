@@ -17,13 +17,17 @@ namespace HallBookingBhatPara.Domain.DTO
         public List<DropDownListDTO> SubCategoryList { get; set; }
         public List<DropDownListDTO> FloorList { get; set; }
         public public_user_registration public_User_Registration { get; set; }
-        #endregion
+        public List<UserListForAdminDTO> User_List_Admin { get; set; } = new();
+		public List<HallBookingDetailsDTO> hallBookingDetails { get; set; } = new();
+        public UserDetailsForAdminDTO userDetailsForAdminDTO { get; set; } = new();
+		#endregion
 
-        #region :: Hall Booking
-        public List<HallSearchDTO> hallSearchList { get; set; }
+		#region :: Hall Booking
+		public List<HallSearchDTO> hallSearchList { get; set; }
         public HallBookingDTO hallBookingDTO { get; set; }
         public PaymentSummeryDTO paymentSummeryDTO { get; set; }
         public List<BookedListDTO> bookedListDTOs { get; set; }
-        #endregion
-    }
+        public List<UserListDTO> userListDTOs { get; set; } = new();
+		#endregion
+	}
 }

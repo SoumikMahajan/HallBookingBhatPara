@@ -80,18 +80,18 @@
             </div>
 
             <div class="modal-body">
-                <form id="userRegisterForm" autocomplete="off">
+                <form id="userRegisterForm">
                     <div class="row g-1">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                                <input type="text" class="form-control" id="firstName" placeholder="First Name" autocomplete="off">
                                 <label for="firstName">First Name</label>
                                 <div class="invalid-feedback">Enter a valid First Name (only letters, min 2 chars).</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                                <input type="text" class="form-control" id="lastName" placeholder="Last Name" autocomplete="off">
                                 <label for="lastName">Last Name</label>
                                 <div class="invalid-feedback">Enter a valid Last Name (only letters, min 2 chars).</div>
                             </div>
@@ -99,14 +99,14 @@
 
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="email" placeholder="Email Address" name="new-email">
+                                <input type="email" class="form-control" id="email" placeholder="Email Address" name="new-email" autocomplete="new-email">
                                 <label for="email">Email Address</label>
                                 <div class="invalid-feedback">Enter a valid email address.</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
+                                <input type="tel" class="form-control" id="phone" placeholder="Phone Number" autocomplete="off">
                                 <label for="phone">Phone Number</label>
                                 <div class="invalid-feedback">Enter a 10-digit mobile number.</div>
                             </div>
@@ -115,10 +115,10 @@
                         <div class="col-md-3">
                             <div class="form-floating">
                                 <select class="form-select" id="gender">
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
+                                    <option value="0">--Select Gender--</option>
+                                    <option value="1">Male</option>
+                                    <option value="2">Female</option>
+                                    <option value="3">Other</option>
                                 </select>
                                 <label for="gender">Gender</label>
                                 <div class="invalid-feedback">Please select gender.</div>
@@ -128,7 +128,7 @@
                             <div class="form-floating">
                                 <select class="form-select" id="role">
                                     <option value="">Select Role</option>
-                                    <option value="1">admin</option>
+                                    <option value="1">Admin</option>
                                     <option value="2">public</option>                                    
                                 </select>
                                 <label for="role">Role</label>
@@ -153,14 +153,14 @@
 
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="city" placeholder="City" value="Bhatpara">
+                                <input type="text" class="form-control" id="city" placeholder="City" value="Bhatpara" autocomplete="off">
                                 <label for="city">City</label>
                                 <div class="invalid-feedback">Enter city name.</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="pincode" placeholder="PIN Code">
+                                <input type="text" class="form-control" id="pincode" placeholder="PIN Code" autocomplete="off">
                                 <label for="pincode">PIN Code</label>
                                 <div class="invalid-feedback">Enter a 6-digit PIN code.</div>
                             </div>
@@ -169,7 +169,7 @@
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="password" placeholder="Password">
+                                <input type="password" class="form-control" id="password" placeholder="Password" autocomplete="new-password">
                                 <span class="input-group-text password-toggle togglePassword">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -179,7 +179,7 @@
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" autocomplete="off">
                                 <div class="invalid-feedback">Passwords do not match.</div>
                             </div>
                         </div>                        
@@ -191,6 +191,80 @@
             <div class="modal-footer"> 
                 <button class="btn btn-primary" id="adminAdduser" type="button">
                     <i class="fas fa-user-plus me-2"></i>Create Account
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade slide-modal" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Update User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="updateUserForm">
+                    
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="adminUpdateUser" type="button">
+                    <i class="fas fa-user-plus me-2"></i>Update Account
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade slide-modal" id="UserPasswordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Change User Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="updateUserPasswordForm">
+                    <div class="row g-1">                       
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="passChangeUserid" value="" hidden>
+                            <input type="text" class="form-control" id="passChangeEmailId" value="" hidden>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="UpPassword" placeholder="Password" autocomplete="new-password">
+                                <span class="input-group-text password-toggle togglePasswordForChange">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                                <div class="invalid-feedback">Password must be 6+ chars with uppercase, lowercase, special char.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="UpConfirmPassword" placeholder="Confirm Password" autocomplete="new-password">
+                                <div class="invalid-feedback">Passwords do not match.</div>
+                            </div>
+                        </div>
+                    </div>
+                </form> 
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="adminUpdateUserPass" type="button">
+                    <i class="fas fa-user-plus me-2"></i>Change Password
                 </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

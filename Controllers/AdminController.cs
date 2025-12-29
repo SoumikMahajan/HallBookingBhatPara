@@ -17,6 +17,7 @@ namespace HallBookingBhatPara.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenProvider _tokenProvider;
 
+
         public AdminController(IUnitOfWork unitOfWork, ITokenProvider tokenProvider)
         {
             _unitOfWork = unitOfWork;

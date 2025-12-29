@@ -74,7 +74,9 @@
                         </div>
                         <h4 class="action-title">Book a Hall</h4>
                         <p class="action-description">Reserve marriage halls, seminar halls, and community centers for your events.</p>
-                        <button class="action-btn" onclick="navigateToBooking()">Book Now</button>
+                        @* <button class="action-btn" href="@Url.Action("UserHallBooking", "UserBooking")">Book Now</button> *@
+                        <br />
+                        <a class="action-btn" style="text-decoration: none;" href="@Url.Action("UserHallBooking", "UserBooking")">Book Now</a>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6">
@@ -84,7 +86,9 @@
                         </div>
                         <h4 class="action-title">View Bookings</h4>
                         <p class="action-description">Check your current bookings, payment status, and booking history.</p>
-                        <button class="action-btn" onclick="navigateToBookings()">View Bookings</button>
+                        @* <button class="action-btn" onclick="navigateToBookings()">View Bookings</button> *@
+                        <br />
+                        <a class="action-btn" style="text-decoration: none;" href="@Url.Action("BookingList", "UserBooking")">View Bookings</a>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6">
@@ -94,7 +98,9 @@
                         </div>
                         <h4 class="action-title">Download Forms</h4>
                         <p class="action-description">Access application forms, guidelines, and necessary documents.</p>
-                        <button class="action-btn" onclick="navigateToForms()">Download</button>
+                        @* <button class="action-btn" onclick="navigateToForms()">Download</button> *@
+                        <br />
+                        <a class="action-btn" style="text-decoration: none;"  onclick="navigateToForms()">Download</a>
                     </div>
                 </div>
             </div>

@@ -319,8 +319,7 @@ namespace HallBookingBhatPara.Controllers
 			var loggedInRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
 			var loggedInStackId = Convert.ToInt64(_tokenProvider.GetUserClaims().StackHolderId);
 
-			MultipleModel mm = new();
-            List<BookedListDTO> hallBookedList = new();
+			MultipleModel mm = new();            
 
             var response = await _unitOfWork.SPRepository.PublicUserHallBookedDetailsAsync(loggedInRoleId, loggedInStackId);
 
@@ -328,6 +327,22 @@ namespace HallBookingBhatPara.Controllers
 
             return PartialView("_partialUserHallBookedList", mm);
         }
+
+		public async Task<IActionResult> UserBookingDetailsById(long HallId)
+		{
+			if (HallId <= 0)
+			{
+				return Json(ResponseService.BadRequestResponse<string>("HallId can not be null or empty"));
+			}
+			MultipleModel mm = new();
+
+			var response = await _unitOfWork.SPRepository.BookingDetailsByIdAsync(HallId);
+			mm.bookedDetailsById = response;
+
+			return PartialView("_partialHallBookedDetailsById", mm);
+
+		}
+
 		#endregion
 
 

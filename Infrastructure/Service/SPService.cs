@@ -560,6 +560,24 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 			}
 		}
 
+		public async Task<BookedDetailsByIdDTO> BookingDetailsByIdAsync(long HallId)
+		{
+			using (var connection = new SqlConnection(_connectionString))
+			{
+				var parameters = new DynamicParameters();
+
+				parameters.Add("@HallId", HallId, DbType.Int64);				
+				parameters.Add("@OperationId", 8, DbType.Int32);
+
+				var result = await connection.QueryFirstOrDefaultAsync<BookedDetailsByIdDTO>(
+					"UserHallBookingSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+				return result;
+			}
+		}
+
 		public async Task<List<HallBookingDetailsDTO>> UserHallBookedDetailsAsync(long StakeId, long StakeDetailsId)
 		{
 			using (var connection = new SqlConnection(_connectionString))
@@ -649,7 +667,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 			{
 				var parameters = new DynamicParameters();
 				
-				parameters.Add("@OperationId", 12, DbType.Int32);
+				parameters.Add("@OperationId", 15, DbType.Int32);
 
 				var result = await connection.QueryAsync<DropDownListDTO>(
 					"Bhatpara_HallBooking_Users",
@@ -701,6 +719,44 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 				);
 				return result;
 			}
+		}
+
+		public async Task<long> AdminUserAddAsync(AddUserDto model)
+		{
+			try
+			{
+				using (var connection = new SqlConnection(_connectionString))
+				{
+					var parameters = new DynamicParameters();
+					parameters.Add("@UserName", $"{model.FirstName} {model.LastName}", DbType.String);
+					parameters.Add("@Mobile", model.Phone, DbType.String);
+					parameters.Add("@Email", model.Email, DbType.String);
+					parameters.Add("@EntryIp", model.EntryIP, DbType.String);
+					parameters.Add("@Gender", model.Gender, DbType.Int64);
+					parameters.Add("@DdlRoleId", model.Role, DbType.Int32);
+					parameters.Add("@DOB", model.DOB, DbType.Date);
+					parameters.Add("@Address", model.Address, DbType.String);
+					parameters.Add("@City", model.City, DbType.String);
+					parameters.Add("@Pin", model.Pincode, DbType.String);
+					parameters.Add("@LoginPassword", model.Password, DbType.String);
+					parameters.Add("@BasePassword", model.BasePassword, DbType.String);
+					parameters.Add("@LoginId", model.CreatedBy, DbType.Int64);
+					parameters.Add("@StakeId", model.StackRoleId, DbType.Int64);
+					parameters.Add("@OperationId", 9, DbType.Int32);
+					var result = await connection.QueryFirstOrDefaultAsync<long>(
+						"Bhatpara_HallBooking_Users",
+						parameters,
+						commandType: CommandType.StoredProcedure
+					);
+					return result;
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Registration failed: " + ex.Message);
+				throw;
+			}
+
 		}
 
 		#endregion

@@ -13,8 +13,8 @@ namespace HallBookingBhatPara.Domain.Entities
         public string? email { get; set; }
         public string? entry_ip { get; set; }
         public short? active_status { get; set; }
-        public long? create_by { get; set; }
-        public DateTime? created_date { get; set; }
+        public long? entry_by_stake_id_fk { get; set; }
+        public DateTime? entry_time { get; set; }
         public long? update_by { get; set; }
         public DateTime? update_date { get; set; }
         public bool? delete_status { get; set; }
@@ -23,5 +23,6 @@ namespace HallBookingBhatPara.Domain.Entities
         public string? address { get; set; }
         public string? city { get; set; }
         public string? pin { get; set; }
-    }
+		public long entry_by_login_id_fk { get; set; }
+	}
 }

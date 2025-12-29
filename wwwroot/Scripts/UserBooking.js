@@ -1153,19 +1153,38 @@
             });
         }
 
-        $(document).on('click', '.btn-view', function (e) {
+        $(document).on('click', '.btnHallBookedDetails', function (e) {
             e.preventDefault();
 
             // Get booking data from the clicked element or its parent
-            const bookingId = $(this).closest('.booking-card').data('booking-id');
-            const hallName = $(this).closest('.booking-card').find('.hall-name').text();
+            const hallId = $(this).data('hallid');
+            const hallName = $(this).data('hallname');
 
             // Populate modal with data (optional)
             $('#bookingDetailsModal .modal-title').text('Booking Details - ' + hallName);
 
-            // Open the modal
-            $('#bookingDetailsModal').modal('show');
+            $.ajax({
+                url: '/UserBooking/UserBookingDetailsById',
+                type: 'GET',
+                data: { HallId: hallId },
+                dataType: 'HTML',
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    $('#partialBookedHallDetails').html('');
+                    $('#partialBookedHallDetails').html(response);
+                    $('#bookingDetailsModal').modal('show');
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+
+            
         });
+
+
     }
     // #endregion :: Booking list
 

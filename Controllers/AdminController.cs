@@ -7,6 +7,7 @@ using HallBookingBhatPara.Infrastructure.Service;
 using HallBookingBhatPara.Model.Validator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HallBookingBhatPara.Controllers
 {
@@ -427,11 +428,15 @@ namespace HallBookingBhatPara.Controllers
 		#endregion
 
 		#region :: Users List
-		public  IActionResult UsersList()
+		public  async Task<IActionResult> UsersList()
 		{
 
+            var roleList = await _unitOfWork.SPRepository.UserRoleAsync();
 
-			return View();
+            MultipleModel mm = new();
+            mm.dropDownListDTOs = roleList;
+
+			return View(mm);
 
 		}
 		
@@ -464,20 +469,21 @@ namespace HallBookingBhatPara.Controllers
 			model.EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
 
 			model.CreatedBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
-			
+            model.StackRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
+
 
 			var EncriptedPassword = PasswordHasher.ComputeSha256Hash(model.Password);
 			model.Password = EncriptedPassword;
 
-			//var userId = await _unitOfWork.SPRepository.RegistrationAsync(model);
-			//if (userId <= 0)
-			//{
-			//	return Json(ResponseService.InternalServerResponse<object>("Registration failed. Please try again."));
-			//}
-			
+            var result = await _unitOfWork.SPRepository.AdminUserAddAsync(model);
+            if (result <= 0)
+            {
+                return Json(ResponseService.InternalServerResponse<object>("User Added failed. Please try again."));
+            }
 
 
-			return Json(ResponseService.SuccessResponse<object>("User Added Successful!"));
+
+            return Json(ResponseService.SuccessResponse<object>("User Added Successful!"));
 
 		}
 

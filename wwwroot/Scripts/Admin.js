@@ -1272,7 +1272,7 @@
             formData.append("BasePassword", $('#password').val());
 
             $.ajax({
-                url: '/Admin/AddUserDto',
+                url: '/Admin/AddUser',
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -1286,6 +1286,7 @@
                     if (response.isSuccess) {
                         notify(true, response.result, true);
                         getAllUserList();
+                        $('#addUserModal').modal('hide');
                     }
                     else {
                         notify(false, response.errorMessages, false);
@@ -1810,6 +1811,37 @@
                 }
             });
         }
+
+        $(document).on('click', '.btnHallBookedDetails', function (e) {
+            e.preventDefault();
+
+            // Get booking data from the clicked element or its parent
+            const hallId = $(this).data('hallid');
+            const hallName = $(this).data('hallname');
+
+            // Populate modal with data (optional)
+            $('#bookingDetailsModal .modal-title').text('Booking Details - ' + hallName);
+
+            $.ajax({
+                url: '/UserBooking/UserBookingDetailsById',
+                type: 'GET',
+                data: { HallId: hallId },
+                dataType: 'HTML',
+                beforeSend: function () {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    $('#partialBookedHallDetails').html('');
+                    $('#partialBookedHallDetails').html(response);
+                    $('#bookingDetailsModal').modal('show');
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+            });
+
+
+        });
         
     }
     // #endregion :: users Booking list

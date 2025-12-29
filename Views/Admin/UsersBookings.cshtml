@@ -25,28 +25,28 @@
         <div class="stats-controls-row">
             <div class="stats-bar">
                 <div class="stat-compact">
-                    <span class="stat-number-compact">156</span>
+                    <span class="stat-number-compact">0</span>
                     <span class="stat-label-compact">Total</span>
                 </div>
                 <div class="stat-compact">
-                    <span class="stat-number-compact">89</span>
+                    <span class="stat-number-compact">0</span>
                     <span class="stat-label-compact">Confirmed</span>
                 </div>
                 <div class="stat-compact">
-                    <span class="stat-number-compact">23</span>
+                    <span class="stat-number-compact">0</span>
                     <span class="stat-label-compact">Pending</span>
                 </div>
                 <div class="stat-compact">
-                    <span class="stat-number-compact">44</span>
+                    <span class="stat-number-compact">0</span>
                     <span class="stat-label-compact">Completed</span>
                 </div>
             </div>
 
             <!-- Advanced Search Button -->
-            <button class="advanced-search-btn" id="openAdvancedSearch">
+            @* <button class="advanced-search-btn" id="openAdvancedSearch">
                 <i class="fas fa-sliders-h"></i>
                 Advanced Search
-            </button>
+            </button> *@
         </div>        
     </div>
 
@@ -240,5 +240,36 @@
         <button class="btn-apply" id="applyFilters">
             <i class="fas fa-check"></i> Apply Filters
         </button>
+    </div>
+</div>
+
+
+<!-- Detailed Booking Modal -->
+<div class="modal fade" id="bookingDetailsModal" tabindex="-1" aria-labelledby="bookingDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingDetailsModalLabel">
+                    <i class="fas fa-info-circle text-primary"></i>
+                    <span id="modalBookingId">Booking Details</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="partialBookedHallDetails">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Close
+                </button>
+                @* <button type="button" class="btn btn-primary" id="modalDownloadBtn">
+                    <i class="fas fa-download"></i> Download Receipt
+                </button>
+                <button type="button" class="btn btn-success" id="modalPrintBtn">
+                    <i class="fas fa-print"></i> Print Details
+                </button> *@
+            </div>
+        </div>
     </div>
 </div>

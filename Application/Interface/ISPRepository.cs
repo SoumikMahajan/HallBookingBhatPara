@@ -39,6 +39,7 @@ namespace HallBookingBhatPara.Application.Interface
         Task<List<BookedListDTO>> PublicUserHallBookedDetailsAsync(long loggedInRoleId,long loggedInStackId);
 
 		Task<List<UserListDTO>> GetAllUserListForHallBooking();
+		Task<BookedDetailsByIdDTO> BookingDetailsByIdAsync(long HallId);
 
 		#endregion
 
@@ -51,6 +52,7 @@ namespace HallBookingBhatPara.Application.Interface
         Task<List<DropDownListDTO>> UserRoleAsync();
         Task<string> ApproveHallAsync(long BookingId, string BookingReferenceId,long UpdateBy,long loggedInRoleId,string EntryIP);
 		Task<string> RejectHallAsync(long BookingId, string BookingReferenceId, long UpdateBy, long loggedInRoleId, string EntryIP);
+        Task<long> AdminUserAddAsync(AddUserDto model);
 
 		#endregion
 	}

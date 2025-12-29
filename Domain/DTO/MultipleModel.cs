@@ -28,6 +28,7 @@ namespace HallBookingBhatPara.Domain.DTO
         public PaymentSummeryDTO paymentSummeryDTO { get; set; }
         public List<BookedListDTO> bookedListDTOs { get; set; }
         public List<UserListDTO> userListDTOs { get; set; } = new();
+        public BookedDetailsByIdDTO bookedDetailsById { get; set; } = new();
 		#endregion
 	}
 }

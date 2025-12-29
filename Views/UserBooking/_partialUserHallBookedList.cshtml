@@ -7,13 +7,14 @@
             <div class="bookings-grid" id="bookingsGrid">
                 @foreach (var item in Model.bookedListDTOs)
                 {
+                    var HallName = $"{@item.category_name} - {item.hall_name} ";
                     if (item.booking_process_status_id == 5)
                     {
                         <!-- Booking Card  - Confirmed -->
                         <div class="booking-card" data-booking-id="@item.booking_reference_id">
                             <div class="booking-list-header">
                                 <div class="booking-id">#@item.booking_reference_id</div>
-                                <h4 class="hall-name">@item.category_name - @item.hall_name</h4>
+                                <h4 class="hall-name">@HallName</h4>
                                 <div class="booking-status status-confirmed">@item.booking_process_name.ToUpper()</div>
                             </div>
 
@@ -42,7 +43,7 @@
                                 </div>
 
                                 <div class="booking-actions">
-                                    <button class="action-btn-bookinglist btn-view">
+                                    <button class="action-btn-bookinglist btn-view btnHallBookedDetails" data-hallid="@item.hall_booking_id_pk" data-hallname="@HallName">
                                         <i class="fas fa-eye"></i> View Details
                                     </button>
                                     <button class="action-btn-bookinglist btn-download">
@@ -58,7 +59,7 @@
                         <div class="booking-card" data-booking-id="@item.booking_reference_id">
                             <div class="booking-list-header">
                                 <div class="booking-id">#@item.booking_reference_id</div>
-                                <h4 class="hall-name">@item.category_name - @item.hall_name</h4>
+                                <h4 class="hall-name">@HallName</h4>
                                 <div class="booking-status status-approved">@item.booking_process_name.ToUpper()</div>
                             </div>
                 
@@ -94,10 +95,10 @@
                                 </div>
                     
                                 <div class="booking-actions">
-                                    <button class="action-btn-bookinglist btn-view">
+                                    <button class="action-btn-bookinglist btn-view btnHallBookedDetails" data-hallid="@item.hall_booking_id_pk" data-hallname="@HallName">
                                         <i class="fas fa-eye"></i> View Details
                                     </button>
-                                    <button class="action-btn-bookinglist btn-payment">
+                                    <button class="action-btn-bookinglist btn-payment" data-hallid="@item.hall_booking_id_pk">
                                         <i class="fas fa-eye"></i> Make Payment
                                     </button>                                   
                                 </div>
@@ -111,7 +112,7 @@
                         <div class="booking-card" data-booking-id="@item.booking_reference_id">
                             <div class="booking-list-header">
                                 <div class="booking-id">#@item.booking_reference_id</div>
-                                <h4 class="hall-name">@item.category_name - @item.hall_name</h4>
+                                <h4 class="hall-name">@HallName</h4>
                                 <div class="booking-status status-pending">@item.booking_process_name.ToUpper()</div>
                             </div>
                 
@@ -140,7 +141,7 @@
                                 </div>
                     
                                 <div class="booking-actions">
-                                    <button class="action-btn-bookinglist btn-view">
+                                    <button class="action-btn-bookinglist btn-view btnHallBookedDetails" data-hallid="@item.hall_booking_id_pk" data-hallname="@HallName">
                                         <i class="fas fa-eye"></i> View Details
                                     </button>
                                     @* <button class="action-btn-bookinglist btn-cancel">
@@ -156,7 +157,7 @@
                         <div class="booking-card" data-booking-id="@item.booking_reference_id">
                             <div class="booking-list-header">
                                 <div class="booking-id">#@item.booking_reference_id</div>
-                                <h4 class="hall-name">@item.category_name - @item.hall_name</h4>
+                                <h4 class="hall-name">@HallName</h4>
                                 <div class="booking-status status-cancelled">@item.booking_process_name.ToUpper()</div>
                             </div>
 
@@ -185,7 +186,7 @@
                                 </div>
 
                                 <div class="booking-actions">
-                                    <button class="action-btn-bookinglist btn-view">
+                                    <button class="action-btn-bookinglist btn-view btnHallBookedDetails" data-hallid="@item.hall_booking_id_pk" data-hallname="@HallName">
                                         <i class="fas fa-eye"></i> View Details
                                     </button>
                                     @* <button class="action-btn-bookinglist btn-cancel">
@@ -207,9 +208,6 @@ else
     <div class="empty-state" id="emptyState">
         <i class="fas fa-calendar-times"></i>
         <h3>No Bookings Found</h3>
-        <p>You haven't made any bookings yet. Start by searching for available halls.</p>
-        <button class="search-new-btn">
-            <i class="fas fa-search"></i> Search Halls
-        </button>
+        <p>You haven't made any bookings yet. Start by searching for available halls.</p>       
     </div>
 }

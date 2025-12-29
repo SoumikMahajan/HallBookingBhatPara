@@ -60,12 +60,11 @@
                     </tr>
                 </thead>
                 <tbody id="partialUserList">
-                    
                 </tbody>
             </table>
-        </div>       
+        </div>
 
-    </div>    
+    </div>
 
 </div>
 
@@ -126,17 +125,34 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-floating">
-                                <select class="form-select" id="role">
-                                    <option value="">Select Role</option>
-                                    <option value="1">Admin</option>
-                                    <option value="2">public</option>                                    
-                                </select>
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Counter Admin"))
+                                {
+                                    <select class="form-select" id="role">
+                                        <!option value="">Select Role</!option>
+                                        @foreach (var item in Model.dropDownListDTOs.Where(x => x.Id == 3))
+                                        {
+                                            <!option value="@item.Id" selected>@item.Name</!option>
+                                        }
+                                    </select>
+                                }
+                                else
+                                {
+
+                                    <select class="form-select" id="role">
+                                        <!option value="">Select Role</!option>
+                                        @foreach (var item in Model.dropDownListDTOs)
+                                        {
+                                            <!option value="@item.Id">@item.Name</!option>
+                                        }
+                                    </select>
+                                }
+
                                 <label for="role">Role</label>
                                 <div class="invalid-feedback">Please select role.</div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-floating">                                
+                            <div class="form-floating">
                                 <input type="date" class="form-control" id="dob" placeholder="Date of Birth">
                                 <label for="dob"><i class="fas fa-calendar-alt"></i>Date of Birth</label>
                                 <div class="invalid-feedback">Please enter birthdate.</div>
@@ -182,13 +198,13 @@
                                 <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" autocomplete="off">
                                 <div class="invalid-feedback">Passwords do not match.</div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
-                    
+
                 </form>
             </div>
 
-            <div class="modal-footer"> 
+            <div class="modal-footer">
                 <button class="btn btn-primary" id="adminAdduser" type="button">
                     <i class="fas fa-user-plus me-2"></i>Create Account
                 </button>
@@ -211,8 +227,6 @@
 
             <div class="modal-body">
                 <form id="updateUserForm">
-                    
-
                 </form>
             </div>
 
@@ -238,7 +252,7 @@
 
             <div class="modal-body">
                 <form id="updateUserPasswordForm">
-                    <div class="row g-1">                       
+                    <div class="row g-1">
                         <div class="col-md-6">
                             <input type="text" class="form-control" id="passChangeUserid" value="" hidden>
                             <input type="text" class="form-control" id="passChangeEmailId" value="" hidden>
@@ -259,7 +273,7 @@
                             </div>
                         </div>
                     </div>
-                </form> 
+                </form>
             </div>
 
             <div class="modal-footer">

@@ -37,6 +37,7 @@
 		public string BasePassword { get; set; } = string.Empty;		
 		public string EntryIP { get; set; } = string.Empty;
         public long CreatedBy { get; set; } = 0;
+		public long StackRoleId { get; set; } = 0;
 	}
 
 	public class EditUserDto

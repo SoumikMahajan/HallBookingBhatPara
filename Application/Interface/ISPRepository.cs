@@ -53,6 +53,8 @@ namespace HallBookingBhatPara.Application.Interface
         Task<string> ApproveHallAsync(long BookingId, string BookingReferenceId,long UpdateBy,long loggedInRoleId,string EntryIP);
 		Task<string> RejectHallAsync(long BookingId, string BookingReferenceId, long UpdateBy, long loggedInRoleId, string EntryIP);
         Task<long> AdminUserAddAsync(AddUserDto model);
+		Task<bool> IsEmailExistsAsync(string email);
+        Task<bool> IsMobileExistsAsync(string mobile);
 
 		#endregion
 	}

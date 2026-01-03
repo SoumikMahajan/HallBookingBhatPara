@@ -191,3 +191,19 @@ $('.modal').on('show.bs.modal', function () {
     // Remove focus from any element during modal transition
     $(document.activeElement).trigger('blur');
 });
+
+function debounce(fn, delay = 600) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidMobile(mobile) {   
+    return /^[6-9]\d{9}$/.test(mobile);
+}

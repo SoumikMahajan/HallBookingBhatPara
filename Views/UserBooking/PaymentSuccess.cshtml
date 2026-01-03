@@ -71,11 +71,11 @@
 
                     <!-- Action Buttons -->
                     <div class="d-grid gap-3">
-                        <a href="@Url.Action("BookingDetails", "UserBooking", new { id = Model.BookingId })"
+                        @* <a href="@Url.Action("BookingDetails", "UserBooking", new { id = Model.BookingId })"
                            class="btn btn-primary btn-lg">
                             <i class="fas fa-file-alt me-2"></i>View Booking Details
-                        </a>
-                        <a href="@Url.Action("MyBookings", "UserBooking")"
+                        </a> *@
+                        <a href="@Url.Action("BookingList", "UserBooking")"
                            class="btn btn-outline-secondary">
                             <i class="fas fa-list me-2"></i>View All Bookings
                         </a>

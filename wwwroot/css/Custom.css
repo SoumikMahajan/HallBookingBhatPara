@@ -2931,6 +2931,17 @@ Main Content
     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
+.table-btn-approve {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed, #6d28d9);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+.table-btn-reject {
+    background: linear-gradient(135deg, #ef4444, #dc2626, #b91c1c);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
 .table-action-btn:hover {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);

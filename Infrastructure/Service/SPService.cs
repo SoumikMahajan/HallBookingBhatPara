@@ -8,6 +8,7 @@ using HallBookingBhatPara.Domain.Utility;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace HallBookingBhatPara.Infrastructure.Repository
 {
@@ -730,7 +731,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 					var parameters = new DynamicParameters();
 					parameters.Add("@UserName", $"{model.FirstName} {model.LastName}", DbType.String);
 					parameters.Add("@Mobile", model.Phone, DbType.String);
-					parameters.Add("@Email", model.Email, DbType.String);
+					parameters.Add("@Email", model.Email.ToLower(), DbType.String);
 					parameters.Add("@EntryIp", model.EntryIP, DbType.String);
 					parameters.Add("@Gender", model.Gender, DbType.Int64);
 					parameters.Add("@DdlRoleId", model.Role, DbType.Int32);
@@ -757,6 +758,37 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 				throw;
 			}
 
+		}
+
+		public async Task<bool> IsEmailExistsAsync(string email)
+		{
+			using var connection = new SqlConnection(_connectionString);
+
+			var parameters = new DynamicParameters();
+			parameters.Add("@Email", email.ToLower(), DbType.String);
+			parameters.Add("@OperationId", 16, DbType.Int32);
+
+
+			return await connection.ExecuteScalarAsync<bool>(
+		        "dbo.Bhatpara_HallBooking_Users",
+		        parameters,
+		        commandType: CommandType.StoredProcedure
+	        );
+		}
+		public async Task<bool> IsMobileExistsAsync(string mobile)
+		{
+			using var connection = new SqlConnection(_connectionString);
+
+			var parameters = new DynamicParameters();
+			parameters.Add("@Mobile", mobile, DbType.String);
+			parameters.Add("@OperationId", 17, DbType.Int32);
+
+
+			return await connection.ExecuteScalarAsync<bool>(
+				"dbo.Bhatpara_HallBooking_Users",
+				parameters,
+				commandType: CommandType.StoredProcedure
+			);
 		}
 
 		#endregion

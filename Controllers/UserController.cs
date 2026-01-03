@@ -95,7 +95,21 @@ namespace HallBookingBhatPara.Controllers
                 return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
             }
 
-            model.EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
+			var emailExists = await _unitOfWork.SPRepository.IsEmailExistsAsync(model.Email);
+
+			if (emailExists)
+			{
+				return Json(ResponseService.ErrorResponse<string>("Email address already exists."));
+			}
+
+			var phoneExists = await _unitOfWork.SPRepository.IsMobileExistsAsync(model.Phone);
+
+			if (phoneExists)
+			{
+				return Json(ResponseService.ErrorResponse<string>("Phone number already exists."));
+			}
+
+			model.EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
 
             model.CreatedBy = 1;
 

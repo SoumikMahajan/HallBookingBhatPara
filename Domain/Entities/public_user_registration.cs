@@ -23,6 +23,6 @@ namespace HallBookingBhatPara.Domain.Entities
         public string? address { get; set; }
         public string? city { get; set; }
         public string? pin { get; set; }
-		public long entry_by_login_id_fk { get; set; }
+		public long? entry_by_login_id_fk { get; set; }
 	}
 }

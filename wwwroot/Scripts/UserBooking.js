@@ -848,19 +848,33 @@
                     $(".loader").css("display", "flex");
                     xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
                 },
-                success: function (data) {
+                success: function (response) {
                     //console.log(data);
                     $(".loader").css("display", "none");
-                    if (data.isSuccess) {
-                        notify(true, "Hall Booked Successfully", true);
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 3000);
+                    if (response.isSuccess) {                       
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Booking Submitted Successfully!',
+                            html: response.result || 'booking has been submitted.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#28a745',
+                            allowOutsideClick: false,
+                            customClass: {
+                                popup: 'booking-success-popup'
+                            },
+                            timer: 10000,
+                            timerProgressBar: true
+                        }).then((result) => {
+                            // Redirect if user clicked OK or timer expired
+                            if (result.isConfirmed || result.dismiss === Swal.DismissReason.timer) {
+                                window.location.href = "/Admin/UsersBookings";
+                            }
+                        });
 
                     } else {
                         // Handle error from server
-                        const errorMessage = data.errorMessages ||
-                            data.message ||
+                        const errorMessage = response.errorMessages ||
+                            response.message ||
                             "Failed to create booking. Please try again.";
 
                         notify(false, errorMessage, true);
@@ -1185,6 +1199,141 @@
         });
 
 
+        $(document).on('click', '.btn-payment', function (e) {
+            e.preventDefault();
+            const hallbookingId = $(this).data('hallbooking-id'); 
+            const HallRefId = $(this).data('hallbooking-refid'); 
+            const submitBtn = $(this);
+            const originalText = submitBtn.html();
+
+            // Show SweetAlert confirmation dialog
+            Swal.fire({
+                title: 'Confirm Payment',
+                html: `
+                    <div style="text-align: left; padding: 10px;">
+                        <p><strong>Booking Reference:</strong> ${HallRefId}</p>
+                        <p style="margin-top: 15px;">You are about to proceed with the payment for your hall booking.</p>
+                        <p style="margin-top: 10px; color: #666;">Please ensure all booking details are correct before proceeding.</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Proceed to Payment',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'payment-confirmation-popup'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // User confirmed, proceed with payment
+                    submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Payment Processing...')
+                        .prop('disabled', true);
+
+                    HallBookingPaymentProcess(hallbookingId, HallRefId, submitBtn, originalText);
+                }
+            });
+        });
+
+        function HallBookingPaymentProcess(hallbookingId, HallRefId, submitBtn, originalText) {
+            $.ajax({
+                url: '/UserBooking/UserHallBookingPayment',
+                type: 'POST',
+                data: { HallBookingId: hallbookingId, HallReferenceId: HallRefId },
+                //dataType: 'json',
+                beforeSend: function (xhr) {
+                    $(".loader").css("display", "flex");
+                },
+                success: function (response) {
+                    $(".loader").css("display", "none");
+                    if (response.isSuccess && response.result.payment_session_id) {                        
+                        initiatePayment(response.result.payment_session_id, submitBtn, originalText);
+
+                    } else {                        
+                        const errorMessage = response.errorMessages ||
+                            response.message ||
+                            "Failed to create booking. Please try again.";
+
+                        notify(false, errorMessage, true);
+                        submitBtn.html(originalText).prop('disabled', false);                       
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    $(".loader").css("display", "none");
+
+                    let errorMessage = "An error occurred while processing your booking.";
+
+                    if (status === "timeout") {
+                        errorMessage = "Request timeout. Please check your connection and try again.";
+                    } else if (xhr.status === 400) {
+                        errorMessage = "Invalid booking data. Please check all fields.";
+                    } else if (xhr.status === 500) {
+                        errorMessage = "Server error. Please try again or contact support.";
+                    } else if (xhr.status === 0) {
+                        errorMessage = "Network error. Please check your internet connection.";
+                    }
+
+                    // Try to parse error response
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.errorMessages) {
+                            errorMessage = response.errorMessages;
+                        }
+                    } catch (e) {
+                        console.error("Could not parse error response");
+                    }
+
+                    notify(false, errorMessage, true);
+                    submitBtn.html(originalText).prop('disabled', false);
+                },
+                complete: function () {
+                    $(".loader").css("display", "none");
+                }
+
+            });
+        }
+
+        function initiatePayment(paymentSessionId, submitBtn, originalText) {
+            // Check if SDK is initialized
+            if (!isSDKInitialized || !cashfree) {
+                notify(false, "Payment system not ready. Please refresh the page.", true);
+                submitBtn.html(originalText).prop('disabled', false);
+                return;
+            }
+
+            const checkoutOptions = {
+                paymentSessionId: paymentSessionId,
+                redirectTarget: "_self" // Redirects in same window
+            };
+
+            // Open Cashfree checkout
+            cashfree.checkout(checkoutOptions).then(function (result) {
+                if (result.error) {
+                    console.error("Cashfree checkout error:", result.error);
+
+                    // User-friendly error message
+                    let errorMsg = "Payment initialization failed.";
+                    if (result.error.message) {
+                        errorMsg = result.error.message;
+                    }
+
+                    notify(false, errorMsg, true);
+                    submitBtn.html(originalText).prop('disabled', false);
+                }
+
+                if (result.redirect) {
+                    console.log("Redirecting to Cashfree checkout...");
+                    // Don't reset button - user is being redirected
+                }
+            }).catch(function (error) {
+                console.error("Cashfree checkout exception:", error);
+                notify(false, "Unable to open payment page. Please try again.", true);
+                submitBtn.html(originalText).prop('disabled', false);
+            });
+        }
     }
     // #endregion :: Booking list
 

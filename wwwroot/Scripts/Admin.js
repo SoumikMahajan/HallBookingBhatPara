@@ -1340,8 +1340,7 @@
                         $('#updateUserForm').html(response);
 
                         flatpickr("#UpDob", {
-                            dateFormat: "Y-m-d",
-                            defaultDate: today
+                            dateFormat: "Y-m-d"                           
                         });
 
                         $('#editUserModal').modal('show');
@@ -1568,6 +1567,69 @@
                 }
             });
         });
+
+        function checkEmailFromServer(email) {
+            $.ajax({
+                url: '/Admin/IsEmailExits',
+                type: 'GET',
+                data: { Email: email },
+                success: function (response) {
+                    if (!response.isSuccess) {
+                        showError("#email", response.errorMessages);
+                    }
+                },
+                error: function () {
+                    showError("#email", "Unable to validate email right now.");
+                }
+            });
+        }
+
+        const debouncedEmailCheck = debounce(function () {
+            const email = $("#email").val().trim();
+
+            if (email === "") return;
+
+            if (!isValidEmail(email)) {
+                showError("#email", "Enter a valid email address.");
+                return;
+            }
+
+            checkEmailFromServer(email);
+        }, 700);
+
+        $(document).on('input', '#email', debouncedEmailCheck);
+
+        function checkMobileFromServer(mobile) {
+            $.ajax({
+                url: '/Admin/IsMobileExits',
+                type: 'GET',
+                data: { Mobile: mobile },
+                success: function (response) {
+                    if (!response.isSuccess) {
+                        showError("#phone", response.errorMessages);
+                    }
+                },
+                error: function () {
+                    showError("#phone", "Unable to validate mobile number right now.");
+                }
+            });
+        }       
+
+        const debouncedMobileCheck = debounce(function () {
+            const phone = $("#phone").val().trim();
+
+            if (phone === "") return;
+
+            if (!isValidMobile(phone)) {
+                showError("#phone", "Enter a valid mobile Number.");
+                return;
+            }
+
+            checkMobileFromServer(phone);
+        }, 700);
+
+        $(document).on('input', '#phone', debouncedMobileCheck);
+       
     }
     // #endregion :: users manage list
 

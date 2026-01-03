@@ -2,11 +2,13 @@
 using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
 using HallBookingBhatPara.Domain.DTO.User;
+using HallBookingBhatPara.Domain.Entities;
 using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Infrastructure.Service;
 using HallBookingBhatPara.Model.Validator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Threading.Tasks;
 
 namespace HallBookingBhatPara.Controllers
@@ -466,6 +468,20 @@ namespace HallBookingBhatPara.Controllers
 				return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
 			}
 
+            var emailExists = await _unitOfWork.SPRepository.IsEmailExistsAsync(model.Email);
+
+			if (emailExists)
+			{
+				return Json(ResponseService.ErrorResponse<string>("Email address already exists."));
+			}
+
+            var phoneExists = await _unitOfWork.SPRepository.IsMobileExistsAsync(model.Phone);
+
+			if (phoneExists)
+			{
+				return Json(ResponseService.ErrorResponse<string>("Phone number already exists."));
+			}
+
 			model.EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
 
 			model.CreatedBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
@@ -485,6 +501,40 @@ namespace HallBookingBhatPara.Controllers
 
             return Json(ResponseService.SuccessResponse<object>("User Added Successful!"));
 
+		}
+
+        public async Task<IActionResult> IsEmailExits(string Email)
+        {
+            if (string.IsNullOrEmpty(Email))
+            {
+				return Json(ResponseService.BadRequestResponse<string>("Email Can not be empty"));
+			}
+
+			var emailExists = await _unitOfWork.SPRepository.IsEmailExistsAsync(Email);
+
+			if (emailExists)
+			{
+				return Json(ResponseService.ErrorResponse<string>("Email already exists."));
+			}
+
+            return Json(ResponseService.SuccessResponse<string>(""));
+		}
+
+		public async Task<IActionResult> IsMobileExits(string Mobile)
+		{
+			if (string.IsNullOrEmpty(Mobile))
+			{
+				return Json(ResponseService.BadRequestResponse<string>("Mobile Can not be empty"));
+			}
+
+			var mobileExists = await _unitOfWork.SPRepository.IsMobileExistsAsync(Mobile);
+
+			if (mobileExists)
+			{
+				return Json(ResponseService.ErrorResponse<string>("Mobile Number already exists."));
+			}
+
+			return Json(ResponseService.SuccessResponse<string>(""));
 		}
 
 		public async Task<IActionResult> GetUserById(long UserId,int roleId)

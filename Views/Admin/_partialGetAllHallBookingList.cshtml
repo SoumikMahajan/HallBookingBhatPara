@@ -21,6 +21,13 @@
                 </div>
             </td>
             <td>
+                <div class="table-user-info">
+                    <strong>@item.user_name</strong>
+                    <small>@item.email</small>
+                    <small>+91 @item.mobile</small>
+                </div>
+            </td>
+            <td>
                 <div class="table-hall-info">
                     <strong>@item.category_name (@item.hall_name)</strong>
                     @if (!string.IsNullOrEmpty(item.floor_name))

@@ -300,7 +300,11 @@ namespace HallBookingBhatPara.Controllers
 				return Json(ResponseService.InternalServerResponse<string>("Failed."));
 			}
 
-			return Json(ResponseService.SuccessResponse<string>("Success."));
+			return Json(ResponseService.SuccessResponse<string>(
+				$"Hall has been booked successfully!<br><br>" +
+				$"<strong>Booking ID:</strong> {bookingId}<br><br>" +
+				$"Please wait for final approval from the admin. You will be notified once your booking is confirmed."
+			));
 
 		}
 		#endregion
@@ -341,6 +345,30 @@ namespace HallBookingBhatPara.Controllers
 
 			return PartialView("_partialHallBookedDetailsById", mm);
 
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> UserHallBookingPayment(long HallBookingId,string HallReferenceId)
+		{
+			if (HallBookingId <= 0)
+				return Json(ResponseService.BadRequestResponse<string>("Booking Id can not be Empty"));
+			if (string.IsNullOrEmpty(HallReferenceId))
+				return Json(ResponseService.BadRequestResponse<string>("Booking Id can not be Empty"));
+
+			//other code to get and save Payment 
+
+			//Cashfree Payment Integration			
+			var orderResponse = await CreateCashfreeOrderAsync(orderId: HallReferenceId);
+
+			if (orderResponse != null && !string.IsNullOrEmpty(orderResponse.PaymentSessionId))
+			{
+				// Log order creation for audit trail
+				await _logService.LogCustomAsync($"Cashfree order created. OrderId: {orderResponse.OrderId}, SessionId: {orderResponse.PaymentSessionId}");
+				return Json(ResponseService.SuccessResponse<CreateOrderResponse>(orderResponse));
+			}
+
+			// Rollback database changes if order creation fails
+			return Json(ResponseService.ErrorResponse<string>("Failed to payment. Please try again."));
 		}
 
 		#endregion

@@ -60,7 +60,12 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task AddAsync(T entity)
+		public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter)
+		{
+			return await dbSet.AnyAsync(filter);
+		}
+
+		public async Task AddAsync(T entity)
         {
             await dbSet.AddAsync(entity);
             await SaveAsync();

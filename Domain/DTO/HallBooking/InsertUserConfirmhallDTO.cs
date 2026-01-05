@@ -27,6 +27,8 @@
 		public string fullName { get; set; } = string.Empty;
 		public string email { get; set; } = string.Empty;
 		public string phone { get; set; } = string.Empty;
+        public long userId { get; set; }
+		public long userRoleId { get; set; }
 		public long eventType { get; set; }
 		public string eventDate { get; set; } = string.Empty;
 		public string EntryIP { get; set; } = string.Empty;

@@ -61,5 +61,8 @@
 		public string user_name { get; set; } = string.Empty;
 		public string email { get; set; } = string.Empty;
 		public string mobile { get; set; } = string.Empty;
+		public string booked_by_admin_name { get; set; } = string.Empty;
+		public string booked_by_admin_email { get; set; } = string.Empty;
+		public string booked_by_admin_mobile { get; set; } = string.Empty;
 	}
 }

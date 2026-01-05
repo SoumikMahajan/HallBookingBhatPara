@@ -2,343 +2,340 @@
 using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
 using HallBookingBhatPara.Domain.DTO.User;
-using HallBookingBhatPara.Domain.Entities;
 using HallBookingBhatPara.Domain.Utility;
 using HallBookingBhatPara.Infrastructure.Service;
 using HallBookingBhatPara.Model.Validator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Threading.Tasks;
 
 namespace HallBookingBhatPara.Controllers
 {
-    [Authorize(Roles = "Super Admin,Admin,Dev,Counter Admin")]
-    public class AdminController : Controller
-    {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ITokenProvider _tokenProvider;
-
-
-        public AdminController(IUnitOfWork unitOfWork, ITokenProvider tokenProvider)
-        {
-            _unitOfWork = unitOfWork;
-            _tokenProvider = tokenProvider;
-        }
-
-        #region :: Category        
-        public IActionResult CategoryList()
-        {
-            return View();
-
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddCategory(string categoryName)
-        {
-            if (string.IsNullOrEmpty(categoryName))
-            {
-                return Json(ResponseService.BadRequestResponse<string>("Category Name can not null or empty"));
-            }
-            var response = await _unitOfWork.SPRepository.AddHallCategoryAsync(categoryName);
-
-            if (response == 0)
-            {
-                return Json(ResponseService.InternalServerResponse<string>("Insert Failed."));
-            }
-
-            return Json(ResponseService.SuccessResponse<string>("Category Insert Successfully"));
-
-        }
-        public async Task<IActionResult> GetAllCategoryList()
-        {
-            var categoryList = await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1);
-            if (categoryList == null || !categoryList.Any())
-            {
-                return Json(ResponseService.NotFoundResponse<string>("No Category Found."));
-            }
-            return Json(ResponseService.SuccessResponse(categoryList));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateCategory(long categoryId, string categoryName)
-        {
-            if (categoryId <= 0)
-                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
-            if (string.IsNullOrEmpty(categoryName))
-                return Json(ResponseService.BadRequestResponse<string>("Category Name can not null or empty"));
-
-            var updated = await _unitOfWork.CategoryMasterRepository.UpdateAsync(categoryId, categoryName);
-
-            if (updated)
-                return Json(ResponseService.SuccessResponse<string>("Category updated successfully."));
-            else
-                return Json(ResponseService.InternalServerResponse<string>("Update failed. Record may not exist."));
-
-        }
-        #endregion
-
-        #region :: SubCategory       
-        public async Task<IActionResult> SubCategoryList()
-        {
-            MultipleModel mm = new();
-            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
-                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
-                             .ToList();
-
-            mm.dropDownListDTOs = dropDownList;
-            return View(mm);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddSubCategory([FromForm] InsertSubCategoryDTO model)
-        {
-            if (model.CategoryId == 0)
-                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
-
-            if (string.IsNullOrEmpty(model.SubCategoryName))
-                return Json(ResponseService.BadRequestResponse<string>("SubCategory Name can not null or empty"));
-            if (model.fileUpload == null || model.fileUpload.Length == 0)
-                return Json(ResponseService.BadRequestResponse<string>("Profile Picture can not null or empty"));
-
-            model.CreatedBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
-            if (model.fileUpload != null && model.fileUpload.Length > 0)
-            {
-                model.ImageData = await FileHelper.ConvertToByteArrayAsync(model.fileUpload);
-            }
-
-            var response = await _unitOfWork.SPRepository.AddHallSubCategoryAsync(model);
-
-            if (response == 0)
-            {
-                return Json(ResponseService.InternalServerResponse<string>("SubCategory Insert Failed."));
-            }
-
-            return Json(ResponseService.SuccessResponse<string>("SubCategory Insert Successfully"));
-
-        }
-
-        public async Task<IActionResult> GetAllSubCategoryList()
-        {
-            var SubcategoryList = await _unitOfWork.SPRepository.GetALlSubcategorisAsync();
-            if (SubcategoryList == null || !SubcategoryList.Any())
-            {
-                return Json(ResponseService.NotFoundResponse<string>("No SubCategory Found."));
-            }
-
-            // Convert images using global FileHelper
-            foreach (var item in SubcategoryList)
-            {
-                item.hall_image_base64 = FileHelper.ConvertToBase64Image(item.hall_image);
-            }
-
-
-            return Json(ResponseService.SuccessResponse(SubcategoryList));
-        }
-
-        public async Task<IActionResult> GetSubCategoryById(long SubCategoryId)
-        {
-            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
-                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
-                             .ToList();
-
-            var SubCategory = await _unitOfWork.SubCategoryMasterRepository.GetAsync(h => h.hall_id_pk == SubCategoryId);
-            MultipleModel mm = new();
-
-            mm.dropDownListDTOs = dropDownList;
-            mm.hall_Master = SubCategory;
-
-            return PartialView("_partialEditSubCategory", mm);
-
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateSubCategory([FromForm] UpdateSubCategoryDTO model)
-        {
-            if (model.Subcategoryid <= 0)
-                return Json(ResponseService.BadRequestResponse<string>("SubCategoryId can not null or empty or 0"));
-
-            if (model.CategoryId == 0)
-                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
-
-            if (string.IsNullOrEmpty(model.SubCategoryName))
-                return Json(ResponseService.BadRequestResponse<string>("SubCategory Name can not null or empty"));
-
-            if (model.HasNewImage)
-            {
-                if (model.fileUpload == null || model.fileUpload.Length == 0)
-                    return Json(ResponseService.BadRequestResponse<string>("Image file is required."));
-
-                model.ImageData = await FileHelper.ConvertToByteArrayAsync(model.fileUpload);
-            }
-
-            bool updated = await _unitOfWork.SubCategoryMasterRepository.UpdateAsync(model);
-
-            if (updated)
-                return Json(ResponseService.SuccessResponse<string>("SubCategory updated successfully."));
-            else
-                return Json(ResponseService.InternalServerResponse<string>("Update failed. Record may not exist."));
-
-        }
+	[Authorize(Roles = "Super Admin,Admin,Dev,Counter Admin")]
+	public class AdminController : Controller
+	{
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly ITokenProvider _tokenProvider;
+
+
+		public AdminController(IUnitOfWork unitOfWork, ITokenProvider tokenProvider)
+		{
+			_unitOfWork = unitOfWork;
+			_tokenProvider = tokenProvider;
+		}
+
+		#region :: Category        
+		public IActionResult CategoryList()
+		{
+			return View();
+
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddCategory(string categoryName)
+		{
+			if (string.IsNullOrEmpty(categoryName))
+			{
+				return Json(ResponseService.BadRequestResponse<string>("Category Name can not null or empty"));
+			}
+			var response = await _unitOfWork.SPRepository.AddHallCategoryAsync(categoryName);
+
+			if (response == 0)
+			{
+				return Json(ResponseService.InternalServerResponse<string>("Insert Failed."));
+			}
+
+			return Json(ResponseService.SuccessResponse<string>("Category Insert Successfully"));
+
+		}
+		public async Task<IActionResult> GetAllCategoryList()
+		{
+			var categoryList = await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1);
+			if (categoryList == null || !categoryList.Any())
+			{
+				return Json(ResponseService.NotFoundResponse<string>("No Category Found."));
+			}
+			return Json(ResponseService.SuccessResponse(categoryList));
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateCategory(long categoryId, string categoryName)
+		{
+			if (categoryId <= 0)
+				return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+			if (string.IsNullOrEmpty(categoryName))
+				return Json(ResponseService.BadRequestResponse<string>("Category Name can not null or empty"));
+
+			var updated = await _unitOfWork.CategoryMasterRepository.UpdateAsync(categoryId, categoryName);
+
+			if (updated)
+				return Json(ResponseService.SuccessResponse<string>("Category updated successfully."));
+			else
+				return Json(ResponseService.InternalServerResponse<string>("Update failed. Record may not exist."));
+
+		}
+		#endregion
+
+		#region :: SubCategory       
+		public async Task<IActionResult> SubCategoryList()
+		{
+			MultipleModel mm = new();
+			var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+							 .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+							 .ToList();
+
+			mm.dropDownListDTOs = dropDownList;
+			return View(mm);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddSubCategory([FromForm] InsertSubCategoryDTO model)
+		{
+			if (model.CategoryId == 0)
+				return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+
+			if (string.IsNullOrEmpty(model.SubCategoryName))
+				return Json(ResponseService.BadRequestResponse<string>("SubCategory Name can not null or empty"));
+			if (model.fileUpload == null || model.fileUpload.Length == 0)
+				return Json(ResponseService.BadRequestResponse<string>("Profile Picture can not null or empty"));
+
+			model.CreatedBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
+			if (model.fileUpload != null && model.fileUpload.Length > 0)
+			{
+				model.ImageData = await FileHelper.ConvertToByteArrayAsync(model.fileUpload);
+			}
+
+			var response = await _unitOfWork.SPRepository.AddHallSubCategoryAsync(model);
+
+			if (response == 0)
+			{
+				return Json(ResponseService.InternalServerResponse<string>("SubCategory Insert Failed."));
+			}
+
+			return Json(ResponseService.SuccessResponse<string>("SubCategory Insert Successfully"));
+
+		}
+
+		public async Task<IActionResult> GetAllSubCategoryList()
+		{
+			var SubcategoryList = await _unitOfWork.SPRepository.GetALlSubcategorisAsync();
+			if (SubcategoryList == null || !SubcategoryList.Any())
+			{
+				return Json(ResponseService.NotFoundResponse<string>("No SubCategory Found."));
+			}
+
+			// Convert images using global FileHelper
+			foreach (var item in SubcategoryList)
+			{
+				item.hall_image_base64 = FileHelper.ConvertToBase64Image(item.hall_image);
+			}
+
+
+			return Json(ResponseService.SuccessResponse(SubcategoryList));
+		}
+
+		public async Task<IActionResult> GetSubCategoryById(long SubCategoryId)
+		{
+			var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+							 .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+							 .ToList();
+
+			var SubCategory = await _unitOfWork.SubCategoryMasterRepository.GetAsync(h => h.hall_id_pk == SubCategoryId);
+			MultipleModel mm = new();
+
+			mm.dropDownListDTOs = dropDownList;
+			mm.hall_Master = SubCategory;
+
+			return PartialView("_partialEditSubCategory", mm);
+
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateSubCategory([FromForm] UpdateSubCategoryDTO model)
+		{
+			if (model.Subcategoryid <= 0)
+				return Json(ResponseService.BadRequestResponse<string>("SubCategoryId can not null or empty or 0"));
+
+			if (model.CategoryId == 0)
+				return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+
+			if (string.IsNullOrEmpty(model.SubCategoryName))
+				return Json(ResponseService.BadRequestResponse<string>("SubCategory Name can not null or empty"));
+
+			if (model.HasNewImage)
+			{
+				if (model.fileUpload == null || model.fileUpload.Length == 0)
+					return Json(ResponseService.BadRequestResponse<string>("Image file is required."));
+
+				model.ImageData = await FileHelper.ConvertToByteArrayAsync(model.fileUpload);
+			}
+
+			bool updated = await _unitOfWork.SubCategoryMasterRepository.UpdateAsync(model);
+
+			if (updated)
+				return Json(ResponseService.SuccessResponse<string>("SubCategory updated successfully."));
+			else
+				return Json(ResponseService.InternalServerResponse<string>("Update failed. Record may not exist."));
+
+		}
 
-        #endregion
-
-        #region :: Hall Availability        
-        public async Task<IActionResult> AddHallAvailabilityDetails()
-        {
-            MultipleModel mm = new();
-            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
-                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
-                             .ToList();
-
-            mm.dropDownListDTOs = dropDownList;
-            return View(mm);
-        }
-
-        public async Task<IActionResult> GetSubCategoriesByCatId(long categoryId)
-        {
-            if (categoryId <= 0)
-            {
-                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
-            }
-            var SubcategoryList = (await _unitOfWork.SubCategoryMasterRepository.GetAllAsync(c => c.active_status == 1 && c.category_id_fk == categoryId))
-                        .Select(c => new DropDownListDTO { Id = c.hall_id_pk, Name = c.hall_name }).ToList();
-            if (SubcategoryList == null || !SubcategoryList.Any())
-            {
-                return Json(ResponseService.NotFoundResponse<string>("No SubCategory Found."));
-            }
-
-            return Json(ResponseService.SuccessResponse(SubcategoryList));
-        }
-
-        public async Task<IActionResult> GetFloorListBySubCatId(long SubCategoryid)
-        {
-            if (SubCategoryid <= 0)
-                return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
-            var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(SubCategoryid);
-
-            if (FloorList == null)
-                return Json(ResponseService.NotFoundResponse<string>("Something Went Wrong"));
-            if (!FloorList.Any())
-            {
-                return Json(ResponseService.SuccessResponse<string>(""));
-            }
-
-            return Json(ResponseService.SuccessResponse(FloorList));
-        }
+		#endregion
+
+		#region :: Hall Availability        
+		public async Task<IActionResult> AddHallAvailabilityDetails()
+		{
+			MultipleModel mm = new();
+			var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+							 .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+							 .ToList();
+
+			mm.dropDownListDTOs = dropDownList;
+			return View(mm);
+		}
+
+		public async Task<IActionResult> GetSubCategoriesByCatId(long categoryId)
+		{
+			if (categoryId <= 0)
+			{
+				return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+			}
+			var SubcategoryList = (await _unitOfWork.SubCategoryMasterRepository.GetAllAsync(c => c.active_status == 1 && c.category_id_fk == categoryId))
+						.Select(c => new DropDownListDTO { Id = c.hall_id_pk, Name = c.hall_name }).ToList();
+			if (SubcategoryList == null || !SubcategoryList.Any())
+			{
+				return Json(ResponseService.NotFoundResponse<string>("No SubCategory Found."));
+			}
+
+			return Json(ResponseService.SuccessResponse(SubcategoryList));
+		}
+
+		public async Task<IActionResult> GetFloorListBySubCatId(long SubCategoryid)
+		{
+			if (SubCategoryid <= 0)
+				return Json(ResponseService.BadRequestResponse<string>("CategoryId can not null or empty or 0"));
+			var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(SubCategoryid);
+
+			if (FloorList == null)
+				return Json(ResponseService.NotFoundResponse<string>("Something Went Wrong"));
+			if (!FloorList.Any())
+			{
+				return Json(ResponseService.SuccessResponse<string>(""));
+			}
+
+			return Json(ResponseService.SuccessResponse(FloorList));
+		}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddHallAvailable([FromForm] InsertHallAvailableDTO model)
-        {
-            var validator = new HallAvailableValidator();
-            var validationResult = validator.Validate(model);
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddHallAvailable([FromForm] InsertHallAvailableDTO model)
+		{
+			var validator = new HallAvailableValidator();
+			var validationResult = validator.Validate(model);
 
-            if (!validationResult.IsValid)
-            {
-                return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
-            }
+			if (!validationResult.IsValid)
+			{
+				return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
+			}
 
-            model.userClaims = _tokenProvider.GetUserClaims();
+			model.userClaims = _tokenProvider.GetUserClaims();
 
-            var IsHallAvail = await _unitOfWork.SPRepository.CheckDatesOfHallAvailAsync(model);
-            if (IsHallAvail > 0)
-            {
-                return Json(ResponseService.BadRequestResponse<string>("This Hall is already booked for the selected date."));
-            }
+			var IsHallAvail = await _unitOfWork.SPRepository.CheckDatesOfHallAvailAsync(model);
+			if (IsHallAvail > 0)
+			{
+				return Json(ResponseService.BadRequestResponse<string>("This Hall is already booked for the selected date."));
+			}
 
 
-            var response = await _unitOfWork.SPRepository.AddHallAvailableAsync(model);
+			var response = await _unitOfWork.SPRepository.AddHallAvailableAsync(model);
 
-            if (response == 0)
-            {
-                return Json(ResponseService.InternalServerResponse<string>("Add Failed."));
-            }
+			if (response == 0)
+			{
+				return Json(ResponseService.InternalServerResponse<string>("Add Failed."));
+			}
 
-            return Json(ResponseService.SuccessResponse<string>("Insert Successfully"));
+			return Json(ResponseService.SuccessResponse<string>("Insert Successfully"));
 
-        }
+		}
 
-        public async Task<IActionResult> GetAllHallAvailabilityList()
-        {
-            var HallAvailabilityList = await _unitOfWork.SPRepository.GetAllHallAvailableAsync();
-            if (HallAvailabilityList == null || !HallAvailabilityList.Any())
-            {
-                return Json(ResponseService.NotFoundResponse<string>("No Hall Found."));
-            }
+		public async Task<IActionResult> GetAllHallAvailabilityList()
+		{
+			var HallAvailabilityList = await _unitOfWork.SPRepository.GetAllHallAvailableAsync();
+			if (HallAvailabilityList == null || !HallAvailabilityList.Any())
+			{
+				return Json(ResponseService.NotFoundResponse<string>("No Hall Found."));
+			}
 
-            return Json(ResponseService.SuccessResponse(HallAvailabilityList));
-        }
+			return Json(ResponseService.SuccessResponse(HallAvailabilityList));
+		}
 
-        public async Task<IActionResult> GetHallAvailById(long hallId)
-        {
-            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
-                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
-                             .ToList();
+		public async Task<IActionResult> GetHallAvailById(long hallId)
+		{
+			var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+							 .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+							 .ToList();
 
 
 
-            var HallAvailById = await _unitOfWork.SPRepository.GetHallAvailableDetailsByIdAsync(hallId);
+			var HallAvailById = await _unitOfWork.SPRepository.GetHallAvailableDetailsByIdAsync(hallId);
 
-            var SubcategoryList = (await _unitOfWork.SubCategoryMasterRepository.GetAllAsync(c => c.active_status == 1 && c.category_id_fk == HallAvailById.category_id_pk))
-                       .Select(c => new DropDownListDTO { Id = c.hall_id_pk, Name = c.hall_name }).ToList();
+			var SubcategoryList = (await _unitOfWork.SubCategoryMasterRepository.GetAllAsync(c => c.active_status == 1 && c.category_id_fk == HallAvailById.category_id_pk))
+					   .Select(c => new DropDownListDTO { Id = c.hall_id_pk, Name = c.hall_name }).ToList();
 
-            var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(HallAvailById.hall_id_pk);
+			var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(HallAvailById.hall_id_pk);
 
-            MultipleModel mm = new()
-            {
-                dropDownListDTOs = dropDownList,
-                SubCategoryList = SubcategoryList,
-                hallAvailable = HallAvailById,
-                FloorList = FloorList
-            };
+			MultipleModel mm = new()
+			{
+				dropDownListDTOs = dropDownList,
+				SubCategoryList = SubcategoryList,
+				hallAvailable = HallAvailById,
+				FloorList = FloorList
+			};
 
-            return PartialView("_partialEditHallAvail", mm);
+			return PartialView("_partialEditHallAvail", mm);
 
-        }
+		}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateHallAvailable([FromForm] UpdateHallAvailableDTO model)
-        {
-            var validator = new UpdateHallAvailableValidator();
-            var validationResult = validator.Validate(model);
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateHallAvailable([FromForm] UpdateHallAvailableDTO model)
+		{
+			var validator = new UpdateHallAvailableValidator();
+			var validationResult = validator.Validate(model);
 
-            if (!validationResult.IsValid)
-            {
-                return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
-            }
+			if (!validationResult.IsValid)
+			{
+				return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
+			}
 
-            //var IsHallAvail = await _unitOfWork.SPRepository.CheckDatesOfHallAvailInUpdateAsync(model);
-            //if (IsHallAvail > 0)
-            //{
-            //    return Json(ResponseService.BadRequestResponse<string>("This Hall is already booked for the selected date."));
-            //}
+			//var IsHallAvail = await _unitOfWork.SPRepository.CheckDatesOfHallAvailInUpdateAsync(model);
+			//if (IsHallAvail > 0)
+			//{
+			//    return Json(ResponseService.BadRequestResponse<string>("This Hall is already booked for the selected date."));
+			//}
 
-            model.userClaims = _tokenProvider.GetUserClaims();
+			model.userClaims = _tokenProvider.GetUserClaims();
 
-            var response = await _unitOfWork.SPRepository.UpdateHallAvailableAsync(model);
+			var response = await _unitOfWork.SPRepository.UpdateHallAvailableAsync(model);
 
-            if (response <= 0)
-            {
-                return Json(ResponseService.InternalServerResponse<string>("Update Failed."));
-            }
+			if (response <= 0)
+			{
+				return Json(ResponseService.InternalServerResponse<string>("Update Failed."));
+			}
 
-            return Json(ResponseService.SuccessResponse<string>("Update Successfully"));
+			return Json(ResponseService.SuccessResponse<string>("Update Successfully"));
 
-        }
+		}
 
-        #endregion
+		#endregion
 
-        #region :: All UsersBookings Status
-        public IActionResult UsersBookings()
-        {
-            return View();
-        }
+		#region :: All UsersBookings Status
+		public IActionResult UsersBookings()
+		{
+			return View();
+		}
 
 
 		public async Task<IActionResult> GetAllHallBookingList()
@@ -366,33 +363,33 @@ namespace HallBookingBhatPara.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> ApproveBookedHall(long BookingId,string BookingReferenceId)
+		public async Task<IActionResult> ApproveBookedHall(long BookingId, string BookingReferenceId)
 		{
 
-            if (BookingId <= 0)
-            {
-                return Json(ResponseService.BadRequestResponse<string>("BookingId can not be null or 0"));
+			if (BookingId <= 0)
+			{
+				return Json(ResponseService.BadRequestResponse<string>("BookingId can not be null or 0"));
 			}
-            if (string.IsNullOrEmpty(BookingReferenceId))
-            {
+			if (string.IsNullOrEmpty(BookingReferenceId))
+			{
 				return Json(ResponseService.BadRequestResponse<string>("BookingReferenceId can not be null or empty"));
 			}
-			
+
 
 			var UpdateBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
 			var loggedInRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
 			var EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
 
 
-			var result = await _unitOfWork.SPRepository.ApproveHallAsync(BookingId,BookingReferenceId,UpdateBy,loggedInRoleId, EntryIP);
-            if (result != "SUCCESS")
-            {
-                return Json(ResponseService.InternalServerResponse<object>("Something Went Wrong. Please try again."));
-            }
+			var result = await _unitOfWork.SPRepository.ApproveHallAsync(BookingId, BookingReferenceId, UpdateBy, loggedInRoleId, EntryIP);
+			if (result != "SUCCESS")
+			{
+				return Json(ResponseService.InternalServerResponse<object>("Something Went Wrong. Please try again."));
+			}
 
 
 
-            return Json(ResponseService.SuccessResponse<object>($"This Booking Id {BookingReferenceId} is Approved Succesfully"));
+			return Json(ResponseService.SuccessResponse<object>($"This Booking Id {BookingReferenceId} is Approved Succesfully"));
 
 		}
 
@@ -430,28 +427,28 @@ namespace HallBookingBhatPara.Controllers
 		#endregion
 
 		#region :: Users List
-		public  async Task<IActionResult> UsersList()
+		public async Task<IActionResult> UsersList()
 		{
 
-            var roleList = await _unitOfWork.SPRepository.UserRoleAsync();
+			var roleList = await _unitOfWork.SPRepository.UserRoleAsync();
 
-            MultipleModel mm = new();
-            mm.dropDownListDTOs = roleList;
+			MultipleModel mm = new();
+			mm.dropDownListDTOs = roleList;
 
 			return View(mm);
 
 		}
-		
+
 		public async Task<IActionResult> GetAllUsersList()
 		{
 			MultipleModel mm = new();
 
 			var roleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
 
-            var userList = await _unitOfWork.SPRepository.GetUserListOnAdminAsync(roleId);
+			var userList = await _unitOfWork.SPRepository.GetUserListOnAdminAsync(roleId);
 
-			
-			mm.User_List_Admin = userList;			
+
+			mm.User_List_Admin = userList;
 
 			return PartialView("_partialUsersList", mm);
 
@@ -468,14 +465,14 @@ namespace HallBookingBhatPara.Controllers
 				return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
 			}
 
-            var emailExists = await _unitOfWork.SPRepository.IsEmailExistsAsync(model.Email);
+			var emailExists = await _unitOfWork.SPRepository.IsEmailExistsAsync(model.Email);
 
 			if (emailExists)
 			{
 				return Json(ResponseService.ErrorResponse<string>("Email address already exists."));
 			}
 
-            var phoneExists = await _unitOfWork.SPRepository.IsMobileExistsAsync(model.Phone);
+			var phoneExists = await _unitOfWork.SPRepository.IsMobileExistsAsync(model.Phone);
 
 			if (phoneExists)
 			{
@@ -485,28 +482,28 @@ namespace HallBookingBhatPara.Controllers
 			model.EntryIP = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
 
 			model.CreatedBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
-            model.StackRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
+			model.StackRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
 
 
 			var EncriptedPassword = PasswordHasher.ComputeSha256Hash(model.Password);
 			model.Password = EncriptedPassword;
 
-            var result = await _unitOfWork.SPRepository.AdminUserAddAsync(model);
-            if (result <= 0)
-            {
-                return Json(ResponseService.InternalServerResponse<object>("User Added failed. Please try again."));
-            }
+			var result = await _unitOfWork.SPRepository.AdminUserAddAsync(model);
+			if (result <= 0)
+			{
+				return Json(ResponseService.InternalServerResponse<object>("User Added failed. Please try again."));
+			}
 
 
 
-            return Json(ResponseService.SuccessResponse<object>("User Added Successful!"));
+			return Json(ResponseService.SuccessResponse<object>("User Added Successful!"));
 
 		}
 
-        public async Task<IActionResult> IsEmailExits(string Email)
-        {
-            if (string.IsNullOrEmpty(Email))
-            {
+		public async Task<IActionResult> IsEmailExits(string Email)
+		{
+			if (string.IsNullOrEmpty(Email))
+			{
 				return Json(ResponseService.BadRequestResponse<string>("Email Can not be empty"));
 			}
 
@@ -517,7 +514,7 @@ namespace HallBookingBhatPara.Controllers
 				return Json(ResponseService.ErrorResponse<string>("Email already exists."));
 			}
 
-            return Json(ResponseService.SuccessResponse<string>(""));
+			return Json(ResponseService.SuccessResponse<string>(""));
 		}
 
 		public async Task<IActionResult> IsMobileExits(string Mobile)
@@ -537,10 +534,10 @@ namespace HallBookingBhatPara.Controllers
 			return Json(ResponseService.SuccessResponse<string>(""));
 		}
 
-		public async Task<IActionResult> GetUserById(long UserId,int roleId)
+		public async Task<IActionResult> GetUserById(long UserId, int roleId)
 		{
-            if (UserId <= 0)
-            {
+			if (UserId <= 0)
+			{
 				return Json(ResponseService.BadRequestResponse<string>("UserId Can not be 0"));
 			}
 
@@ -554,7 +551,7 @@ namespace HallBookingBhatPara.Controllers
 			MultipleModel mm = new();
 
 			var userDetails = await _unitOfWork.SPRepository.GetUserListOnAdminAsync(UserId, roleId);
-            mm.userDetailsForAdminDTO = userDetails;
+			mm.userDetailsForAdminDTO = userDetails;
 
 
 			return PartialView("_partialUserDeatilsById", mm);
@@ -570,14 +567,14 @@ namespace HallBookingBhatPara.Controllers
 			if (!validationResult.IsValid)
 			{
 				return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
-			}			
+			}
 
 			model.UpdateBy = Convert.ToInt64(_tokenProvider.GetUserClaims().Id);
 
-            var responce = await _unitOfWork.SPRepository.UpdateUserOnAdminAsync(model);
+			var responce = await _unitOfWork.SPRepository.UpdateUserOnAdminAsync(model);
 
-            if (responce != "SUCCESS")
-            {
+			if (responce != "SUCCESS")
+			{
 				return Json(ResponseService.InternalServerResponse<string>("Something Went Wrong!"));
 			}
 
@@ -587,24 +584,24 @@ namespace HallBookingBhatPara.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> UpdateUserPassWord(string Password,long UserId,string EmailId)
+		public async Task<IActionResult> UpdateUserPassWord(string Password, long UserId, string EmailId)
 		{
-            if (string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(EmailId))
-            {
-                return Json(ResponseService.BadRequestResponse<string>("Please Enter Password"));
-            }
+			if (string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(EmailId))
+			{
+				return Json(ResponseService.BadRequestResponse<string>("Please Enter Password"));
+			}
 
-            if (UserId <= 0)
-            {
+			if (UserId <= 0)
+			{
 				return Json(ResponseService.BadRequestResponse<string>("Something Went Wrong"));
 			}
 
-            var EncriptedPassword = PasswordHasher.ComputeSha256Hash(Password);
+			var EncriptedPassword = PasswordHasher.ComputeSha256Hash(Password);
 
-            var responce = await _unitOfWork.StackHolderLoginRepository.UpdatePasswordAsync(Password, UserId, EmailId, EncriptedPassword);
-            if (!responce)
+			var responce = await _unitOfWork.StackHolderLoginRepository.UpdatePasswordAsync(Password, UserId, EmailId, EncriptedPassword);
+			if (!responce)
 			{
-                return Json(ResponseService.InternalServerResponse<string>("Something Went Wrong!"));
+				return Json(ResponseService.InternalServerResponse<string>("Something Went Wrong!"));
 			}
 
 

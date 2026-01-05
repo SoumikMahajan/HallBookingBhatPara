@@ -729,6 +729,8 @@
                     fullName: $("#fullName").val().trim(),
                     email: $("#email").val().trim(),
                     phone: $("#phone").val().trim(),
+                    userId: $("#userId").val().trim(),
+                    userRoleId: $("#roleId").val().trim(),
                     eventType: $("#eventType").val(),
                     eventDate: selectedEventDates.join('^'),
                     OnloadPaymentTypeId: $("#paymentTypeId").val(),
@@ -1127,11 +1129,14 @@
                             $("#fullName").val(response.result.user_name);
                             $("#email").val(response.result.email);
                             $("#phone").val(response.result.mobile);
+                            $("#userId").val(response.result.user_id_pk);                           
                         }
                     } else {
                         $("#fullName").val('');
                         $("#email").val('');
                         $("#phone").val('');
+                        $("#phone").val('');
+                        $("#userId").val('');  
                         notify(false, response.errorMessages, false);
                     }
 

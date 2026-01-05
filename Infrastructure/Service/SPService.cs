@@ -448,17 +448,20 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 parameters.Add("@BookedUserEmail", model.email, DbType.String);
                 parameters.Add("@EventTypeId", model.eventType, DbType.Int64);
                 parameters.Add("@EntryIp", model.EntryIP, DbType.String);
-                parameters.Add("@StakeId", model.userClaims.RolesId, DbType.Int64);
-                parameters.Add("@StakeDetailsId", model.userClaims.StackHolderId, DbType.Int64);
+                parameters.Add("@BookedByStakeId", model.userClaims.RolesId, DbType.Int64);
+                parameters.Add("@BookedByStakeDetailsId", model.userClaims.StackHolderId, DbType.Int64);
                 parameters.Add("@PaymentTypeId", model.OnloadPaymentTypeId, DbType.Int64);
 				parameters.Add("@BookedDayCount", dateCount, DbType.Int32);
 				parameters.Add("@TotalPriceSummaryAmount", TotalPriceSummery, DbType.Decimal);
 				parameters.Add("@PaymentTransID", model.MrNumber, DbType.String);
 
+				parameters.Add("@StakeId", model.userRoleId, DbType.Int64);
+				parameters.Add("@StakeDetailsId", model.userId, DbType.Int64);
+
 				//-----------------------------------------------------------------------------------//
 				//-----------------------------------------------------------------------------------//
 				//parameters.Add("@PaymentPercentage", PercentageOfIntialPaymentAmount, DbType.Int64);
-                parameters.Add("@PaymentAmount", model.PaymentSummeryDTO.payable_amount, DbType.Decimal);
+				parameters.Add("@PaymentAmount", model.PaymentSummeryDTO.payable_amount, DbType.Decimal);
                 //parameters.Add("@RemainingPaymentAmount", RemainingAmount, DbType.Decimal);
 
                 //-----------------------------------------------------------------------------------//
@@ -536,7 +539,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
                 var parameters = new DynamicParameters();
 				parameters.Add("@StakeId", loggedInRoleId, DbType.Int64);
 				parameters.Add("@StakeDetailsId", loggedInStackId, DbType.Int64);
-                parameters.Add("@OperationId", 2, DbType.Int32);
+                parameters.Add("@OperationId", 4, DbType.Int32);
                 var result = await connection.QueryAsync<BookedListDTO>(
                     "UserHallBookingSp",
                     parameters,

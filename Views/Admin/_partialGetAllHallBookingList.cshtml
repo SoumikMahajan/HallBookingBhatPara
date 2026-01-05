@@ -17,14 +17,29 @@
                 <div class="table-user-info">
                     <strong>@item.user_name</strong>
                     <small>@item.email</small>
-                    <small>+91 @item.mobile</small>
+                    @if (string.IsNullOrEmpty(@item.mobile))
+                    {
+                        <small></small>
+                    }
+                    else
+                    {
+                        <small>+91 @item.mobile</small>
+                    }
+                   
                 </div>
             </td>
             <td>
                 <div class="table-user-info">
-                    <strong>@item.user_name</strong>
-                    <small>@item.email</small>
-                    <small>+91 @item.mobile</small>
+                    <strong>@item.booked_by_admin_name</strong>
+                    <small>@item.booked_by_admin_email</small>
+                    @if (string.IsNullOrEmpty(@item.booked_by_admin_mobile))
+                    {
+                        <small>Self</small>
+                    }
+                    else
+                    {
+                        <small>+91 @item.booked_by_admin_mobile</small>
+                    }
                 </div>
             </td>
             <td>

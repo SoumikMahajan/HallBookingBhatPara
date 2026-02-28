@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.CashFreePayment;
 using HallBookingBhatPara.Domain.DTO.HallBooking;
 using HallBookingBhatPara.Domain.DTO.User;
 using Microsoft.Data.SqlClient;
@@ -41,6 +42,15 @@ namespace HallBookingBhatPara.Application.Interface
 		Task<List<UserListDTO>> GetAllUserListForHallBooking();
 		Task<BookedDetailsByIdDTO> BookingDetailsByIdAsync(long HallId);
 
+		#endregion
+
+		#region
+		Task<OrderDetailsForPaymentDTO> GetBookingDetailsByReferenceIdAsync(string orderid);
+        Task<long> SaveCashfreeOrderDetailsAsync(CreateOrderResponse model, OrderDetailsForPaymentDTO model2,UserClaims userClaims);
+        Task<string> UpdateOrderStatusAsync(string OrderStatus, string OrderId,string PaymentSessionId);
+        Task<long> SaveCashfreePaymentDetailsAsync(PaymentDetails model, UserClaims userClaims);
+        Task<string> UpdateBookingPaymentDetailsAsync(string CfPaymentId,string OrderId);
+		Task<ExistingCashfreeOrder> GetActiveCashfreeOrderAsync(string orderId);
 		#endregion
 
 		#region :: Admin

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -57,7 +58,15 @@ builder.Services.AddScoped<ExceptionHandlingHelper>();
 builder.Services.AddScoped<LogService>();
 
 // Register HttpClient for CashfreeService
-builder.Services.AddHttpClient<ICashfreeService, CashfreeService>();
+builder.Services.AddHttpClient<ICashfreeService, CashfreeService>((sp, client) =>
+{
+	var settings = sp.GetRequiredService<IOptions<CashfreeSettings>>().Value;
+	client.BaseAddress = new Uri(settings.BaseUrl);
+	client.DefaultRequestHeaders.Add("x-client-id", settings.ClientId);
+	client.DefaultRequestHeaders.Add("x-client-secret", settings.ClientSecret);
+	client.DefaultRequestHeaders.Add("x-api-version", settings.ApiVersion);
+	client.Timeout = TimeSpan.FromSeconds(30);
+});
 
 builder.Services.AddDistributedMemoryCache();
 

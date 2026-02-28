@@ -2,6 +2,7 @@
 using HallBookingBhatPara.Application.Interface;
 using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.CashFreePayment;
 using HallBookingBhatPara.Domain.DTO.HallBooking;
 using HallBookingBhatPara.Domain.DTO.User;
 using HallBookingBhatPara.Domain.Utility;
@@ -76,11 +77,143 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             }
 
         }
-        #endregion
+		#endregion
 
 
-        #region :: Admin
-        public async Task<long> AddHallCategoryAsync(string categoryName)
+		#region :: Payments
+        public async Task<OrderDetailsForPaymentDTO> GetBookingDetailsByReferenceIdAsync(string orderid)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@BookingRefId", orderid, DbType.String);
+                parameters.Add("@OperationId", 1, DbType.Int32);
+                var result = await connection.QueryFirstOrDefaultAsync<OrderDetailsForPaymentDTO>(
+					"HallBookingPaymentSp",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+		}
+
+        public async Task<long> SaveCashfreeOrderDetailsAsync(CreateOrderResponse model, OrderDetailsForPaymentDTO model2, UserClaims userClaims)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+				parameters.Add("@HallId", model2.hall_booking_id_pk, DbType.Int32);
+				parameters.Add("@OrderId", model.OrderId, DbType.String);
+				parameters.Add("@OrderAmount", model.OrderAmount, DbType.Decimal);
+				//parameters.Add("@CustomerId", model2.user_id_pk, DbType.Int64);
+				parameters.Add("@BookedUserName", model2.user_name, DbType.String);
+				parameters.Add("@BookedUserEmail", model2.email, DbType.String);
+				parameters.Add("@BookedUserMobile", model2.mobile, DbType.String);
+				parameters.Add("@CfOrderId", model.CfOrderId, DbType.String);
+				parameters.Add("@OrderExpiryTime", model.OrderExpiryTime, DbType.DateTime);
+				//parameters.Add("@StakeId", userClaims.Roles, DbType.Int64);
+				//parameters.Add("@CustomerId", model2.user_id_pk, DbType.Int64);
+				parameters.Add("@OrderCurrency", model.OrderCurrency, DbType.String);
+				parameters.Add("@CreatedAt", model.CreatedTime, DbType.DateTime);
+				parameters.Add("@OrderStatus", model.OrderStatus, DbType.String);
+				parameters.Add("@PaymentSessionId", model.PaymentSessionId, DbType.String);				
+				parameters.Add("@OrderNote", model.OrderNote, DbType.String);
+				parameters.Add("@OperationId", 2, DbType.Int32);
+
+                var result = await connection.QueryFirstOrDefaultAsync<long>(
+                    "HallBookingPaymentSp",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+                return result;
+            }
+		}
+
+		public async Task<string> UpdateOrderStatusAsync(string OrderStatus, string OrderId, string PaymentSessionId)
+		{
+			using (var connection = new SqlConnection(_connectionString))
+			{
+				var parameters = new DynamicParameters();
+
+				parameters.Add("@OrderStatus", OrderStatus, DbType.String);
+				parameters.Add("@OrderId", OrderId, DbType.String);
+                parameters.Add("@PaymentSessionId", PaymentSessionId, DbType.String);
+
+				parameters.Add("@OperationId", 6, DbType.Int32);
+
+				var result = await connection.QueryFirstOrDefaultAsync<string>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+				return result;
+			}
+		}
+
+		public async Task<long> SaveCashfreePaymentDetailsAsync(PaymentDetails model, UserClaims userClaims)
+		{
+			using (var connection = new SqlConnection(_connectionString))
+			{
+				var parameters = new DynamicParameters();
+
+				parameters.Add("@CfPaymentId", model.CfPaymentId, DbType.String);
+				parameters.Add("@PaymentAmount", model.PaymentAmount, DbType.Decimal);
+				parameters.Add("@PaymentCurrency", model.PaymentCurrency, DbType.String);
+				parameters.Add("@PaymentTime", model.PaymentTime, DbType.DateTime);
+				parameters.Add("@PaymentMethod", model.PaymentMethod.Method, DbType.String);
+				parameters.Add("@BookingReferenceId", model.OrderId, DbType.String);
+
+				parameters.Add("@OperationId", 3, DbType.Int32);
+
+				var result = await connection.QueryFirstOrDefaultAsync<long>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+				return result;
+			}
+		}
+
+		public async Task<string> UpdateBookingPaymentDetailsAsync(string CfPaymentId, string OrderId)
+		{
+			using (var connection = new SqlConnection(_connectionString))
+			{
+				var parameters = new DynamicParameters();
+
+				parameters.Add("@CfPaymentId", CfPaymentId, DbType.String);
+				parameters.Add("@OrderId", OrderId, DbType.String);				
+
+				parameters.Add("@OperationId", 5, DbType.Int32);
+
+				var result = await connection.QueryFirstOrDefaultAsync<string>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+				return result;
+			}
+		}
+
+		public async Task<ExistingCashfreeOrder> GetActiveCashfreeOrderAsync(string orderid)
+		{
+			using (var connection = new SqlConnection(_connectionString))
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("@OrderId", orderid);
+				parameters.Add("@OperationId", 1, DbType.Int32);
+				var result = await connection.QueryFirstOrDefaultAsync<ExistingCashfreeOrder>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+				return result;
+			}
+		}
+
+		#endregion
+
+		#region :: Admin
+		public async Task<long> AddHallCategoryAsync(string categoryName)
         {
             using (var connection = new SqlConnection(_connectionString))
             {

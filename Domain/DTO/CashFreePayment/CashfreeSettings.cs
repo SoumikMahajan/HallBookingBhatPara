@@ -7,8 +7,6 @@
 		public string Environment { get; set; } = "sandbox"; // "sandbox" or "production"
 		public string ApiVersion { get; set; } = "2023-08-01";
 
-		public string BaseUrl => Environment == "production"
-			? "https://api.cashfree.com/pg/"
-			: "https://sandbox.cashfree.com/pg/";
+		public string BaseUrl { get; set; }
 	}
 }

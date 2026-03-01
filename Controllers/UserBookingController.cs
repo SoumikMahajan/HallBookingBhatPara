@@ -388,32 +388,32 @@ namespace HallBookingBhatPara.Controllers
 
 			var orderDetails = await _unitOfWork.SPRepository.GetBookingDetailsByReferenceIdAsync(orderId);
 
-			if(orderDetails == null)
+			if (orderDetails.Result <= 0)
 			{
-				await _logService.LogCustomAsync($"Booking not found for OrderId: {orderId}");
+				await _logService.LogCustomAsync(orderDetails.message);
 				return null;
-			}
+			}			
 
 			// Check if a valid Cashfree order already exists in your DB
 			var existingOrder = await _unitOfWork.SPRepository.GetActiveCashfreeOrderAsync(orderId);
-			if (existingOrder != null && existingOrder.OrderStatus == "ACTIVE")
+			if (existingOrder.Item3 != null && existingOrder.Item3.OrderStatus == "ACTIVE")
 			{
 				await _logService.LogCustomAsync(
 						$"Reusing existing active Cashfree order. " +
 						$"OrderId: {orderId}, " +
-						$"CfOrderId: {existingOrder.CfOrderId}, " +
-						$"Expires: {existingOrder.OrderExpiryTime}");
+						$"CfOrderId: {existingOrder.Item3.CfOrderId}, " +
+						$"Expires: {existingOrder.Item3.OrderExpiryTime}");
 
 				return new CreateOrderResponse
 				{
-					CfOrderId = existingOrder.CfOrderId,
-					OrderId = existingOrder.OrderId,
-					PaymentSessionId = existingOrder.PaymentSessionId,
-					OrderStatus = existingOrder.OrderStatus,
-					OrderAmount = existingOrder.OrderAmount,
-					OrderCurrency = existingOrder.OrderCurrency,
-					OrderExpiryTime = existingOrder.OrderExpiryTime,
-					CreatedTime = existingOrder.CreatedAt
+					CfOrderId = existingOrder.Item3.CfOrderId,
+					OrderId = existingOrder.Item3.OrderId,
+					PaymentSessionId = existingOrder.Item3.PaymentSessionId,
+					OrderStatus = existingOrder.Item3.OrderStatus,
+					OrderAmount = existingOrder.Item3.OrderAmount,
+					OrderCurrency = existingOrder.Item3.OrderCurrency,
+					OrderExpiryTime = existingOrder.Item3.OrderExpiryTime,
+					CreatedTime = existingOrder.Item3.CreatedAt
 				};
 			}
 
@@ -423,13 +423,13 @@ namespace HallBookingBhatPara.Controllers
 			{
 				OrderId = orderId,
 				OrderCurrency = "INR",
-				OrderAmount = orderDetails.total_price_summary_amount,
+				OrderAmount = orderDetails.Item3.total_price_summary_amount,
 				CustomerDetails = new CustomerDetails
 				{
-					CustomerId = orderDetails.user_id_pk.ToString(),
-					CustomerPhone = orderDetails.mobile,
-					CustomerEmail = orderDetails.email,
-					CustomerName = orderDetails.user_name
+					CustomerId = orderDetails.Item3.user_id_pk.ToString(),
+					CustomerPhone = orderDetails.Item3.mobile,
+					CustomerEmail = orderDetails.Item3.email,
+					CustomerName = orderDetails.Item3.user_name
 				},
 				OrderNote = $"Payment for Order {orderId}",
 				OrderMeta = new OrderMeta
@@ -450,10 +450,10 @@ namespace HallBookingBhatPara.Controllers
 			var userClaims = _tokenProvider.GetUserClaims();
 
 			// save in db when order created successfully
-			var saveOrderResult = await _unitOfWork.SPRepository.SaveCashfreeOrderDetailsAsync(responce, orderDetails, userClaims);
-			if (saveOrderResult <= 0)
+			var saveOrderResult = await _unitOfWork.SPRepository.SaveCashfreeOrderDetailsAsync(responce, orderDetails.Item3, userClaims);
+			if (saveOrderResult.Result <= 0)
 			{
-				await _logService.LogCustomAsync($"Failed to save Cashfree order details in DB. OrderId: {responce.OrderId}");				
+				await _logService.LogCustomAsync(saveOrderResult.message);				
 				return null;
 			}
 
@@ -494,35 +494,35 @@ namespace HallBookingBhatPara.Controllers
 				}
 
 				// 3. Handle ACTIVE early — no payment made yet, don't fetch payment details
-				if (orderStatus.OrderStatus == "ACTIVE")
-				{
-					await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, "ACTIVE", orderStatus.PaymentSessionId);
+				//if (orderStatus.OrderStatus == "ACTIVE")
+				//{
+				//	await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, "ACTIVE", orderStatus.PaymentSessionId);
 
-					return View("PaymentPending", new PaymentResultViewModel
-					{
-						OrderId = order_id,
-						Message = "Your payment is being processed. You will receive confirmation shortly."
-					});
-				}
+				//	return View("PaymentPending", new PaymentResultViewModel
+				//	{
+				//		OrderId = order_id,
+				//		Message = "Your payment is being processed. You will receive confirmation shortly."
+				//	});
+				//}
 
-				// 4. Handle EXPIRED early — session expired, no payment
-				if (orderStatus.OrderStatus == "EXPIRED")
-				{
-					await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, "EXPIRED", orderStatus.PaymentSessionId);
-					return View("PaymentFailed", new PaymentResultViewModel
-					{
-						OrderId = order_id,
-						Status = "Expired",
-						ErrorMessage = "Payment session expired. Please try booking again."
-					});
-				}
+				//// 4. Handle EXPIRED early — session expired, no payment
+				//if (orderStatus.OrderStatus == "EXPIRED")
+				//{
+				//	await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, "EXPIRED", orderStatus.PaymentSessionId);
+				//	return View("PaymentFailed", new PaymentResultViewModel
+				//	{
+				//		OrderId = order_id,
+				//		Status = "Expired",
+				//		ErrorMessage = "Payment session expired. Please try booking again."
+				//	});
+				//}
 
 
 				// 5.Update order status in DB(for PAID / failed statuses)
 				var updateOrderStatusResult = await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, orderStatus.OrderStatus,orderStatus.PaymentSessionId);
-				if (updateOrderStatusResult != "SUCCESS")
+				if (updateOrderStatusResult.Result <= 0)
 				{
-					await _logService.LogCustomAsync($"Failed to update order status in DB. OrderId: {order_id}, Status: {orderStatus.OrderStatus}");					
+					await _logService.LogCustomAsync(updateOrderStatusResult.message);					
 				}
 
 				// 6. Fetch payment details (only for PAID or other terminal statuses)
@@ -560,19 +560,19 @@ namespace HallBookingBhatPara.Controllers
 				foreach (var item in paymentDetails)
 				{
 					// Idempotency — skip if already saved
-					//var alreadyExists = await _unitOfWork.SPRepository.CashfreePaymentExistsAsync(item.CfPaymentId);
-					//if (alreadyExists)
-					//{
-					//	await _logService.LogCustomAsync(
-					//		$"Payment already saved, skipping. CfPaymentId: {item.CfPaymentId}");
-					//  anyPaymentSaved = true;
-					//	continue;
-					//}
+					var alreadyExists = await _unitOfWork.SPRepository.CashfreePaymentExistsAsync(item.CfPaymentId);
+					if (alreadyExists.Item3 > 0)
+					{
+						await _logService.LogCustomAsync(
+							$"Payment already saved, skipping. CfPaymentId: {item.CfPaymentId}");
+						anyPaymentSaved = true;
+						continue;
+					}
 
 					var paymentSaveToDb = await _unitOfWork.SPRepository.SaveCashfreePaymentDetailsAsync(item, userClaims);
-					if (paymentSaveToDb <= 0)
+					if (paymentSaveToDb.Result <= 0)
 					{
-						await _logService.LogCustomAsync($"Failed to save Cashfree payment details in DB. OrderId: {order_id}, PaymentId: {item.CfPaymentId}");
+						await _logService.LogCustomAsync(paymentSaveToDb.message);
 						continue;
 					}
 
@@ -580,9 +580,9 @@ namespace HallBookingBhatPara.Controllers
 
 					var updateBookingPaymentResult = await _unitOfWork.SPRepository.UpdateBookingPaymentDetailsAsync(item.CfPaymentId, item.OrderId);
 
-					if (updateBookingPaymentResult != "SUCCESS")
+					if (updateBookingPaymentResult.Result <= 0)
 					{
-						await _logService.LogCustomAsync($"Failed to update booking payment details in DB. OrderId: {order_id}, PaymentId: {item.CfPaymentId}");
+						await _logService.LogCustomAsync(updateBookingPaymentResult.message);
 						continue;
 					}
 
@@ -611,11 +611,26 @@ namespace HallBookingBhatPara.Controllers
 							Status = "Success",
 							BookingId = "",
 							TransactionId = paymentDetails?.FirstOrDefault()?.CfPaymentId
-						});					
+						});
+					case "ACTIVE":
+						//await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, "ACTIVE", orderStatus.PaymentSessionId);
+						return View("PaymentPending", new PaymentResultViewModel
+						{
+							OrderId = order_id,
+							Message = "Your payment is being processed. You will receive confirmation shortly."
+						});
+					case "EXPIRED":
+						//await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, "EXPIRED", orderStatus.PaymentSessionId);
+						return View("PaymentFailed", new PaymentResultViewModel
+						{
+							OrderId = order_id,
+							Status = "Expired",
+							ErrorMessage = "Payment session expired. Please try booking again."
+						});
 
 					default:
 						// Payment failed or cancelled
-						await _logService.LogCustomAsync($"Payment failed/cancelled. OrderId: {order_id}, Status: {orderStatus.OrderStatus}");
+						//await _logService.LogCustomAsync($"Payment failed/cancelled. OrderId: {order_id}, Status: {orderStatus.OrderStatus}");
 
 						//await _bookingService.UpdatePaymentStatusAsync(order_id, orderStatus.OrderStatus);
 

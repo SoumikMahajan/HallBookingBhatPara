@@ -1252,7 +1252,7 @@
                 //dataType: 'json',
                 beforeSend: function (xhr) {
                     $(".loader").css("display", "flex");
-                    xhr.setRequestHeader("RequestVerificationToken", antiForgeryToken);
+                    xhr.setRequestHeader("RequestVerificationToken", antiforgeryToken);
                 },
                 success: function (response) {
                     $(".loader").css("display", "none");

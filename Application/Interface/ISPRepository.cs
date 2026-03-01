@@ -45,12 +45,13 @@ namespace HallBookingBhatPara.Application.Interface
 		#endregion
 
 		#region
-		Task<OrderDetailsForPaymentDTO> GetBookingDetailsByReferenceIdAsync(string orderid);
-        Task<long> SaveCashfreeOrderDetailsAsync(CreateOrderResponse model, OrderDetailsForPaymentDTO model2,UserClaims userClaims);
-        Task<string> UpdateOrderStatusAsync(string OrderStatus, string OrderId,string PaymentSessionId);
-        Task<long> SaveCashfreePaymentDetailsAsync(PaymentDetails model, UserClaims userClaims);
-        Task<string> UpdateBookingPaymentDetailsAsync(string CfPaymentId,string OrderId);
-		Task<ExistingCashfreeOrder> GetActiveCashfreeOrderAsync(string orderId);
+		Task<(int Result,string message, OrderDetailsForPaymentDTO)> GetBookingDetailsByReferenceIdAsync(string orderid);
+        Task<(int Result, string message,long)> SaveCashfreeOrderDetailsAsync(CreateOrderResponse model, OrderDetailsForPaymentDTO model2,UserClaims userClaims);
+        Task<(int Result, string message)> UpdateOrderStatusAsync(string OrderId, string OrderStatus, string PaymentSessionId);
+        Task<(int Result, string message,long)> SaveCashfreePaymentDetailsAsync(PaymentDetails model, UserClaims userClaims);
+        Task<(int Result, string message)> UpdateBookingPaymentDetailsAsync(string CfPaymentId,string OrderId);
+		Task<(int Result, string message,ExistingCashfreeOrder)> GetActiveCashfreeOrderAsync(string orderId);
+		Task<(int Result, string message, int)> CashfreePaymentExistsAsync(string CfPaymentId);
 		#endregion
 
 		#region :: Admin

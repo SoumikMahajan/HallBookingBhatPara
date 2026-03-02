@@ -54,6 +54,9 @@ namespace HallBookingBhatPara.Domain.DTO.CashFreePayment
 		[JsonPropertyName("cf_order_id")]
 		public string CfOrderId { get; set; } = string.Empty;
 
+		[JsonPropertyName("created_at")]
+		public DateTime? CreatedTime { get; set; }
+
 		[JsonPropertyName("order_id")]
 		public string OrderId { get; set; } = string.Empty;
 
@@ -77,6 +80,7 @@ namespace HallBookingBhatPara.Domain.DTO.CashFreePayment
 
 		[JsonPropertyName("order_note")]
 		public string? OrderNote { get; set; }
+
 	}
 
 	public class OrderStatusResponse
@@ -96,9 +100,6 @@ namespace HallBookingBhatPara.Domain.DTO.CashFreePayment
 		[JsonPropertyName("order_status")]
 		public string OrderStatus { get; set; } = string.Empty;
 
-		[JsonPropertyName("order_token")]
-		public string? OrderToken { get; set; }
-
 		[JsonPropertyName("created_at")]
 		public DateTime CreatedAt { get; set; }
 
@@ -107,6 +108,9 @@ namespace HallBookingBhatPara.Domain.DTO.CashFreePayment
 
 		[JsonPropertyName("order_meta")]
 		public OrderMeta? OrderMeta { get; set; }
+
+		[JsonPropertyName("payment_session_id")]
+		public string PaymentSessionId { get; set; } = string.Empty;
 	}
 
 	public class PaymentDetails
@@ -126,8 +130,35 @@ namespace HallBookingBhatPara.Domain.DTO.CashFreePayment
 		[JsonPropertyName("payment_time")]
 		public DateTime? PaymentTime { get; set; }
 
+		[JsonPropertyName("payment_group")]      
+		public string? PaymentGroup { get; set; } 
+
 		[JsonPropertyName("payment_method")]
-		public PaymentMethod? PaymentMethod { get; set; }
+		public PaymentMethod? PaymentMethod { get; set; } = new();
+
+		[JsonPropertyName("order_id")]
+		public string OrderId { get; set; } = string.Empty;
+
+		[JsonPropertyName("is_captured")]      
+		public bool IsCaptured { get; set; }
+
+		[JsonPropertyName("error_details")] 
+		public PaymentErrorDetails? ErrorDetails { get; set; } = new();
+	}
+
+	public class PaymentErrorDetails
+	{
+		[JsonPropertyName("error_code")]
+		public string? ErrorCode { get; set; }
+
+		[JsonPropertyName("error_description")]
+		public string? ErrorDescription { get; set; }
+
+		[JsonPropertyName("error_reason")]
+		public string? ErrorReason { get; set; }
+
+		[JsonPropertyName("error_source")]
+		public string? ErrorSource { get; set; }  // "bank", "user", "cashfree"
 	}
 
 	public class PaymentMethod
@@ -155,5 +186,30 @@ namespace HallBookingBhatPara.Domain.DTO.CashFreePayment
 		public string TransactionId { get; set; }
 		public string ErrorMessage { get; set; }
 		public string Message { get; set; }
+	}
+
+	public class CashfreeErrorResponse
+	{
+		[JsonPropertyName("message")]
+		public string Message { get; set; } = string.Empty;
+
+		[JsonPropertyName("code")]
+		public string Code { get; set; } = string.Empty;
+
+		[JsonPropertyName("type")]
+		public string Type { get; set; } = string.Empty;
+	}
+
+	public class ExistingCashfreeOrder
+	{
+		public long Id { get; set; }
+		public string OrderId { get; set; } = string.Empty;
+		public string CfOrderId { get; set; } = string.Empty;
+		public string PaymentSessionId { get; set; } = string.Empty;
+		public string OrderStatus { get; set; } = string.Empty;
+		public decimal OrderAmount { get; set; }
+		public string OrderCurrency { get; set; } = string.Empty;
+		public DateTime? OrderExpiryTime { get; set; }
+		public DateTime CreatedAt { get; set; }
 	}
 }

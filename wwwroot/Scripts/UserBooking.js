@@ -1211,6 +1211,8 @@
             const submitBtn = $(this);
             const originalText = submitBtn.html();
 
+            let antiforgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
             // Show SweetAlert confirmation dialog
             Swal.fire({
                 title: 'Confirm Payment',
@@ -1237,12 +1239,12 @@
                     submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Payment Processing...')
                         .prop('disabled', true);
 
-                    HallBookingPaymentProcess(hallbookingId, HallRefId, submitBtn, originalText);
+                    HallBookingPaymentProcess(hallbookingId, HallRefId, submitBtn, originalText, antiforgeryToken);
                 }
             });
         });
 
-        function HallBookingPaymentProcess(hallbookingId, HallRefId, submitBtn, originalText) {
+        function HallBookingPaymentProcess(hallbookingId, HallRefId, submitBtn, originalText, antiforgeryToken) {
             $.ajax({
                 url: '/UserBooking/UserHallBookingPayment',
                 type: 'POST',
@@ -1250,6 +1252,7 @@
                 //dataType: 'json',
                 beforeSend: function (xhr) {
                     $(".loader").css("display", "flex");
+                    xhr.setRequestHeader("RequestVerificationToken", antiforgeryToken);
                 },
                 success: function (response) {
                     $(".loader").css("display", "none");

@@ -1,31 +1,20 @@
 ﻿using HallBookingBhatPara.Application.Interface.Payments;
 using HallBookingBhatPara.Domain.DTO.CashFreePayment;
-using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace HallBookingBhatPara.Infrastructure.Service.Payments
 {
 	public class CashfreeService : ICashfreeService
 	{
 		private readonly HttpClient _httpClient;
-		private readonly CashfreeSettings _settings;
 		private readonly ILogger<CashfreeService> _logger;
 
-		public CashfreeService(
-			HttpClient httpClient,
-			IOptions<CashfreeSettings> settings,
-			ILogger<CashfreeService> logger)
+		public CashfreeService(HttpClient httpClient, ILogger<CashfreeService> logger)
 		{
 			_httpClient = httpClient;
-			_settings = settings.Value;
 			_logger = logger;
-
-			// Configure HttpClient base address and default headers
-			_httpClient.BaseAddress = new Uri(_settings.BaseUrl);
-			_httpClient.DefaultRequestHeaders.Add("x-client-id", _settings.ClientId);
-			_httpClient.DefaultRequestHeaders.Add("x-client-secret", _settings.ClientSecret);
-			_httpClient.DefaultRequestHeaders.Add("x-api-version", _settings.ApiVersion);
 		}
 
 		public async Task<CreateOrderResponse?> CreateOrderAsync(CreateOrderRequest request)
@@ -34,31 +23,96 @@ namespace HallBookingBhatPara.Infrastructure.Service.Payments
 			{
 				var json = JsonSerializer.Serialize(request, new JsonSerializerOptions
 				{
-					DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+					DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
 				});
 
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 				var response = await _httpClient.PostAsync("orders", content);
 
+				if ((int)response.StatusCode == 429)
+				{
+					_logger.LogWarning("Cashfree rate limit hit. OrderId: {OrderId}", request.OrderId);
+					throw new Exception("Payment system is busy. Please try again in a moment.");
+				}
+
+				var responseBody = await response.Content.ReadAsStringAsync();
+
 				if (response.IsSuccessStatusCode)
 				{
-					var responseBody = await response.Content.ReadAsStringAsync();
 					_logger.LogInformation("Order created successfully: {OrderId}", request.OrderId);
 					return JsonSerializer.Deserialize<CreateOrderResponse>(responseBody);
 				}
-				else
+
+				// Handle 409 Conflict — order already exists in Cashfree
+
+				if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
 				{
-					var errorContent = await response.Content.ReadAsStringAsync();
-					_logger.LogError("Failed to create order. Status: {Status}, Error: {Error}",
-						response.StatusCode, errorContent);
-					return null;
+					_logger.LogWarning("Cashfree order already exists. OrderId: {OrderId}. " +
+						"Fetching existing order...", request.OrderId);
+
+					// Fetch the existing order from Cashfree
+					return await GetOrderAsCreateResponseAsync(request.OrderId);
 				}
+
+				var errorResponse = JsonSerializer.Deserialize<CashfreeErrorResponse>(responseBody);
+				_logger.LogError("Cashfree CreateOrder failed. Status: {Status}, " +
+					"Code: {Code}, Message: {Message}",
+					response.StatusCode,
+					errorResponse?.Code,
+					errorResponse?.Message);
+
+				return null;
+			}
+			catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+			{
+				_logger.LogError(ex, "Cashfree CreateOrder timed out. OrderId: {OrderId}",
+					request.OrderId);
+				throw new Exception("Payment gateway timeout. Please try again.");
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Exception occurred while creating order");
+				_logger.LogError(ex, "Exception in CreateOrderAsync. OrderId: {OrderId}",
+					request.OrderId);
 				throw;
+			}
+		}
+
+		private async Task<CreateOrderResponse?> GetOrderAsCreateResponseAsync(string orderId)
+		{
+			try
+			{
+				var response = await _httpClient.GetAsync($"orders/{orderId}");
+				var responseBody = await response.Content.ReadAsStringAsync();
+
+				if (!response.IsSuccessStatusCode)
+				{
+					_logger.LogError("Failed to fetch existing Cashfree order. " +
+					"OrderId: {OrderId}, Status: {Status}", orderId, response.StatusCode);
+					return null;
+				}
+
+				var orderStatus = JsonSerializer.Deserialize<OrderStatusResponse>(responseBody);
+
+				if (orderStatus == null)
+					return null;
+
+				return new CreateOrderResponse
+				{
+					CfOrderId = orderStatus.CfOrderId,
+					OrderId = orderStatus.OrderId,
+					OrderAmount = orderStatus.OrderAmount,
+					OrderCurrency = orderStatus.OrderCurrency,
+					OrderStatus = orderStatus.OrderStatus,
+					PaymentSessionId = orderStatus.PaymentSessionId ?? string.Empty,
+					CreatedTime = orderStatus.CreatedAt
+				};
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Exception in GetOrderAsCreateResponseAsync. OrderId: {OrderId}",
+				orderId);
+				return null;
 			}
 		}
 
@@ -67,6 +121,12 @@ namespace HallBookingBhatPara.Infrastructure.Service.Payments
 			try
 			{
 				var response = await _httpClient.GetAsync($"orders/{orderId}");
+
+				if ((int)response.StatusCode == 429)
+				{
+					_logger.LogWarning("Cashfree rate limit hit. OrderId: {OrderId}", orderId);
+					throw new Exception("Payment system is busy. Please try again in a moment.");
+				}
 
 				if (response.IsSuccessStatusCode)
 				{
@@ -93,6 +153,12 @@ namespace HallBookingBhatPara.Infrastructure.Service.Payments
 			try
 			{
 				var response = await _httpClient.GetAsync($"orders/{orderId}/payments");
+
+				if ((int)response.StatusCode == 429)
+				{
+					_logger.LogWarning("Cashfree rate limit hit. OrderId: {OrderId}", orderId);
+					throw new Exception("Payment system is busy. Please try again in a moment.");
+				}
 
 				if (response.IsSuccessStatusCode)
 				{

@@ -1,7 +1,9 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
 using HallBookingBhatPara.Application.Interface;
 using HallBookingBhatPara.Domain.DTO;
 using HallBookingBhatPara.Domain.DTO.Admin;
+using HallBookingBhatPara.Domain.DTO.CashFreePayment;
 using HallBookingBhatPara.Domain.DTO.HallBooking;
 using HallBookingBhatPara.Domain.DTO.User;
 using HallBookingBhatPara.Domain.Utility;
@@ -76,11 +78,282 @@ namespace HallBookingBhatPara.Infrastructure.Repository
             }
 
         }
-        #endregion
+		#endregion
 
 
-        #region :: Admin
-        public async Task<long> AddHallCategoryAsync(string categoryName)
+		#region :: Payments
+        public async Task<(int Result, string message,OrderDetailsForPaymentDTO)> GetBookingDetailsByReferenceIdAsync(string orderid)
+        {
+
+			try
+			{
+				using var sqlConnection = new SqlConnection(_connectionString);
+				// Input params
+				var parameters = new DynamicParameters();
+				parameters.Add("@BookingRefId", orderid, DbType.String);
+				parameters.Add("@OperationId", 1, DbType.Int32);
+
+				// Output params
+				parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
+				parameters.Add("@Message", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
+
+				await sqlConnection.OpenAsync();
+
+				var responce = await sqlConnection.QueryFirstOrDefaultAsync<OrderDetailsForPaymentDTO>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+
+				// Read outputs safely
+				int result = parameters.Get<int?>("@Result") ?? -1;
+				string message = parameters.Get<string>("@Message") ?? "Unknown error from DB";
+				return (result, message, responce ?? new());
+			}
+			catch (SqlException ex)
+			{
+				await _logService.LogExceptionErrorAsync(ex);
+				throw;
+			}			
+		}
+
+        public async Task<(int Result, string message, long)> SaveCashfreeOrderDetailsAsync(CreateOrderResponse model, OrderDetailsForPaymentDTO model2, UserClaims userClaims)
+        {
+
+			try
+			{
+				using var sqlConnection = new SqlConnection(_connectionString);
+				var parameters = new DynamicParameters();
+				parameters.Add("@HallId", model2.hall_booking_id_pk, DbType.Int32);
+				parameters.Add("@OrderId", model.OrderId, DbType.String);
+				parameters.Add("@OrderAmount", model.OrderAmount, DbType.Decimal);
+				//parameters.Add("@CustomerId", model2.user_id_pk, DbType.Int64);
+				parameters.Add("@BookedUserName", model2.user_name, DbType.String);
+				parameters.Add("@BookedUserEmail", model2.email, DbType.String);
+				parameters.Add("@BookedUserMobile", model2.mobile, DbType.String);
+				parameters.Add("@CfOrderId", model.CfOrderId, DbType.String);
+				parameters.Add("@OrderExpiryTime", model.OrderExpiryTime, DbType.DateTime);
+				//parameters.Add("@StakeId", userClaims.Roles, DbType.Int64);
+				//parameters.Add("@CustomerId", model2.user_id_pk, DbType.Int64);
+				parameters.Add("@OrderCurrency", model.OrderCurrency, DbType.String);
+				parameters.Add("@CreatedAt", model.CreatedTime, DbType.DateTime);
+				parameters.Add("@OrderStatus", model.OrderStatus, DbType.String);
+				parameters.Add("@PaymentSessionId", model.PaymentSessionId, DbType.String);
+				parameters.Add("@OrderNote", model.OrderNote, DbType.String);
+				parameters.Add("@OperationId", 2, DbType.Int32);
+
+				// Output params
+				parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
+				parameters.Add("@Message", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
+
+				await sqlConnection.OpenAsync();
+
+				var responce = await sqlConnection.QueryFirstOrDefaultAsync<long>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+
+				// Read outputs safely
+				int result = parameters.Get<int?>("@Result") ?? -1;
+				string message = parameters.Get<string>("@Message") ?? "Unknown error from DB";
+				return (result, message, responce);
+			}
+			catch (SqlException ex)
+			{
+				await _logService.LogExceptionErrorAsync(ex);
+				throw;
+			}			
+		}
+
+		public async Task<(int Result, string message)> UpdateOrderStatusAsync(string OrderId, string OrderStatus, string PaymentSessionId)
+		{
+			try
+			{
+				using var sqlConnection = new SqlConnection(_connectionString);
+				// Input params
+				var parameters = new DynamicParameters();
+				parameters.Add("@OrderStatus", OrderStatus, DbType.String);
+				parameters.Add("@OrderId", OrderId, DbType.String);
+				parameters.Add("@PaymentSessionId", PaymentSessionId,DbType.String);
+				parameters.Add("@OperationId", 6, DbType.Int32);
+
+				// Output params
+				parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
+				parameters.Add("@Message", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
+
+				await sqlConnection.OpenAsync();
+
+				await sqlConnection.ExecuteAsync(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+
+				// Read outputs safely
+				int result = parameters.Get<int?>("@Result") ?? -1;
+				string message = parameters.Get<string>("@Message") ?? "Unknown error from DB";
+
+				//if (result <= 0)
+				//	throw new InvalidOperationException(message ?? "Unknown Error");
+
+				return (result,message);
+			}
+			catch (SqlException ex)
+			{
+				await _logService.LogExceptionErrorAsync(ex);
+				throw;
+			}			
+		}
+
+		public async Task<(int Result, string message, long)> SaveCashfreePaymentDetailsAsync(PaymentDetails model, UserClaims userClaims)
+		{
+			try
+			{
+				using var sqlConnection = new SqlConnection(_connectionString);
+				var parameters = new DynamicParameters();
+				parameters.Add("@CfPaymentId", model.CfPaymentId, DbType.String);
+				parameters.Add("@PaymentAmount", model.PaymentAmount, DbType.Decimal);
+				parameters.Add("@PaymentCurrency", model.PaymentCurrency, DbType.String);
+				parameters.Add("@PaymentTime", model.PaymentTime, DbType.DateTime);
+				parameters.Add("@PaymentMethod", model.PaymentMethod.Method, DbType.String);
+				parameters.Add("@BookingReferenceId", model.OrderId, DbType.String);
+
+				parameters.Add("@OperationId", 3, DbType.Int32);
+
+				// Output params
+				parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
+				parameters.Add("@Message", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
+
+				await sqlConnection.OpenAsync();
+
+				var responce = await sqlConnection.QueryFirstOrDefaultAsync<long>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+
+				// Read outputs safely
+				int result = parameters.Get<int?>("@Result") ?? -1;
+				string message = parameters.Get<string>("@Message") ?? "Unknown error from DB";
+
+				return (result, message, responce);
+			}
+			catch (SqlException ex)
+			{
+				await _logService.LogExceptionErrorAsync(ex);
+				throw;
+			}			
+		}
+
+		public async Task<(int Result, string message)> UpdateBookingPaymentDetailsAsync(string CfPaymentId, string OrderId)
+		{
+			try
+			{
+				using var sqlConnection = new SqlConnection(_connectionString);
+				var parameters = new DynamicParameters();
+				parameters.Add("@CfPaymentId", CfPaymentId, DbType.String);
+				parameters.Add("@OrderId", OrderId, DbType.String);
+				parameters.Add("@OperationId", 5, DbType.Int32);
+
+				// Output params
+				parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
+				parameters.Add("@Message", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
+
+				await sqlConnection.OpenAsync();
+
+				await sqlConnection.ExecuteAsync(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+
+				int result = parameters.Get<int?>("@Result") ?? -1;
+				string message = parameters.Get<string>("@Message") ?? "Unknown error from DB";
+
+
+				return (result, message);
+			}
+			catch (SqlException ex)
+			{
+				await _logService.LogExceptionErrorAsync(ex);
+				throw;
+			}			
+		}
+
+		public async Task<(int Result, string message, ExistingCashfreeOrder)> GetActiveCashfreeOrderAsync(string orderid)
+		{
+			try
+			{
+				using var sqlConnection = new SqlConnection(_connectionString);
+
+				var parameters = new DynamicParameters();
+				parameters.Add("@OrderId", orderid);
+				parameters.Add("@OperationId", 7, DbType.Int32);
+
+				// Output params
+				parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
+				parameters.Add("@Message", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
+
+				await sqlConnection.OpenAsync();
+
+				var responce = await sqlConnection.QueryFirstOrDefaultAsync<ExistingCashfreeOrder>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+
+				// Read outputs safely
+				int result = parameters.Get<int?>("@Result") ?? -1;
+				string message = parameters.Get<string>("@Message") ?? "Unknown error from DB";
+
+				return (result, message, responce ?? new());
+			}
+			catch (SqlException ex)
+			{
+				await _logService.LogExceptionErrorAsync(ex);
+				throw;
+			}			
+		}
+
+		public async Task<(int Result, string message, int)> CashfreePaymentExistsAsync(string CfPaymentId)
+		{
+			try
+			{
+				using var sqlConnection = new SqlConnection(_connectionString);
+				var parameters = new DynamicParameters();
+				parameters.Add("@CfPaymentId", CfPaymentId, DbType.String);				
+				parameters.Add("@OperationId", 8, DbType.Int32);
+
+				// Output params
+				parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
+				parameters.Add("@Message", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
+
+				await sqlConnection.OpenAsync();
+
+				var responce = await sqlConnection.QueryFirstOrDefaultAsync<int>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+
+				// Read outputs safely
+				int result = parameters.Get<int?>("@Result") ?? -1;
+				string message = parameters.Get<string>("@Message") ?? "Unknown error from DB";
+
+				return (result, message, responce);
+			}
+			catch (SqlException ex)
+			{
+				await _logService.LogExceptionErrorAsync(ex);
+				throw;
+			}
+		}
+
+		#endregion
+
+		#region :: Admin
+		public async Task<long> AddHallCategoryAsync(string categoryName)
         {
             using (var connection = new SqlConnection(_connectionString))
             {

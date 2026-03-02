@@ -29,7 +29,8 @@ async function initializeSDK() {
     try {
         if (!isSDKInitialized) {
             cashfree = await Cashfree({
-                mode: "sandbox" // Change to "production" for live
+                /*mode: "sandbox" // Change to "production" for live*/
+                mode: window.cashfreeMode
             });
             isSDKInitialized = true;
             console.log("Cashfree SDK initialized successfully");

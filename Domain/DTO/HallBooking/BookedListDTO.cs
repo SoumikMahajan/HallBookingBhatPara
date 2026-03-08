@@ -31,7 +31,10 @@
         public string? hall_name { get; set; }
         public string? floor_name { get; set; }
         public string? event_type_name { get; set; }
-    }
+
+		public long payment_process_status_id { get; set; }
+		
+	}
 
 	public class BookedDetailsByIdDTO
 	{

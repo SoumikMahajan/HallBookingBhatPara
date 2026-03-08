@@ -62,7 +62,7 @@
                                 <h4 class="hall-name">@HallName</h4>
                                 <div class="booking-status status-approved">@item.booking_process_name.ToUpper()</div>
                             </div>
-                
+
                             <div class="booking-body">
                                 <div class="booking-details">
                                     <div class="detail-item">
@@ -71,21 +71,21 @@
                                         </div>
                                         <span><strong>Event Date:</strong> @item.booking_date_range</span>
                                     </div>
-                        
+
                                     <div class="detail-item">
                                         <div class="detail-icon">
                                             <i class="fas fa-tag"></i>
                                         </div>
                                         <span><strong>Event Type:</strong> @item.event_type_name</span>
                                     </div>
-                        
+
                                     <div class="detail-item">
                                         <div class="detail-icon">
                                             <i class="fas fa-rupee-sign"></i>
                                         </div>
                                         <span><strong>Total Amount:</strong> ₹@item.total_price_summary_amount</span>
                                     </div>
-                        
+
                                     <div class="detail-item payment-pending">
                                         <div class="detail-icon">
                                             <i class="fas fa-exclamation-triangle"></i>
@@ -93,14 +93,24 @@
                                         <span><strong>Payment:</strong> <!--75% Complete - ₹1500 Due-->- ₹@item.total_price_summary_amount</span>
                                     </div>
                                 </div>
-                    
+
                                 <div class="booking-actions">
                                     <button class="action-btn-bookinglist btn-view btnHallBookedDetails" data-hallid="@item.hall_booking_id_pk" data-hallname="@HallName">
                                         <i class="fas fa-eye"></i> View Details
                                     </button>
-                                    <button class="action-btn-bookinglist btn-payment" data-hallbooking-id="@item.hall_booking_id_pk" data-hallbooking-refid="@item.booking_reference_id">
-                                        <i class="fas fa-eye"></i> Make Payment
-                                    </button>                                   
+                                    @if (item.payment_process_status_id == 3 || item.payment_process_status_id == 1)
+                                    {
+                                        <button class="action-btn-bookinglist btn-payment" data-hallbooking-id="@item.hall_booking_id_pk" data-hallbooking-refid="@item.booking_reference_id">
+                                            <i class="fas fa-eye"></i> Make Payment
+                                        </button>
+                                    }
+                                    else if (item.payment_process_status_id == 2)
+                                    {
+                                        <button class="action-btn-bookinglist btn-payment-status"  data-hallbooking-id="@item.hall_booking_id_pk" data-hallbooking-refid="@item.booking_reference_id">
+                                            <i class="fas fa-eye"></i> Check Payment Status
+                                        </button>
+                                    }
+
                                 </div>
                             </div>
                         </div>
@@ -115,7 +125,7 @@
                                 <h4 class="hall-name">@HallName</h4>
                                 <div class="booking-status status-pending">@item.booking_process_name.ToUpper()</div>
                             </div>
-                
+
                             <div class="booking-body">
                                 <div class="booking-details">
                                     <div class="detail-item">
@@ -124,14 +134,14 @@
                                         </div>
                                         <span><strong>Event Date:</strong> @item.booking_date_range</span>
                                     </div>
-                        
+
                                     <div class="detail-item">
                                         <div class="detail-icon">
                                             <i class="fas fa-tag"></i>
                                         </div>
                                         <span><strong>Event Type:</strong> @item.event_type_name</span>
                                     </div>
-                        
+
                                     <div class="detail-item">
                                         <div class="detail-icon">
                                             <i class="fas fa-rupee-sign"></i>
@@ -139,7 +149,7 @@
                                         <span><strong>Total Amount:</strong> ₹@item.total_price_summary_amount</span>
                                     </div>
                                 </div>
-                    
+
                                 <div class="booking-actions">
                                     <button class="action-btn-bookinglist btn-view btnHallBookedDetails" data-hallid="@item.hall_booking_id_pk" data-hallname="@HallName">
                                         <i class="fas fa-eye"></i> View Details
@@ -207,6 +217,6 @@ else
     <div class="empty-state" id="emptyState">
         <i class="fas fa-calendar-times"></i>
         <h3>No Bookings Found</h3>
-        <p>You haven't made any bookings yet. Start by searching for available halls.</p>       
+        <p>You haven't made any bookings yet. Start by searching for available halls.</p>
     </div>
 }

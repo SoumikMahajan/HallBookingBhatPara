@@ -29,7 +29,7 @@ async function initializeSDK() {
     try {
         if (!isSDKInitialized) {
             cashfree = await Cashfree({
-                /*mode: "sandbox" // Change to "production" for live*/
+                /*mode: "sandbox"*/ // Change to "production" for live
                 mode: "production"
             });
             isSDKInitialized = true;

@@ -18,83 +18,87 @@ namespace HallBookingBhatPara.Controllers
 	//[Authorize(Roles = "Public User,Dev")]
 	[Authorize]
 	public class UserBookingController : Controller
-    {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ITokenProvider _tokenProvider;
+	{
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly ITokenProvider _tokenProvider;
 		private readonly ICashfreeService _cashfreeService;
-        private readonly LogService _logService;
+		private readonly LogService _logService;
 
 		public UserBookingController(IUnitOfWork unitOfWork, ITokenProvider tokenProvider, ICashfreeService cashfreeService, LogService logService)
-        {
-            _unitOfWork = unitOfWork;
-            _tokenProvider = tokenProvider;
+		{
+			_unitOfWork = unitOfWork;
+			_tokenProvider = tokenProvider;
 			_cashfreeService = cashfreeService;
-            _logService = logService;
+			_logService = logService;
 		}
 
-        #region :: Hall Search
-        public async Task<IActionResult> UserHallBooking()
-        {
-            MultipleModel mm = new();
-            var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
-                             .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
-                             .ToList();
+		#region :: Hall Search
+		public async Task<IActionResult> UserHallBooking()
+		{
+			MultipleModel mm = new();
+			var dropDownList = (await _unitOfWork.CategoryMasterRepository.GetAllAsync(c => c.active_status == 1))
+							 .Select(c => new DropDownListDTO { Id = c.category_id_pk, Name = c.category_name })
+							 .ToList();
 
-            mm.dropDownListDTOs = dropDownList;
-            return View(mm);
-        }
+			mm.dropDownListDTOs = dropDownList;
+			return View(mm);
+		}
 
-        public async Task<IActionResult> HallAvailableSearchResult(long catType, string startDate, string endDate)
-        {
-            MultipleModel mm = new();
-            List<HallSearchDTO> hallSearchList = new();
+		public async Task<IActionResult> HallAvailableSearchResult(long catType, string startDate, string endDate)
+		{
+			MultipleModel mm = new();
+			List<HallSearchDTO> hallSearchList = new();
 
-            var response = await _unitOfWork.SPRepository.HallAvailableSearchResultAsync(catType, startDate, endDate);
+			var response = await _unitOfWork.SPRepository.HallAvailableSearchResultAsync(catType, startDate, endDate);
 
-            mm.hallSearchList = response ?? new List<HallSearchDTO>();
+			mm.hallSearchList = response ?? new List<HallSearchDTO>();
 
-            return PartialView("_partialHallAvailableSearchResult", mm);
-        }
-        #endregion
+			return PartialView("_partialHallAvailableSearchResult", mm);
+		}
+		#endregion
 
-        #region :: User Hall Book
-        public async Task<IActionResult> HallDetailsBooking(long hallAvlId)
-        {
-            MultipleModel mm = new();
+		#region :: User Hall Book
+		public async Task<IActionResult> HallDetailsBooking(long hallAvlId)
+		{
+			MultipleModel mm = new();
 
-            var LoginUserMail = _tokenProvider.GetUserClaims().Email;
+			var LoginUserMail = _tokenProvider.GetUserClaims().Email;
 
-            var UserRegDeatils = await _unitOfWork.UserRegistrationRepository.GetAsync(filter: u => u.email == LoginUserMail && u.active_status == 1);
-            mm.public_User_Registration = UserRegDeatils;
+			var UserRegDeatils = await _unitOfWork.UserRegistrationRepository.GetAsync(filter: u => u.email == LoginUserMail && u.active_status == 1);
+			mm.public_User_Registration = UserRegDeatils;
 
-            var hallDetails = await _unitOfWork.SPRepository.GetHallDetailsAfterSearchAsync(hallAvlId);
+			var hallDetails = await _unitOfWork.SPRepository.GetHallDetailsAfterSearchAsync(hallAvlId);
 
-            mm.hallBookingDTO = hallDetails;
+			mm.hallBookingDTO = hallDetails;
 
-            var drpDownHallEvent = (await _unitOfWork.HallEventMasterRepository.GetAllAsync(h => h.active_status == 1))
-                .Select(h => new DropDownListDTO { Id = h.hall_event_type_id_pk, Name = h.event_type_name })
-                .ToList();
+			var drpDownHallEvent = (await _unitOfWork.HallEventMasterRepository.GetAllAsync(h => h.active_status == 1))
+				.Select(h => new DropDownListDTO { Id = h.hall_event_type_id_pk, Name = h.event_type_name })
+				.ToList();
 
-            //var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(hallDetails.hall_id_pk);
+			//var FloorList = await _unitOfWork.SPRepository.GetFloorListBySubCatIdAsync(hallDetails.hall_id_pk);
 
-            mm.dropDownListDTOs = drpDownHallEvent;
-            //mm.FloorList = FloorList;
-
-            var PercentageOfIntialPaymentAmount = 0;
-            if (hallDetails.payment_type_id_fk == 1) // Full Payment
-            {
-                PercentageOfIntialPaymentAmount = 100;
-            }
-            else if (hallDetails.payment_type_id_fk == 2) // Half Payment
-            {
-                PercentageOfIntialPaymentAmount = 75;
-            }
-
-            var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsAsync(hallDetails.hall_availability_id_pk, hallDetails.payment_type_id_fk, PercentageOfIntialPaymentAmount);
-            mm.paymentSummeryDTO = paymentSummery;
+			mm.dropDownListDTOs = drpDownHallEvent;
+			//mm.FloorList = FloorList;
 
 
-			List<UserListDTO> userDdlList = new ();
+			var PercentageOfIntialPaymentAmount = 100;			
+
+			//blocked on 08-03-2026
+			//var PercentageOfIntialPaymentAmount = 0;
+			//if (hallDetails.payment_type_id_fk == 1) // Full Payment
+			//{
+			//	PercentageOfIntialPaymentAmount = 100;
+			//}
+			//else if (hallDetails.payment_type_id_fk == 2) // Half Payment
+			//{
+			//	PercentageOfIntialPaymentAmount = 75;
+			//}
+
+			var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsAsync(hallDetails.hall_availability_id_pk, hallDetails.payment_type_id_fk, PercentageOfIntialPaymentAmount);
+			mm.paymentSummeryDTO = paymentSummery;
+
+
+			List<UserListDTO> userDdlList = new();
 
 			var loggedInRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
 
@@ -104,62 +108,62 @@ namespace HallBookingBhatPara.Controllers
 				userDdlList = await _unitOfWork.SPRepository.GetAllUserListForHallBooking();
 				mm.userListDTOs = userDdlList;
 			}
-						
+
 			return View(mm);
-        }
+		}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BookUserConfirmedHall([FromForm] InsertUserConfirmhallDTO model)
-        {
-            var validator = new InsertConfirmBookHallValidator();
-            var validationResult = validator.Validate(model);
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> BookUserConfirmedHall([FromForm] InsertUserConfirmhallDTO model)
+		{
+			var validator = new InsertConfirmBookHallValidator();
+			var validationResult = validator.Validate(model);
 
-            if (!validationResult.IsValid)
-            {
-                return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
-            }
-
-
-            //Add validation for checking the event date already booked or not
-            var isDateBooked = await _unitOfWork.SPRepository.IsEventDateAlreadyBookedAsync(model.hallAvailId, model.eventDate);
-            if (isDateBooked > 0)
-            {
-                return Json(ResponseService.BadRequestResponse<string>("The selected event date is already booked. Please choose a different date."));
-            }
-
-            var percentage = GetPaymentPercentage(model.OnloadPaymentTypeId, model.SelectedPaymentTypeId);
+			if (!validationResult.IsValid)
+			{
+				return Json(ResponseService.FluentValidationErrorResponse<object>(validationResult.Errors));
+			}
 
 
-            var dateCount = model.eventDate.Split('^').Length;
+			//Add validation for checking the event date already booked or not
+			var isDateBooked = await _unitOfWork.SPRepository.IsEventDateAlreadyBookedAsync(model.hallAvailId, model.eventDate);
+			if (isDateBooked > 0)
+			{
+				return Json(ResponseService.BadRequestResponse<string>("The selected event date is already booked. Please choose a different date."));
+			}
 
-            var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsForMultipleDateAsync(model.hallAvailId, model.OnloadPaymentTypeId, percentage, dateCount);
-            if (paymentSummery == null)
-                return Json(ResponseService.BadRequestResponse<string>("paymentSummery can not be null"));
-            if (paymentSummery.rate == 0)
-                return Json(ResponseService.BadRequestResponse<string>("Rate can not be 0"));
-            if (paymentSummery.payable_amount == 0)
-                return Json(ResponseService.BadRequestResponse<string>("Payable_amount can not be 0"));
-
+			var percentage = GetPaymentPercentage(model.OnloadPaymentTypeId, model.SelectedPaymentTypeId);
 
 
-            //double remainingAmount = 0;
-            //if (model.OnloadPaymentTypeId == 2 && model.SelectedPaymentTypeId == 20)
-            //{
-            //    remainingAmount = (paymentSummery.rate * dateCount) - ((paymentSummery.rate * dateCount) * 0.75);
-            //}
+			var dateCount = model.eventDate.Split('^').Length;
 
-            model.PaymentSummeryDTO = paymentSummery;
-            model.userClaims = _tokenProvider.GetUserClaims();
-            model.EntryIP = _tokenProvider.GetClientIpAddress(HttpContext);
+			var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsForMultipleDateAsync(model.hallAvailId, model.OnloadPaymentTypeId, percentage, dateCount);
+			if (paymentSummery == null)
+				return Json(ResponseService.BadRequestResponse<string>("paymentSummery can not be null"));
+			if (paymentSummery.rate == 0)
+				return Json(ResponseService.BadRequestResponse<string>("Rate can not be 0"));
+			if (paymentSummery.payable_amount == 0)
+				return Json(ResponseService.BadRequestResponse<string>("Payable_amount can not be 0"));
 
-            var bookingIdList = (await _unitOfWork.HallBookingDetailsRepository
-                            .GetAllAsync())
-                            .Select(b => b.booking_reference_id)
-                            .ToHashSet();
 
-            // Ensure the generated booking ID is unique
-            string bookingId = GenerateUniqueBookingIdAsync(bookingIdList);
+
+			//double remainingAmount = 0;
+			//if (model.OnloadPaymentTypeId == 2 && model.SelectedPaymentTypeId == 20)
+			//{
+			//    remainingAmount = (paymentSummery.rate * dateCount) - ((paymentSummery.rate * dateCount) * 0.75);
+			//}
+
+			model.PaymentSummeryDTO = paymentSummery;
+			model.userClaims = _tokenProvider.GetUserClaims();
+			model.EntryIP = _tokenProvider.GetClientIpAddress(HttpContext);
+
+			var bookingIdList = (await _unitOfWork.HallBookingDetailsRepository
+							.GetAllAsync())
+							.Select(b => b.booking_reference_id)
+							.ToHashSet();
+
+			// Ensure the generated booking ID is unique
+			string bookingId = GenerateUniqueBookingIdAsync(bookingIdList);
 
 			var response = await _unitOfWork.SPRepository.BookUserConfirmedHallAsync(model, dateCount, paymentSummery.TotalPriceSummaryAmount, bookingId);
 
@@ -177,54 +181,54 @@ namespace HallBookingBhatPara.Controllers
 		}
 
 
-        public string GenerateUniqueBookingIdAsync(ISet<string> existingIds)
-        {
-            string bookingId;
-            do
-            {
-                bookingId = BookingIdGenerator.Generate();
-            }
-            while (existingIds.Contains(bookingId)); // regenerate if duplicate
+		public string GenerateUniqueBookingIdAsync(ISet<string> existingIds)
+		{
+			string bookingId;
+			do
+			{
+				bookingId = BookingIdGenerator.Generate();
+			}
+			while (existingIds.Contains(bookingId)); // regenerate if duplicate
 
-            return bookingId;
-        }
+			return bookingId;
+		}
 
-        private int GetPaymentPercentage(long onloadPaymentTypeId, long selectedPaymentTypeId)
-        {
-            if (onloadPaymentTypeId == 1) return 100;
-            if (onloadPaymentTypeId == 2)
-            {
-                return selectedPaymentTypeId == 10 ? 100 : 75;
-            }
-            return 0;
-        }
+		private int GetPaymentPercentage(long onloadPaymentTypeId, long selectedPaymentTypeId)
+		{
+			if (onloadPaymentTypeId == 1) return 100;
+			if (onloadPaymentTypeId == 2)
+			{
+				return selectedPaymentTypeId == 10 ? 100 : 75;
+			}
+			return 0;
+		}
 
-        public async Task<IActionResult> GetPaymentSummeryDetails(long selectedPaymentType, long AvailId, int TotalDaysCount)
-        {
-            if (selectedPaymentType == 0 || AvailId == 0 || TotalDaysCount == 0)
-            {
-                return Json(ResponseService.BadRequestResponse<string>("Invalid Data."));
-            }
+		public async Task<IActionResult> GetPaymentSummeryDetails(long selectedPaymentType, long AvailId, int TotalDaysCount)
+		{
+			if (selectedPaymentType == 0 || AvailId == 0 || TotalDaysCount == 0)
+			{
+				return Json(ResponseService.BadRequestResponse<string>("Invalid Data."));
+			}
 
-            MultipleModel mm = new();
-            var PercentageOfIntialPaymentAmount = 0;
-            if (selectedPaymentType == 10) // Full Payment
-            {
-                PercentageOfIntialPaymentAmount = 100;
-            }
-            else if (selectedPaymentType == 20) // Half Payment
-            {
-                PercentageOfIntialPaymentAmount = 75;
-            }
+			MultipleModel mm = new();
+			var PercentageOfIntialPaymentAmount = 0;
+			if (selectedPaymentType == 10) // Full Payment
+			{
+				PercentageOfIntialPaymentAmount = 100;
+			}
+			else if (selectedPaymentType == 20) // Half Payment
+			{
+				PercentageOfIntialPaymentAmount = 75;
+			}
 
 
-            //var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsAsync(AvailId, 2, PercentageOfIntialPaymentAmount);
-            var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsForMultipleDateAsync(AvailId, 2, PercentageOfIntialPaymentAmount, TotalDaysCount);
-            mm.paymentSummeryDTO = paymentSummery;
-            ViewBag.NewPaymentId = selectedPaymentType;
+			//var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsAsync(AvailId, 2, PercentageOfIntialPaymentAmount);
+			var paymentSummery = await _unitOfWork.SPRepository.GetPaymentSummeryDetailsForMultipleDateAsync(AvailId, 2, PercentageOfIntialPaymentAmount, TotalDaysCount);
+			mm.paymentSummeryDTO = paymentSummery;
+			ViewBag.NewPaymentId = selectedPaymentType;
 
-            return PartialView("_partialPriceSummary", mm);
-        }
+			return PartialView("_partialPriceSummary", mm);
+		}
 
 		public async Task<IActionResult> GetUserDetailsOnHallBookingByUserId(long UserId)
 		{
@@ -317,23 +321,23 @@ namespace HallBookingBhatPara.Controllers
 
 		#region :: Booking Details
 		public IActionResult BookingList()
-        {
-            return View();
-        }
+		{
+			return View();
+		}
 
-        public async Task<IActionResult> UserHallBookedList()
-        {
+		public async Task<IActionResult> UserHallBookedList()
+		{
 			var loggedInRoleId = Convert.ToInt64(_tokenProvider.GetUserClaims().RolesId);
 			var loggedInStackId = Convert.ToInt64(_tokenProvider.GetUserClaims().StackHolderId);
 
-			MultipleModel mm = new();            
+			MultipleModel mm = new();
 
-            var response = await _unitOfWork.SPRepository.PublicUserHallBookedDetailsAsync(loggedInRoleId, loggedInStackId);
+			var response = await _unitOfWork.SPRepository.PublicUserHallBookedDetailsAsync(loggedInRoleId, loggedInStackId);
 
-            mm.bookedListDTOs = response ?? new List<BookedListDTO>();
+			mm.bookedListDTOs = response ?? new List<BookedListDTO>();
 
-            return PartialView("_partialUserHallBookedList", mm);
-        }
+			return PartialView("_partialUserHallBookedList", mm);
+		}
 
 		public async Task<IActionResult> UserBookingDetailsById(long HallId)
 		{
@@ -352,7 +356,7 @@ namespace HallBookingBhatPara.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UserHallBookingPayment(long HallBookingId,string HallReferenceId)
+		public async Task<IActionResult> UserHallBookingPayment(long HallBookingId, string HallReferenceId)
 		{
 			if (HallBookingId <= 0)
 				return Json(ResponseService.BadRequestResponse<string>("Booking Id can not be Empty"));
@@ -369,7 +373,7 @@ namespace HallBookingBhatPara.Controllers
 				// Log order creation for audit trail
 				await _logService.LogCustomAsync($"Cashfree order created. OrderId: {orderResponse.OrderId}, SessionId: {orderResponse.PaymentSessionId}");
 
-				
+
 
 				return Json(ResponseService.SuccessResponse(orderResponse));
 			}
@@ -382,7 +386,7 @@ namespace HallBookingBhatPara.Controllers
 
 
 		#region :: CashFree Payment Intregation		
-			
+
 		private async Task<CreateOrderResponse?> CreateCashfreeOrderAsync(string orderId)
 		{
 
@@ -392,7 +396,7 @@ namespace HallBookingBhatPara.Controllers
 			{
 				await _logService.LogCustomAsync(orderDetails.message);
 				return null;
-			}			
+			}
 
 			// Check if a valid Cashfree order already exists in your DB
 			var existingOrder = await _unitOfWork.SPRepository.GetActiveCashfreeOrderAsync(orderId);
@@ -434,12 +438,13 @@ namespace HallBookingBhatPara.Controllers
 				OrderNote = $"Payment for Order {orderId}",
 				OrderMeta = new OrderMeta
 				{
-					ReturnUrl = Url.Action("PaymentCallback", "UserBooking", null, Request.Scheme) + "?order_id={order_id}"
+					ReturnUrl = Url.Action("PaymentCallback", "UserBooking", null, Request.Scheme) + "?order_id={order_id}",
+					PaymentMethods = "upi,nb,cc,dc"
 					// NotifyUrl, PaymentMethods etc. can be added here if needed
 				}
 			};
 
-			var responce =  await _cashfreeService.CreateOrderAsync(orderRequest);
+			var responce = await _cashfreeService.CreateOrderAsync(orderRequest);
 
 			if (responce == null || string.IsNullOrEmpty(responce.PaymentSessionId))
 			{
@@ -453,7 +458,7 @@ namespace HallBookingBhatPara.Controllers
 			var saveOrderResult = await _unitOfWork.SPRepository.SaveCashfreeOrderDetailsAsync(responce, orderDetails.Item3, userClaims);
 			if (saveOrderResult.Result <= 0)
 			{
-				await _logService.LogCustomAsync(saveOrderResult.message);				
+				await _logService.LogCustomAsync(saveOrderResult.message);
 				return null;
 			}
 
@@ -519,10 +524,10 @@ namespace HallBookingBhatPara.Controllers
 
 
 				// 5.Update order status in DB(for PAID / failed statuses)
-				var updateOrderStatusResult = await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, orderStatus.OrderStatus,orderStatus.PaymentSessionId);
+				var updateOrderStatusResult = await _unitOfWork.SPRepository.UpdateOrderStatusAsync(order_id, orderStatus.OrderStatus, orderStatus.PaymentSessionId);
 				if (updateOrderStatusResult.Result <= 0)
 				{
-					await _logService.LogCustomAsync(updateOrderStatusResult.message);					
+					await _logService.LogCustomAsync(updateOrderStatusResult.message);
 				}
 
 				// 6. Fetch payment details (only for PAID or other terminal statuses)
@@ -563,6 +568,13 @@ namespace HallBookingBhatPara.Controllers
 					var alreadyExists = await _unitOfWork.SPRepository.CashfreePaymentExistsAsync(item.CfPaymentId);
 					if (alreadyExists.Item3 > 0)
 					{
+						var paymentUpdateToDb = await _unitOfWork.SPRepository.UpdateAlreadyExitsCashfreePaymentDetailsAsync(item);
+						if (paymentUpdateToDb.Result <= 0)
+						{
+							await _logService.LogCustomAsync(paymentUpdateToDb.message);
+							continue;
+						}
+
 						await _logService.LogCustomAsync(
 							$"Payment already saved, skipping. CfPaymentId: {item.CfPaymentId}");
 						anyPaymentSaved = true;
@@ -578,7 +590,7 @@ namespace HallBookingBhatPara.Controllers
 
 					anyPaymentSaved = true;
 
-					var updateBookingPaymentResult = await _unitOfWork.SPRepository.UpdateBookingPaymentDetailsAsync(item.CfPaymentId, item.OrderId);
+					var updateBookingPaymentResult = await _unitOfWork.SPRepository.UpdateBookingPaymentDetailsAsync(item.CfPaymentId, item.OrderId, item.PaymentStatus);
 
 					if (updateBookingPaymentResult.Result <= 0)
 					{
@@ -599,7 +611,7 @@ namespace HallBookingBhatPara.Controllers
 				// 8. Show result based on final status
 				switch (orderStatus.OrderStatus)
 				{
-					case "PAID":						
+					case "PAID":
 
 						// Send confirmation email/SMS
 						//await SendBookingConfirmationAsync(bookingRecord);
@@ -663,6 +675,108 @@ namespace HallBookingBhatPara.Controllers
 				"TERMINATED" => "Payment session terminated",
 				_ => "Payment could not be completed. Please try again."
 			};
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> CheckPaymentStatus(string orderId)
+		{
+			try
+			{
+				var orderStatus = await _cashfreeService.GetOrderStatusAsync(orderId);
+				return Json(new { status = orderStatus?.OrderStatus ?? "UNKNOWN" });
+			}
+			catch
+			{
+				return Json(new { status = "ERROR" });
+			}
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> CheckPaymentStatustoReturnView(string orderId)
+		{
+			if (string.IsNullOrEmpty(orderId))
+			{
+				await _logService.LogCustomAsync("PaymentCallback called without order_id");
+				return View("PaymentFailed", new PaymentResultViewModel
+				{
+					ErrorMessage = "Invalid payment reference"
+				});
+			}
+
+			// 2. Fetch order status from Cashfree
+			var orderStatus = await _cashfreeService.GetOrderStatusAsync(orderId);
+
+			if (orderStatus == null)
+			{
+				await _logService.LogCustomAsync($"Failed to fetch order status from Cashfree. OrderId: {orderId}");
+				return View("PaymentFailed", new PaymentResultViewModel
+				{
+					OrderId = orderId,
+					ErrorMessage = "Unable to verify payment status. Please contact support."
+				});
+			}
+
+			var paymentDetails = await _cashfreeService.GetPaymentDetailsAsync(orderId);
+
+			if (paymentDetails == null || !paymentDetails.Any())
+			{
+				await _logService.LogCustomAsync($"No payment details found for OrderId: {orderId}");
+
+				if (orderStatus.OrderStatus == "PAID")
+				{
+					return View("PaymentSuccess", new PaymentResultViewModel
+					{
+						OrderId = orderId,
+						Amount = orderStatus.OrderAmount,
+						Status = "Success",
+						BookingId = orderId,
+						TransactionId = "Pending"
+					});
+				}
+
+				return View("PaymentFailed", new PaymentResultViewModel
+				{
+					OrderId = orderId,
+					ErrorMessage = "Unable to retrieve payment details. Please contact support."
+				});
+			}
+
+			switch (orderStatus.OrderStatus)
+			{
+				case "PAID":
+
+					return View("PaymentSuccess", new PaymentResultViewModel
+					{
+						OrderId = orderId,
+						Amount = orderStatus.OrderAmount,
+						Status = "Success",
+						BookingId = "",
+						TransactionId = paymentDetails?.FirstOrDefault()?.CfPaymentId
+					});
+				case "ACTIVE":
+					return View("PaymentPending", new PaymentResultViewModel
+					{
+						OrderId = orderId,
+						Message = "Your payment is being processed. You will receive confirmation shortly."
+					});
+				case "EXPIRED":
+					return View("PaymentFailed", new PaymentResultViewModel
+					{
+						OrderId = orderId,
+						Status = "Expired",
+						ErrorMessage = "Payment session expired. Please try booking again."
+					});
+
+				default:
+
+					return View("PaymentFailed", new PaymentResultViewModel
+					{
+						OrderId = orderId,
+						Status = orderStatus.OrderStatus,
+						ErrorMessage = GetUserFriendlyErrorMessage(orderStatus.OrderStatus)
+					});
+			}
+
 		}
 
 		#endregion

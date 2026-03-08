@@ -1342,6 +1342,31 @@
                 submitBtn.html(originalText).prop('disabled', false);
             });
         }
+
+        $(document).on('click', '.btn-payment-status', function (e) {
+            e.preventDefault();
+
+            const orderId = $(this).data('hallbooking-refid');
+            const button = $(this);
+            const originalHtml = button.html();
+
+            if (!orderId) {
+                alert('Invalid order reference');
+                return;
+            }
+
+            // Show loading state
+            button.html('<i class="fas fa-spinner fa-spin"></i> Checking...').prop('disabled', true);
+
+            // Redirect to status check page
+            window.location.href = '/UserBooking/CheckPaymentStatustoReturnView?orderId=' + orderId;
+
+            // If page doesn't redirect (error), restore button
+            setTimeout(function () {
+                button.html(originalHtml).prop('disabled', false);
+            }, 3000);
+                    
+        });
     }
     // #endregion :: Booking list
 

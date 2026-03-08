@@ -11,6 +11,7 @@ using HallBookingBhatPara.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using System.Text.Json;
 using static System.Net.WebRequestMethods;
 
 namespace HallBookingBhatPara.Controllers
@@ -531,7 +532,7 @@ namespace HallBookingBhatPara.Controllers
 				}
 
 				// 6. Fetch payment details (only for PAID or other terminal statuses)
-				var paymentDetails = await _cashfreeService.GetPaymentDetailsAsync(order_id);
+				List<PaymentDetails> paymentDetails = await _cashfreeService.GetPaymentDetailsAsync(order_id);				
 
 				if (paymentDetails == null || !paymentDetails.Any())
 				{
@@ -564,6 +565,11 @@ namespace HallBookingBhatPara.Controllers
 				// 7. Save payment details with duplicate protection
 				foreach (var item in paymentDetails)
 				{
+
+					string jsonString = JsonSerializer.Serialize(item);
+
+					await _logService.LogCustomAsync($"All Payment details for Bookingid -{item.OrderId}--------------- {jsonString}");
+
 					// Idempotency — skip if already saved
 					var alreadyExists = await _unitOfWork.SPRepository.CashfreePaymentExistsAsync(item.CfPaymentId);
 					if (alreadyExists.Item3 > 0)
@@ -579,9 +585,11 @@ namespace HallBookingBhatPara.Controllers
 							$"Payment already saved, skipping. CfPaymentId: {item.CfPaymentId}");
 						anyPaymentSaved = true;
 						continue;
-					}
+					}				
 
 					var paymentSaveToDb = await _unitOfWork.SPRepository.SaveCashfreePaymentDetailsAsync(item, userClaims);
+					
+
 					if (paymentSaveToDb.Result <= 0)
 					{
 						await _logService.LogCustomAsync(paymentSaveToDb.message);

@@ -206,6 +206,42 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 			}			
 		}
 
+		public async Task<(int Result, string message, long)> UpdateAlreadyExitsCashfreePaymentDetailsAsync(PaymentDetails model)
+		{
+			try
+			{
+				using var sqlConnection = new SqlConnection(_connectionString);
+				var parameters = new DynamicParameters();
+				parameters.Add("@CfPaymentId", model.CfPaymentId, DbType.String);				
+				parameters.Add("@BookingReferenceId", model.OrderId, DbType.String);
+				parameters.Add("@PaymentStatus", model.PaymentStatus, DbType.String);
+				parameters.Add("@OperationId", 9, DbType.Int32);
+
+				// Output params
+				parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
+				parameters.Add("@Message", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
+
+				await sqlConnection.OpenAsync();
+
+				var responce = await sqlConnection.QueryFirstOrDefaultAsync<long>(
+					"HallBookingPaymentSp",
+					parameters,
+					commandType: CommandType.StoredProcedure
+				);
+
+				// Read outputs safely
+				int result = parameters.Get<int?>("@Result") ?? -1;
+				string message = parameters.Get<string>("@Message") ?? "Unknown error from DB";
+
+				return (result, message, responce);
+			}
+			catch (SqlException ex)
+			{
+				await _logService.LogExceptionErrorAsync(ex);
+				throw;
+			}
+		}
+
 		public async Task<(int Result, string message, long)> SaveCashfreePaymentDetailsAsync(PaymentDetails model, UserClaims userClaims)
 		{
 			try
@@ -218,7 +254,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 				parameters.Add("@PaymentTime", model.PaymentTime, DbType.DateTime);
 				parameters.Add("@PaymentMethod", model.PaymentMethod.Method, DbType.String);
 				parameters.Add("@BookingReferenceId", model.OrderId, DbType.String);
-
+				parameters.Add("@PaymentStatus", model.PaymentStatus, DbType.String);
 				parameters.Add("@OperationId", 3, DbType.Int32);
 
 				// Output params
@@ -246,7 +282,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 			}			
 		}
 
-		public async Task<(int Result, string message)> UpdateBookingPaymentDetailsAsync(string CfPaymentId, string OrderId)
+		public async Task<(int Result, string message)> UpdateBookingPaymentDetailsAsync(string CfPaymentId, string OrderId, string PaymentStatus)
 		{
 			try
 			{
@@ -254,6 +290,7 @@ namespace HallBookingBhatPara.Infrastructure.Repository
 				var parameters = new DynamicParameters();
 				parameters.Add("@CfPaymentId", CfPaymentId, DbType.String);
 				parameters.Add("@OrderId", OrderId, DbType.String);
+				parameters.Add("@PaymentStatus", PaymentStatus, DbType.String);
 				parameters.Add("@OperationId", 5, DbType.Int32);
 
 				// Output params

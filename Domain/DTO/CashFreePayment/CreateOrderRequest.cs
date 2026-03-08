@@ -45,8 +45,8 @@ namespace HallBookingBhatPara.Domain.DTO.CashFreePayment
 		//[JsonPropertyName("notify_url")]
 		//public string? NotifyUrl { get; set; }
 
-		//[JsonPropertyName("payment_methods")]
-		//public string? PaymentMethods { get; set; }
+		[JsonPropertyName("payment_methods")]
+		public string? PaymentMethods { get; set; }
 	}
 
 	public class CreateOrderResponse
